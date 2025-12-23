@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="AgentinFlow - Premium AI agent automation and custom n8n workflows for modern businesses. Automate your lead management, customer service, and more.">
+    <title>AgentinFlow - AI Agent Automation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">AgentinFlow</div>
+            <button class="nav-btn" onclick="scrollToSection('services')">Learn More</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>
+                    Automate Your Business with <span class="hero-highlight">AI Agents</span>
+                </h1>
+                <p>
+                    Transform your workflow with intelligent automation and cutting-edge web development. We build
+                    agents that work 24/7 so you don't have to.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="scrollToSection('contact')">Start Your Project</button>
+                    <button class="btn-secondary" onclick="scrollToSection('services')">Learn More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews">
+        <h2>Trusted by <span class="hero-highlight">Industry Leaders</span></h2>
+        <div class="reviews-scroll">
+            <div class="reviews-track" id="reviewsTrack"></div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2>What We <span class="hero-highlight">Deliver</span></h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <svg class="service-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <h3 class="service-title">Agent Automation</h3>
+                    <p class="service-desc">Custom AI agents that handle repetitive tasks, customer service, data
+                        processing, and workflow automation.</p>
+                </div>
+                <div class="service-card">
+                    <svg class="service-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6" />
+                        <polyline points="8 6 2 12 8 18" />
+                    </svg>
+                    <h3 class="service-title">Web Development</h3>
+                    <p class="service-desc">Modern, responsive websites and web applications built with the latest
+                        technologies and best practices.</p>
+                </div>
+                <div class="service-card">
+                    <svg class="service-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    <h3 class="service-title">Integration Solutions</h3>
+                    <p class="service-desc">Seamless integration of AI agents with your existing tools, databases, and
+                        business systems.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="container">
+            <div class="benefits-grid">
+                <div>
+                    <h2>Why Choose <span class="hero-highlight">AgentinFlow?</span></h2>
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">Save 20+ hours per week with intelligent automation</p>
+                        </div>
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">Scale your operations without scaling costs</p>
+                        </div>
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">Reduce human error with precision AI agents</p>
+                        </div>
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">Get 24/7 automated workflows</p>
+                        </div>
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">Custom solutions tailored to your business</p>
+                        </div>
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">N8N Workflow Automation</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">90%</div>
+                    <p class="stat-label">Reduction in Manual Tasks</p>
+                    <p class="stat-desc">Our clients typically see dramatic efficiency improvements within the first
+                        month of implementation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-header">
+                <h2>Ready to <span class="hero-highlight">Automate?</span></h2>
+                <p class="contact-subtitle">Get in touch and let's discuss how we can transform your business</p>
+            </div>
+            <form id="contactForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" name="company" placeholder="Your company name">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Tell us about your project..."
+                        required></textarea>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span id="btnText">Send Message</span>
+                    <svg id="btnIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container-footer-grid">
+            <div class="footer-info">
+                <div class="logo">AgentinFlow</div>
+                <p class="footer-text">Transforming businesses through AI automation and web development</p>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact Us</h3>
+                <p><a href="mailto:aarvsinghchauhan@gmail.com">aarvsinghchauhan@gmail.com</a></p>
+                <p><a href="tel:+919584898779">+91 95848 98779</a></p>
+                <p><a href="tel:+919343393388">+91 93433 93388</a></p>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p class="footer-copyright">© 2026 AgentinFlow. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
