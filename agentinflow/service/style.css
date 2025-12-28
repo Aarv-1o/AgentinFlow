@@ -726,3 +726,33 @@ footer {
         gap: 12rem;
     }
 }
+
+/* Very small screens - Hide navigation links */
+@media (max-width: 480px) {
+    .nav-links {
+        gap: 0.5rem;
+    }
+
+    .nav-link {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .nav-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.7rem;
+    }
+
+    .logo {
+        font-size: 1.25rem;
+    }
+}
+@media (max-width: 640px) {
+    .nav-links {
+        display: none;
+    }
+
+    .nav-btn {
+        display: block;
+    }
+}
