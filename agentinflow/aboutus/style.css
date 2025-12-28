@@ -200,6 +200,13 @@ nav .container {
     transform: scale(1.05);
 }
 
+/* Specific styling for Chinmay's image */
+#chinmay {
+    object-fit: contain;
+    object-position: center;
+    background-color: #0a0a0a;
+}
+
 .image-overlay {
     position: absolute;
     bottom: 0;
@@ -561,15 +568,16 @@ footer {
         gap: 12rem;
     }
 }
+
 @media (max-width: 768px) {
     .nav-links {
         gap: 1rem;
     }
-    
+
     .nav-link {
         font-size: 0.875rem;
     }
-    
+
     .nav-btn {
         padding: 0.5rem 1rem;
         font-size: 0.875rem;
@@ -578,9 +586,10 @@ footer {
 
 @media (max-width: 640px) {
     .nav-links {
-        display: none; /* Hide links on very small screens */
+        display: none;
+        /* Hide links on very small screens */
     }
-    
+
     /* Show only contact button on mobile */
     .nav-btn {
         display: block;
