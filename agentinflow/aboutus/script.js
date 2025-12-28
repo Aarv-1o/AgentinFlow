@@ -4,8 +4,8 @@
 // ========================================
 
 const linkedInProfiles = {
-    aarv: 'www.linkedin.com/in/aarv-singh-chauhan-4a7987291', // Replace with actual LinkedIn URL
-    chinmay: 'www.linkedin.com/in/chinmay-pratap-singh-bhadoria-6a8756221' // Replace with actual LinkedIn URL
+    aarv: 'https://www.linkedin.com/in/aarv-singh-chauhan-4a7987291',
+    chinmay: 'https://www.linkedin.com/in/chinmay-pratap-singh-bhadoria-6a8756221'
 };
 
 // ========================================
@@ -18,7 +18,7 @@ const linkedInProfiles = {
  */
 function openLinkedIn(member) {
     const url = linkedInProfiles[member];
-    
+
     if (url) {
         // Open LinkedIn profile in new tab
         window.open(url, '_blank', 'noopener,noreferrer');
@@ -29,21 +29,21 @@ function openLinkedIn(member) {
 }
 
 // Smooth scroll for navigation links
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Handle navigation links with hash
     const links = document.querySelectorAll('a[href^="#"]');
-    
+
     links.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
-            
+
             if (href === '#') return;
-            
+
             e.preventDefault();
-            
+
             const targetId = href.substring(1);
             const targetElement = document.getElementById(targetId);
-            
+
             if (targetElement) {
                 targetElement.scrollIntoView({
                     behavior: 'smooth',
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         rootMargin: '0px 0px -50px 0px'
     };
 
-    const observer = new IntersectionObserver(function(entries) {
+    const observer = new IntersectionObserver(function (entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
@@ -79,10 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Add active state to navigation
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     navLinks.forEach(link => {
         const linkPage = link.getAttribute('href').split('#')[0];
         if (linkPage === currentPage || (currentPage === '' && linkPage === 'index.html')) {
@@ -94,21 +94,21 @@ document.addEventListener('DOMContentLoaded', function() {
 // Add this to your existing script.js file
 
 // Smooth scroll for all anchor links
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Handle navigation links with hash
     const links = document.querySelectorAll('a[href^="#"]');
-    
+
     links.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
-            
+
             if (href === '#') return;
-            
+
             e.preventDefault();
-            
+
             const targetId = href.substring(1);
             const targetElement = document.getElementById(targetId);
-            
+
             if (targetElement) {
                 targetElement.scrollIntoView({
                     behavior: 'smooth',
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add active state to navigation based on current page
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     navLinks.forEach(link => {
         const linkPage = link.getAttribute('href').split('#')[0];
         if (linkPage === currentPage || (currentPage === '' && linkPage === 'index.html')) {
