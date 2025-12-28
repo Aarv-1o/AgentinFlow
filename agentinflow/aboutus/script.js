@@ -4,8 +4,8 @@
 // ========================================
 
 const linkedInProfiles = {
-    aarv: 'https://www.linkedin.com/in/aarv-singh-chauhan/', // Replace with actual LinkedIn URL
-    chinmay: 'https://www.linkedin.com/in/chinmay-bhadouria/' // Replace with actual LinkedIn URL
+    aarv: 'www.linkedin.com/in/aarv-singh-chauhan-4a7987291', // Replace with actual LinkedIn URL
+    chinmay: 'www.linkedin.com/in/chinmay-pratap-singh-bhadoria-6a8756221' // Replace with actual LinkedIn URL
 };
 
 // ========================================
