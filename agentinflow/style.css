@@ -576,3 +576,54 @@ footer .container {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+/* Add to your style.css file */
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: #E2DDB4;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+    font-size: 1rem;
+}
+
+.nav-link:hover {
+    color: #E43636;
+}
+
+.nav-link.active {
+    color: #E43636;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .nav-links {
+        gap: 1rem;
+    }
+    
+    .nav-link {
+        font-size: 0.875rem;
+    }
+    
+    .nav-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .nav-links {
+        display: none; /* Hide links on very small screens */
+    }
+    
+    /* Show only contact button on mobile */
+    .nav-btn {
+        display: block;
+    }
+}

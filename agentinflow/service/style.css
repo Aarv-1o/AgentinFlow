@@ -1,0 +1,349 @@
+/* Add these styles to your about.css file */
+
+/* Service Detail Section */
+.service-detail {
+    padding: 5rem 1.5rem;
+    background-color: #000;
+}
+
+.service-detail.alternate {
+    background-color: #0a0a0a;
+}
+
+.service-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.service-number {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #E43636;
+    opacity: 0.2;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.service-detail-title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #F6EFD2;
+    margin-bottom: 0.5rem;
+}
+
+.service-detail-subtitle {
+    font-size: 1.5rem;
+    color: #E43636;
+    margin-bottom: 2rem;
+}
+
+.service-description h3 {
+    font-size: 1.75rem;
+    color: #F6EFD2;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.service-description p {
+    font-size: 1.125rem;
+    color: #E2DDB4;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.service-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.service-list li {
+    font-size: 1.125rem;
+    color: #E2DDB4;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.service-list li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: #E43636;
+    font-weight: bold;
+}
+
+.service-list li strong {
+    color: #F6EFD2;
+}
+
+/* Service Features Sidebar */
+.service-detail-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.feature-box {
+    background-color: #0a0a0a;
+    border: 2px solid #E43636;
+    border-radius: 1rem;
+    padding: 2rem;
+}
+
+.service-detail.alternate .feature-box {
+    background-color: #000;
+}
+
+.feature-box h4 {
+    font-size: 1.5rem;
+    color: #F6EFD2;
+    margin-bottom: 1rem;
+}
+
+.feature-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-box ul li {
+    font-size: 1rem;
+    color: #E2DDB4;
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+}
+
+.feature-box p {
+    font-size: 1rem;
+    color: #E2DDB4;
+    line-height: 1.6;
+}
+
+/* Pricing Section */
+.pricing-section {
+    padding: 5rem 1.5rem;
+    background-color: #0a0a0a;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 1280px;
+    margin: 3rem auto;
+}
+
+.pricing-card {
+    background-color: #000;
+    border: 2px solid #E43636;
+    border-radius: 1rem;
+    padding: 2.5rem;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.pricing-card:hover {
+    transform: translateY(-0.5rem);
+    box-shadow: 0 20px 40px rgba(228, 54, 54, 0.3);
+}
+
+.pricing-card.featured {
+    border-color: #E43636;
+    border-width: 3px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #000 100%);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #E43636;
+    color: #fff;
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.pricing-card h3 {
+    font-size: 2rem;
+    color: #F6EFD2;
+    margin-bottom: 1rem;
+}
+
+.pricing-desc {
+    font-size: 1.125rem;
+    color: #E2DDB4;
+    margin-bottom: 2rem;
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+    text-align: left;
+}
+
+.pricing-features li {
+    font-size: 1rem;
+    color: #E2DDB4;
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+}
+
+.pricing-btn {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background-color: #E43636;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 9999px;
+    font-weight: bold;
+    font-size: 1.125rem;
+    transition: all 0.3s;
+    margin-top: 1rem;
+}
+
+.pricing-btn:hover {
+    background-color: #c42e2e;
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(228, 54, 54, 0.5);
+}
+
+.pricing-note {
+    text-align: center;
+    font-size: 1rem;
+    color: #E2DDB4;
+    margin-top: 2rem;
+    font-style: italic;
+}
+
+/* Process Section */
+.process-section {
+    padding: 5rem 1.5rem;
+    background-color: #000;
+}
+
+.process-timeline {
+    max-width: 900px;
+    margin: 3rem auto;
+    position: relative;
+}
+
+.process-step {
+    padding: 2rem;
+    margin-bottom: 2rem;
+    background-color: #0a0a0a;
+    border: 2px solid #E43636;
+    border-radius: 1rem;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.process-step:hover {
+    transform: translateX(1rem);
+    box-shadow: 0 10px 30px rgba(228, 54, 54, 0.3);
+}
+
+.step-number {
+    position: absolute;
+    left: -1rem;
+    top: 2rem;
+    width: 3rem;
+    height: 3rem;
+    background-color: #E43636;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.process-step h3 {
+    font-size: 1.75rem;
+    color: #F6EFD2;
+    margin-bottom: 1rem;
+    padding-left: 3rem;
+}
+
+.process-step p {
+    font-size: 1.125rem;
+    color: #E2DDB4;
+    line-height: 1.8;
+    padding-left: 3rem;
+}
+
+/* Responsive Design for Services Page */
+@media (max-width: 768px) {
+    .service-number {
+        font-size: 3rem;
+    }
+
+    .service-detail-title {
+        font-size: 2rem;
+    }
+
+    .service-detail-subtitle {
+        font-size: 1.25rem;
+    }
+
+    .service-description h3 {
+        font-size: 1.5rem;
+    }
+
+    .service-description p,
+    .service-list li {
+        font-size: 1rem;
+    }
+
+    .process-step {
+        padding: 1.5rem;
+    }
+
+    .step-number {
+        position: static;
+        margin-bottom: 1rem;
+    }
+
+    .process-step h3,
+    .process-step p {
+        padding-left: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .service-detail-grid {
+        grid-template-columns: 2fr 1fr;
+    }
+
+    .service-detail-grid.reverse {
+        grid-template-columns: 1fr 2fr;
+    }
+
+    .service-detail-grid.reverse .service-detail-content {
+        order: 2;
+    }
+
+    .service-detail-grid.reverse .service-detail-features {
+        order: 1;
+    }
+
+    .pricing-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .service-detail-title {
+        font-size: 3.5rem;
+    }
+}
