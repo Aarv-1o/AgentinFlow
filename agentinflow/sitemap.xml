@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://agentinflow.com/</loc></url>
-    <url><loc>https://agentinflow.com/service/</loc></url>
-    <url><loc>https://agentinflow.com/aboutus/</loc></url>
-
+  <url>
+    <loc>https://www.agentinflow.com/</loc>
+  </url>
+  <url>
+    <loc>https://www.agentinflow.com/service/</loc>
+  </url>
+  <url>
+    <loc>https://www.agentinflow.com/aboutus/</loc>
+  </url>
 </urlset>
