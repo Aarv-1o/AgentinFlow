@@ -34,9 +34,9 @@ const reviews = [
 // To update credentials, change the values below
 // ========================================
 
-const EMAILJS_SERVICE_ID = 'service_4bh62x2';
-const EMAILJS_TEMPLATE_ID = 'template_w5hz4df';
-const EMAILJS_PUBLIC_KEY = 'CzHf1hBzaQZvLGMxn';
+let EMAILJS_SERVICE_ID = 'service_4bh62x2';
+let EMAILJS_TEMPLATE_ID = 'template_w5hz4df';
+let EMAILJS_PUBLIC_KEY = 'CzHf1hBzaQZvLGMxn';
 
 // ========================================
 // END EMAILJS CONFIGURATION
