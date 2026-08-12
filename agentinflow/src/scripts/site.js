@@ -11,6 +11,8 @@
 //   3. The LinkedIn open-in-new-tab handler is gone: the team list uses real
 //      anchors now, which is better for accessibility and lets the URL be
 //      seen, copied and crawled.
+//   4. The scroll-reveal observer is gone with the mission cards it animated;
+//      it had no remaining targets.
 
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach((link) => {
@@ -27,28 +29,6 @@ function initSmoothScroll() {
     });
 }
 
-function initScrollReveal() {
-    const cards = document.querySelectorAll('.mission-card');
-    if (cards.length === 0) return;
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-    cards.forEach((card) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(card);
-    });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     initSmoothScroll();
-    initScrollReveal();
 });

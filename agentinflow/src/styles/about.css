@@ -72,24 +72,29 @@ body {
     background-color: var(--bg);
 }
 
+.connect-section {
+    padding: 0 1.5rem 5rem;
+    background-color: var(--bg);
+}
+
 .team-section .container {
     max-width: 1280px;
     margin: 0 auto;
 }
 
-/* ---------- Team (name-led list, no photos) ---------- */
-.team-list {
+/* ---------- Row-link list (team + connect) ---------- */
+.link-list {
     list-style: none;
     max-width: 60rem;
     margin: 0 auto;
     border-top: 1px solid var(--border);
 }
 
-.team-row {
+.link-row {
     border-bottom: 1px solid var(--border);
 }
 
-.team-link {
+.link-item {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
@@ -98,13 +103,13 @@ body {
     transition: padding-left 0.35s ease, background-color 0.35s ease;
 }
 
-.team-link:hover,
-.team-link:focus-visible {
+.link-item:hover,
+.link-item:focus-visible {
     padding-left: 1.5rem;
     background-color: var(--surface);
 }
 
-.team-name {
+.link-title {
     font-family: var(--font-display);
     font-size: clamp(1.75rem, 4vw, 2.75rem);
     line-height: 1.15;
@@ -112,12 +117,12 @@ body {
     transition: color 0.3s;
 }
 
-.team-link:hover .team-name,
-.team-link:focus-visible .team-name {
+.link-item:hover .link-title,
+.link-item:focus-visible .link-title {
     color: var(--accent);
 }
 
-.team-role {
+.link-meta {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -127,7 +132,7 @@ body {
     color: var(--text-dim);
 }
 
-.team-arrow {
+.link-arrow {
     width: 16px;
     height: 16px;
     opacity: 0;
@@ -135,8 +140,8 @@ body {
     transition: opacity 0.3s, transform 0.3s;
 }
 
-.team-link:hover .team-arrow,
-.team-link:focus-visible .team-arrow {
+.link-item:hover .link-arrow,
+.link-item:focus-visible .link-arrow {
     opacity: 1;
     transform: translate(0, 0);
     color: var(--accent);
@@ -144,17 +149,17 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
 
-    .team-link,
-    .team-arrow {
+    .link-item,
+    .link-arrow {
         transition: none;
     }
 
-    .team-link:hover,
-    .team-link:focus-visible {
+    .link-item:hover,
+    .link-item:focus-visible {
         padding-left: 0.5rem;
     }
 
-    .team-arrow {
+    .link-arrow {
         opacity: 1;
         transform: none;
     }
@@ -180,67 +185,6 @@ body {
     object-fit: contain;
     object-position: center;
     background-color: var(--bg-alt);
-}
-
-/* Mission Section */
-.mission-section {
-    padding: 5rem 1.5rem;
-    background-color: var(--bg-alt);
-}
-
-.mission-section .container {
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-.mission-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-}
-
-.mission-card {
-    padding: 2.5rem;
-    background-color: var(--bg);
-    border: 2px solid var(--accent);
-    border-radius: 1rem;
-    text-align: center;
-    transition: all 0.3s;
-}
-
-.mission-card:hover {
-    transform: translateY(-0.5rem);
-    box-shadow: 0 20px 40px rgba(var(--accent-rgb), 0.3);
-}
-
-.mission-icon {
-    width: 4rem;
-    height: 4rem;
-    margin: 0 auto 1.5rem;
-    color: var(--accent);
-    transition: transform 0.3s;
-}
-
-.mission-card:hover .mission-icon {
-    transform: scale(1.1);
-}
-
-.mission-icon svg {
-    width: 100%;
-    height: 100%;
-}
-
-.mission-card h3 {
-    font-size: 1.75rem;
-    font-weight: bold;
-    color: var(--heading);
-    margin-bottom: 1rem;
-}
-
-.mission-card p {
-    font-size: 1.125rem;
-    color: var(--text);
-    line-height: 1.8;
 }
 
 /* CTA Section */
@@ -335,19 +279,7 @@ body {
     }
 
     .intro-text,
-                        .mission-card {
-        padding: 1.5rem;
-    }
-
-    .mission-icon {
-        width: 3rem;
-        height: 3rem;
-    }
-
-    .mission-card h3 {
-        font-size: 1.5rem;
-    }
-}
+                                }
 
 /* Tablets (640px and up) */
 @media (min-width: 640px) {
@@ -373,11 +305,7 @@ body {
         font-size: 4.5rem;
     }
 
-        .mission-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .container-footer-grid {
+            .container-footer-grid {
         gap: 4rem;
     }
 }
