@@ -283,7 +283,7 @@ Stated explicitly so they can be corrected rather than discovered later.
 | Risk | Mitigation |
 |---|---|
 | Migration drops SEO ranking | Preserve all URLs, keep verification file, regenerate sitemap, resubmit in Search Console after deploy |
-| EmailJS free-tier quota exhausted by bots | Honeypot now; server-side rate limiting in Phase 2 |
+| EmailJS free-tier quota exhausted by bots | Honeypot now; server-side rate limiting in Phase 2. **Confirmed 2026-08-12: the linked auto-reply consumes an additional request, so 200 emails/month = ~100 submissions/month.** Cc costs nothing extra. Anti-spam is load-bearing, not optional |
 | Portfolio content never arrives, blocking the redesign | Ship the section with placeholders; it goes live the day content lands |
 | Redesign drifts from "premium" into "busy" | Motion budget: no more than 2 animated elements per viewport; token-driven so restraint is enforced by the system |
 | LinkedIn app review rejected | Postiz/Buffer rail sidesteps review entirely |
