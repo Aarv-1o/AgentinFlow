@@ -7,12 +7,53 @@
 // reads that one number, so the animation is scrubbed by scroll position
 // rather than played on a timer.
 //
-// The laptop is a PLACEHOLDER built from divs, standing in until the real
-// asset arrives. Swapping it out means replacing the .laptop block and
-// nothing else - the progress mechanism and layering stay as they are.
+// The laptop is drawn as inline SVG rather than sourced as a 3D model: the
+// perspective is baked into the geometry, so it reads as a solid object at a
+// few kilobytes with no 3D runtime. If a rendered asset replaces it later,
+// only the <svg> and its part rules change - the progress mechanism and
+// layering stay as they are.
 //
 // Layers: the wordmark sits behind (z-index 1), the stage object in front
 // (z-index 2), so the object occludes the letters.
+
+// Keyboard keys are generated rather than hand-written. The deck is drawn in
+// perspective - it widens towards the viewer - so each row sits at its own
+// depth. edgeAt() interpolates the deck's left and right edge for a given y,
+// and every key is measured against that.
+const DECK_TOP_Y = 384, DECK_BOT_Y = 470;
+const DECK_TOP_L = 110, DECK_TOP_R = 690;
+const DECK_BOT_L = 40, DECK_BOT_R = 760;
+
+const edgeAt = (y) => {
+    const t = (y - DECK_TOP_Y) / (DECK_BOT_Y - DECK_TOP_Y);
+    return {
+        left: DECK_TOP_L + (DECK_BOT_L - DECK_TOP_L) * t,
+        right: DECK_TOP_R + (DECK_BOT_R - DECK_TOP_R) * t
+    };
+};
+
+const ROWS = 5, PER_ROW = 14, GAP = 2.2;
+const keys = [];
+
+for (let r = 0; r < ROWS; r++) {
+    const y = 394 + r * 8.4;
+    const { left, right } = edgeAt(y);
+    const inset = 58 + r * 2;
+    const x0 = left + inset;
+    const kw = (right - inset - x0 - GAP * (PER_ROW - 1)) / PER_ROW;
+
+    for (let c = 0; c < PER_ROW; c++) {
+        keys.push({
+            x: +(x0 + c * (kw + GAP)).toFixed(2),
+            y: +y.toFixed(2),
+            w: +kw.toFixed(2),
+            h: 6.2,
+            // staggered reveal: left to right, back row to front
+            delay: +((r * PER_ROW + c) / (ROWS * PER_ROW) * 0.75).toFixed(3)
+        });
+    }
+}
+
 ---
 
 <section class="hero-track" id="heroTrack">
@@ -20,14 +61,65 @@
         <h1 class="wordmark-back" aria-label="AgentinFlow">AGENTINFLOW</h1>
 
         <div class="stage-object">
-            <!-- PLACEHOLDER laptop. Each part slides in as --p advances. -->
-            <div class="laptop">
-                <div class="part screen"><span class="screen-glow"></span></div>
-                <div class="part hinge"></div>
-                <div class="part base"></div>
-                <div class="part keys"></div>
-                <div class="part pad"></div>
-            </div>
+            <svg class="laptop" viewBox="0 0 800 600" role="img"
+                aria-label="A laptop assembling itself, part by part">
+                <defs>
+                    <linearGradient id="lidFace" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#2b2b2b" />
+                        <stop offset="100%" stop-color="#161616" />
+                    </linearGradient>
+                    <linearGradient id="deckFace" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#242424" />
+                        <stop offset="100%" stop-color="#131313" />
+                    </linearGradient>
+                    <linearGradient id="edgeSheen" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.02" />
+                        <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16" />
+                        <stop offset="100%" stop-color="#ffffff" stop-opacity="0.02" />
+                    </linearGradient>
+                    <radialGradient id="screenGlow" cx="50%" cy="12%" r="85%">
+                        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.85" />
+                        <stop offset="55%" stop-color="var(--accent-strong)" stop-opacity="0.22" />
+                        <stop offset="100%" stop-color="var(--accent-strong)" stop-opacity="0" />
+                    </radialGradient>
+                </defs>
+
+                <!-- soft contact shadow, grounds the object -->
+                <ellipse class="pt shadow" cx="400" cy="482" rx="330" ry="20" />
+
+                <!-- lid -->
+                <g class="pt lid">
+                    <rect x="140" y="40" width="520" height="332" rx="15" fill="url(#lidFace)"
+                        stroke="var(--glass-border)" />
+                    <rect x="154" y="54" width="492" height="304" rx="8" fill="#0b0b0b" />
+                    <rect class="glow" x="154" y="54" width="492" height="304" rx="8" fill="url(#screenGlow)" />
+                    <rect x="154" y="54" width="492" height="304" rx="8" fill="none"
+                        stroke="var(--glass-highlight)" stroke-width="0.75" />
+                </g>
+
+                <!-- hinge -->
+                <rect class="pt hinge" x="128" y="371" width="544" height="11" rx="5.5"
+                    fill="#1d1d1d" stroke="var(--glass-border)" />
+
+                <!-- deck, drawn in perspective -->
+                <g class="pt deck">
+                    <path d="M110 384 H690 L760 470 Q760 478 750 478 H50 Q40 478 40 470 Z"
+                        fill="url(#deckFace)" stroke="var(--glass-border)" />
+                    <path d="M110 385 H690" stroke="url(#edgeSheen)" stroke-width="1.5" fill="none" />
+                </g>
+
+                <!-- keys -->
+                <g class="pt keys">
+                    {keys.map((k) => (
+                        <rect x={k.x} y={k.y} width={k.w} height={k.h} rx="1.6"
+                            fill="#2c2c2c" style={`--d:${k.delay}`} />
+                    ))}
+                </g>
+
+                <!-- trackpad -->
+                <path class="pt pad" d="M338 442 H462 L472 468 H328 Z" fill="#1f1f1f"
+                    stroke="var(--glass-border)" />
+            </svg>
         </div>
 
         <p class="hero-line">We build what you ask</p>
@@ -82,74 +174,61 @@
         aspect-ratio: 4 / 3;
     }
 
-    /* --- Placeholder laptop ---
-       Parts converge on the centre as --p goes 0 to 1. */
+    /* --- Laptop ---
+       Vector rather than a 3D asset: perspective is drawn into the geometry,
+       so it reads as a solid object while staying a few kilobytes and needing
+       no runtime. Every part is positioned by --p alone.
+
+       Transforms use px, which inside an SVG resolve to viewBox user units,
+       so the motion scales with the drawing rather than the viewport. */
     .laptop {
-        position: relative;
         width: 100%;
         height: 100%;
+        overflow: visible;
     }
 
-    .part {
-        position: absolute;
-        border: 1px solid var(--glass-border);
-        background-color: var(--glass-bg);
-        backdrop-filter: var(--glass-blur);
-        -webkit-backdrop-filter: var(--glass-blur);
-        border-radius: 0.5rem;
-        opacity: calc(0.25 + var(--p) * 0.75);
+    .shadow {
+        fill: #000;
+        opacity: calc(var(--p) * 0.55);
     }
 
-    .screen {
-        left: 12%;
-        top: 6%;
-        width: 76%;
-        height: 54%;
-        border-radius: 0.6rem 0.6rem 0.2rem 0.2rem;
-        transform: translateY(calc((1 - var(--p)) * -40vh)) scale(calc(0.85 + var(--p) * 0.15));
+    /* Lid drops in from above and settles */
+    .lid {
+        transform: translateY(calc((1 - var(--p)) * -340px));
+        opacity: calc(0.15 + var(--p) * 0.85);
     }
 
-    .screen-glow {
-        position: absolute;
-        inset: 8%;
-        border-radius: 0.35rem;
-        background: radial-gradient(120% 100% at 50% 0%,
-                rgba(var(--accent-rgb), calc(var(--p) * 0.55)) 0%,
-                transparent 70%);
+    .glow {
+        opacity: calc(var(--p) * var(--p));
     }
 
+    /* Hinge draws outward from the centre */
     .hinge {
-        left: 8%;
-        top: 60%;
-        width: 84%;
-        height: 3%;
         transform: scaleX(var(--p));
+        transform-origin: 400px 377px;
+        opacity: calc(0.2 + var(--p) * 0.8);
     }
 
-    .base {
-        left: 4%;
-        top: 64%;
-        width: 92%;
-        height: 22%;
-        transform: translateY(calc((1 - var(--p)) * 40vh));
+    /* Deck rises from below */
+    .deck {
+        transform: translateY(calc((1 - var(--p)) * 320px));
+        opacity: calc(0.15 + var(--p) * 0.85);
     }
 
-    .keys {
-        left: 12%;
-        top: 68%;
-        width: 76%;
-        height: 10%;
-        border-radius: 0.25rem;
-        transform: translateX(calc((1 - var(--p)) * -60vw));
+    /* Keys land in sequence. Each carries its own --d offset, so the row
+       fills left to right and front to back instead of appearing at once. */
+    .keys rect {
+        /* One reveal value per key, derived once and reused for both
+           properties, rather than nesting clamp inside calc twice. */
+        --reveal: clamp(0, calc((var(--p) - var(--d)) * 5), 1);
+        opacity: var(--reveal);
+        transform: translateY(calc((1 - var(--reveal)) * 26px));
     }
 
     .pad {
-        left: 40%;
-        top: 79%;
-        width: 20%;
-        height: 5%;
-        border-radius: 0.25rem;
-        transform: translateX(calc((1 - var(--p)) * 60vw));
+        --reveal: clamp(0, calc((var(--p) - 0.72) * 4), 1);
+        opacity: var(--reveal);
+        transform: translateY(calc((1 - var(--reveal)) * 22px));
     }
 
     /* --- Bottom line --- */
