@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/tokens.css';
+import Hero from '../components/Hero.astro';
+
+// Blank ground with the floating nav on top. Every previous section (hero,
+// reviews marquee, services, benefits, contact) has been cleared so the page
+// can be rebuilt from scratch. tokens.css alone is imported - it carries the
+// background colour on `body`, and the nav styles itself.
+//
+// Still on disk and ready to be re-imported when the rebuild needs them:
+//   src/styles/home.css  - hero, cards, contact form, channel and status styles
+//   src/scripts/home.js  - the Phase 1 contact form handler and reviews render
+// Neither is referenced right now. The previous markup is in git history at
+// commit 409069c if any of it is wanted back.
+
+const title = 'AgentinFlow – AI Automation Agency in India | AI Agents & N8N Workflows';
+const description = 'AgentinFlow is an AI automation agency in India providing AI agents, N8N workflows, and business automation solutions for modern businesses.';
+const canonical = 'https://www.agentinflow.com/';
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} footer={false}>
+    <Hero />
+</BaseLayout>
