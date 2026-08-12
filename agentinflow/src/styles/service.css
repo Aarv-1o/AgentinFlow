@@ -1,7 +1,7 @@
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-    background-color: #000;
-    color: #fff;
+    font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--heading);
     min-height: 100vh;
     line-height: 1.6;
 }
@@ -15,8 +15,8 @@ body {
 
 .nav-btn {
     padding: 0.5rem 1.5rem;
-    background-color: #E43636;
-    color: #fff;
+    background-color: var(--accent);
+    color: var(--heading);
     border: none;
     border-radius: 9999px;
     font-weight: 500;
@@ -27,7 +27,7 @@ body {
 /* Hero Section */
 .about-hero {
     padding: 10rem 1.5rem 5rem;
-    background: linear-gradient(135deg, #000 0%, #0a0a0a 100%);
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-alt) 100%);
 }
 
 .about-hero h1 {
@@ -39,13 +39,13 @@ body {
 
 .hero-subtitle {
     font-size: 1.5rem;
-    color: #E2DDB4;
+    color: var(--text);
 }
 
 /* Introduction Section */
 .introduction {
     padding: 5rem 1.5rem;
-    background-color: #0a0a0a;
+    background-color: var(--bg-alt);
 }
 
 .introduction .container {
@@ -63,12 +63,12 @@ body {
     font-weight: bold;
     margin-bottom: 2rem;
     text-align: center;
-    color: #F6EFD2;
+    color: var(--heading);
 }
 
 .intro-text {
     font-size: 1.125rem;
-    color: #E2DDB4;
+    color: var(--text);
     margin-bottom: 1.5rem;
     line-height: 1.8;
 }
@@ -79,12 +79,12 @@ body {
     font-weight: bold;
     text-align: center;
     margin-bottom: 1rem;
-    color: #F6EFD2;
+    color: var(--heading);
 }
 
 .section-subtitle {
     font-size: 1.25rem;
-    color: #E2DDB4;
+    color: var(--text);
     text-align: center;
     margin-bottom: 4rem;
 }
@@ -92,7 +92,7 @@ body {
 /* CTA Section */
 .cta-section {
     padding: 5rem 1.5rem;
-    background: linear-gradient(135deg, #E43636 0%, #a82828 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
     text-align: center;
 }
 
@@ -100,20 +100,20 @@ body {
     font-size: 3rem;
     font-weight: bold;
     margin-bottom: 1rem;
-    color: #fff;
+    color: var(--heading);
 }
 
 .cta-section p {
     font-size: 1.25rem;
-    color: #F6EFD2;
+    color: var(--heading);
     margin-bottom: 2rem;
 }
 
 .cta-btn {
     display: inline-block;
     padding: 1rem 2.5rem;
-    background-color: #000;
-    color: #fff;
+    background-color: var(--bg);
+    color: var(--heading);
     text-decoration: none;
     border-radius: 9999px;
     font-weight: bold;
@@ -122,10 +122,10 @@ body {
 }
 
 .cta-btn:hover {
-    background-color: #F6EFD2;
-    color: #000;
+    background-color: var(--heading);
+    color: var(--bg);
     transform: scale(1.05);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 25px rgba(var(--bg-rgb), 0.3);
 }
 
 .container-footer-grid {
@@ -140,7 +140,7 @@ body {
 }
 
 .footer-bottom {
-    border-top: 1px solid #1f2937;
+    border-top: 1px solid var(--border);
     padding-top: 2rem;
     text-align: center;
     width: 100%;
@@ -155,11 +155,11 @@ body {
 /* Service Detail Section */
 .service-detail {
     padding: 5rem 1.5rem;
-    background-color: #000;
+    background-color: var(--bg);
 }
 
 .service-detail.alternate {
-    background-color: #0a0a0a;
+    background-color: var(--bg-alt);
 }
 
 .service-detail-grid {
@@ -173,7 +173,7 @@ body {
 .service-number {
     font-size: 4rem;
     font-weight: bold;
-    color: #E43636;
+    color: var(--accent);
     opacity: 0.2;
     line-height: 1;
     margin-bottom: 1rem;
@@ -182,26 +182,26 @@ body {
 .service-detail-title {
     font-size: 3rem;
     font-weight: bold;
-    color: #F6EFD2;
+    color: var(--heading);
     margin-bottom: 0.5rem;
 }
 
 .service-detail-subtitle {
     font-size: 1.5rem;
-    color: #E43636;
+    color: var(--accent);
     margin-bottom: 2rem;
 }
 
 .service-description h3 {
     font-size: 1.75rem;
-    color: #F6EFD2;
+    color: var(--heading);
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
 
 .service-description p {
     font-size: 1.125rem;
-    color: #E2DDB4;
+    color: var(--text);
     line-height: 1.8;
     margin-bottom: 1.5rem;
 }
@@ -214,7 +214,7 @@ body {
 
 .service-list li {
     font-size: 1.125rem;
-    color: #E2DDB4;
+    color: var(--text);
     line-height: 1.8;
     margin-bottom: 1rem;
     padding-left: 1.5rem;
@@ -225,12 +225,12 @@ body {
     content: "→";
     position: absolute;
     left: 0;
-    color: #E43636;
+    color: var(--accent);
     font-weight: bold;
 }
 
 .service-list li strong {
-    color: #F6EFD2;
+    color: var(--heading);
 }
 
 /* Service Features Sidebar */
@@ -241,19 +241,19 @@ body {
 }
 
 .feature-box {
-    background-color: #0a0a0a;
-    border: 2px solid #E43636;
+    background-color: var(--bg-alt);
+    border: 2px solid var(--accent);
     border-radius: 1rem;
     padding: 2rem;
 }
 
 .service-detail.alternate .feature-box {
-    background-color: #000;
+    background-color: var(--bg);
 }
 
 .feature-box h4 {
     font-size: 1.5rem;
-    color: #F6EFD2;
+    color: var(--heading);
     margin-bottom: 1rem;
 }
 
@@ -264,21 +264,21 @@ body {
 
 .feature-box ul li {
     font-size: 1rem;
-    color: #E2DDB4;
+    color: var(--text);
     margin-bottom: 0.75rem;
     line-height: 1.6;
 }
 
 .feature-box p {
     font-size: 1rem;
-    color: #E2DDB4;
+    color: var(--text);
     line-height: 1.6;
 }
 
 /* Pricing Section */
 .pricing-section {
     padding: 5rem 1.5rem;
-    background-color: #0a0a0a;
+    background-color: var(--bg-alt);
 }
 
 .pricing-grid {
@@ -290,8 +290,8 @@ body {
 }
 
 .pricing-card {
-    background-color: #000;
-    border: 2px solid #E43636;
+    background-color: var(--bg);
+    border: 2px solid var(--accent);
     border-radius: 1rem;
     padding: 2.5rem;
     text-align: center;
@@ -301,13 +301,13 @@ body {
 
 .pricing-card:hover {
     transform: translateY(-0.5rem);
-    box-shadow: 0 20px 40px rgba(228, 54, 54, 0.3);
+    box-shadow: 0 20px 40px rgba(var(--accent-rgb), 0.3);
 }
 
 .pricing-card.featured {
-    border-color: #E43636;
+    border-color: var(--accent);
     border-width: 3px;
-    background: linear-gradient(135deg, #0a0a0a 0%, #000 100%);
+    background: linear-gradient(135deg, var(--bg-alt) 0%, var(--bg) 100%);
 }
 
 .popular-badge {
@@ -315,8 +315,8 @@ body {
     top: -1rem;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #E43636;
-    color: #fff;
+    background-color: var(--accent);
+    color: var(--heading);
     padding: 0.5rem 1.5rem;
     border-radius: 9999px;
     font-size: 0.875rem;
@@ -326,13 +326,13 @@ body {
 
 .pricing-card h3 {
     font-size: 2rem;
-    color: #F6EFD2;
+    color: var(--heading);
     margin-bottom: 1rem;
 }
 
 .pricing-desc {
     font-size: 1.125rem;
-    color: #E2DDB4;
+    color: var(--text);
     margin-bottom: 2rem;
 }
 
@@ -345,7 +345,7 @@ body {
 
 .pricing-features li {
     font-size: 1rem;
-    color: #E2DDB4;
+    color: var(--text);
     margin-bottom: 1rem;
     padding-left: 0.5rem;
 }
@@ -353,8 +353,8 @@ body {
 .pricing-btn {
     display: inline-block;
     padding: 1rem 2.5rem;
-    background-color: #E43636;
-    color: #fff;
+    background-color: var(--accent);
+    color: var(--heading);
     text-decoration: none;
     border-radius: 9999px;
     font-weight: bold;
@@ -364,15 +364,15 @@ body {
 }
 
 .pricing-btn:hover {
-    background-color: #c42e2e;
+    background-color: var(--accent-strong);
     transform: scale(1.05);
-    box-shadow: 0 10px 25px rgba(228, 54, 54, 0.5);
+    box-shadow: 0 10px 25px rgba(var(--accent-rgb), 0.5);
 }
 
 .pricing-note {
     text-align: center;
     font-size: 1rem;
-    color: #E2DDB4;
+    color: var(--text);
     margin-top: 2rem;
     font-style: italic;
 }
@@ -380,7 +380,7 @@ body {
 /* Process Section */
 .process-section {
     padding: 5rem 1.5rem;
-    background-color: #000;
+    background-color: var(--bg);
 }
 
 .process-timeline {
@@ -392,8 +392,8 @@ body {
 .process-step {
     padding: 2rem;
     margin-bottom: 2rem;
-    background-color: #0a0a0a;
-    border: 2px solid #E43636;
+    background-color: var(--bg-alt);
+    border: 2px solid var(--accent);
     border-radius: 1rem;
     position: relative;
     transition: all 0.3s;
@@ -401,7 +401,7 @@ body {
 
 .process-step:hover {
     transform: translateX(1rem);
-    box-shadow: 0 10px 30px rgba(228, 54, 54, 0.3);
+    box-shadow: 0 10px 30px rgba(var(--accent-rgb), 0.3);
 }
 
 .step-number {
@@ -410,8 +410,8 @@ body {
     top: 2rem;
     width: 3rem;
     height: 3rem;
-    background-color: #E43636;
-    color: #fff;
+    background-color: var(--accent);
+    color: var(--heading);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -422,14 +422,14 @@ body {
 
 .process-step h3 {
     font-size: 1.75rem;
-    color: #F6EFD2;
+    color: var(--heading);
     margin-bottom: 1rem;
     padding-left: 3rem;
 }
 
 .process-step p {
     font-size: 1.125rem;
-    color: #E2DDB4;
+    color: var(--text);
     line-height: 1.8;
     padding-left: 3rem;
 }

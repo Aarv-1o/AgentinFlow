@@ -13,7 +13,7 @@ const { title, description, canonical } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-palette="a">
 
 <head>
     <meta charset="UTF-8" />
@@ -31,7 +31,27 @@ const { title, description, canonical } = Astro.props;
 
     <meta name="google-site-verification" content="ju9vQiPbb1cA_tEG0_ZDC5OvLYYloZi9xtFsKCrATUA" />
 
+    <!-- Domine for headings and highlights, Inter for everything else.
+         Only the weights actually used are requested. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+
     <slot name="head" />
+
+    <!-- Palette preview switch. Lets any URL be viewed in a different
+         combination (/?palette=b) while we are choosing. Runs before paint
+         so there is no flash. Delete this block once a palette is picked. -->
+    <script is:inline>
+        (function () {
+            var p = new URLSearchParams(location.search).get('palette');
+            if (p && ['a', 'b', 'c'].indexOf(p) !== -1) {
+                document.documentElement.setAttribute('data-palette', p);
+            }
+        })();
+    </script>
 </head>
 
 <body>

@@ -1,14 +1,14 @@
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-    background-color: #000;
-    color: #fff;
+    font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--heading);
     min-height: 100vh;
 }
 
 .nav-btn {
     padding: 0.5rem 1.5rem;
-    background-color: #E43636;
-    color: #fff;
+    background-color: var(--accent);
+    color: var(--heading);
     border: none;
     border-radius: 9999px;
     font-weight: 500;
@@ -37,7 +37,7 @@ body {
 .hero p {
     font-size: 1.5rem;
     margin-bottom: 3rem;
-    color: #E2DDB4;
+    color: var(--text);
 }
 
 .hero-buttons {
@@ -49,8 +49,8 @@ body {
 
 .btn-primary {
     padding: 1rem 2rem;
-    background-color: #E43636;
-    color: #fff;
+    background-color: var(--accent);
+    color: var(--heading);
     border: none;
     border-radius: 9999px;
     font-weight: bold;
@@ -61,14 +61,14 @@ body {
 
 .btn-primary:hover {
     transform: scale(1.1);
-    box-shadow: 0 20px 40px rgba(228, 54, 54, 0.5);
+    box-shadow: 0 20px 40px rgba(var(--accent-rgb), 0.5);
 }
 
 .btn-secondary {
     padding: 1rem 2rem;
     background-color: transparent;
-    color: #E43636;
-    border: 2px solid #E43636;
+    color: var(--accent);
+    border: 2px solid var(--accent);
     border-radius: 9999px;
     font-weight: bold;
     font-size: 1.125rem;
@@ -78,13 +78,13 @@ body {
 
 .btn-secondary:hover {
     transform: scale(1.1);
-    background-color: rgba(228, 54, 54, 0.1);
+    background-color: rgba(var(--accent-rgb), 0.1);
 }
 
 /* Reviews Section */
 .reviews {
     padding: 4rem 0;
-    background-color: #0a0a0a;
+    background-color: var(--bg-alt);
     overflow: hidden;
 }
 
@@ -114,14 +114,14 @@ body {
     width: 320px;
     padding: 1.5rem;
     border-radius: 0.75rem;
-    border: 2px solid #E43636;
-    background-color: #000;
+    border: 2px solid var(--accent);
+    background-color: var(--bg);
     transition: all 0.3s;
 }
 
 .review-card:hover {
     transform: scale(1.05);
-    box-shadow: 0 20px 40px rgba(228, 54, 54, 0.5);
+    box-shadow: 0 20px 40px rgba(var(--accent-rgb), 0.5);
 }
 
 .stars {
@@ -133,23 +133,23 @@ body {
 .star {
     width: 1.25rem;
     height: 1.25rem;
-    fill: #E43636;
-    color: #E43636;
+    fill: var(--accent);
+    color: var(--accent);
 }
 
 .review-text {
     margin-bottom: 1rem;
-    color: #E2DDB4;
+    color: var(--text);
 }
 
 .review-author {
-    border-top: 1px solid #E43636;
+    border-top: 1px solid var(--accent);
     padding-top: 1rem;
 }
 
 .author-name {
     font-weight: bold;
-    color: #F6EFD2;
+    color: var(--heading);
 }
 
 /* Services Section */
@@ -178,20 +178,20 @@ body {
 .service-card {
     padding: 2rem;
     border-radius: 1rem;
-    border: 2px solid #E43636;
-    background-color: #0a0a0a;
+    border: 2px solid var(--accent);
+    background-color: var(--bg-alt);
     transition: all 0.3s;
 }
 
 .service-card:hover {
     transform: scale(1.05) translateY(-0.5rem);
-    box-shadow: 0 20px 40px rgba(228, 54, 54, 0.5);
+    box-shadow: 0 20px 40px rgba(var(--accent-rgb), 0.5);
 }
 
 .service-icon {
     width: 3rem;
     height: 3rem;
-    color: #E43636;
+    color: var(--accent);
     margin-bottom: 1rem;
     transition: transform 0.3s;
 }
@@ -204,17 +204,17 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 1rem;
-    color: #F6EFD2;
+    color: var(--heading);
 }
 
 .service-desc {
-    color: #E2DDB4;
+    color: var(--text);
 }
 
 /* Benefits Section */
 .benefits {
     padding: 5rem 1.5rem;
-    background-color: #0a0a0a;
+    background-color: var(--bg-alt);
 }
 
 .benefits .container {
@@ -255,34 +255,34 @@ body {
 .check-icon {
     width: 1.5rem;
     height: 1.5rem;
-    color: #E43636;
+    color: var(--accent);
     flex-shrink: 0;
     margin-top: 0.25rem;
 }
 
 .benefit-text {
     font-size: 1.125rem;
-    color: #E2DDB4;
+    color: var(--text);
 }
 
 .stat-card {
     border-radius: 1rem;
     padding: 3rem;
-    border: 2px solid #E43636;
-    background-color: #000;
+    border: 2px solid var(--accent);
+    background-color: var(--bg);
     text-align: center;
     transition: all 0.3s;
 }
 
 .stat-card:hover {
     transform: scale(1.05);
-    box-shadow: 0 20px 40px rgba(228, 54, 54, 0.5);
+    box-shadow: 0 20px 40px rgba(var(--accent-rgb), 0.5);
 }
 
 .stat-number {
     font-size: 3.75rem;
     font-weight: bold;
-    color: #E43636;
+    color: var(--accent);
     margin-bottom: 1rem;
     transition: transform 0.3s;
 }
@@ -293,12 +293,12 @@ body {
 
 .stat-label {
     font-size: 1.5rem;
-    color: #F6EFD2;
+    color: var(--heading);
     margin-bottom: 2rem;
 }
 
 .stat-desc {
-    color: #E2DDB4;
+    color: var(--text);
 }
 
 /* Contact Section */
@@ -324,7 +324,7 @@ body {
 
 .contact-subtitle {
     font-size: 1.25rem;
-    color: #E2DDB4;
+    color: var(--text);
 }
 
 .form-group {
@@ -342,7 +342,7 @@ label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: #F6EFD2;
+    color: var(--heading);
 }
 
 input,
@@ -350,9 +350,9 @@ textarea {
     width: 100%;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
-    border: 2px solid #E43636;
-    background-color: #000;
-    color: #F6EFD2;
+    border: 2px solid var(--accent);
+    background-color: var(--bg);
+    color: var(--heading);
     font-family: inherit;
     font-size: 1rem;
     transition: all 0.3s;
@@ -366,7 +366,7 @@ textarea:focus {
 
 input:hover,
 textarea:hover {
-    border-color: rgba(228, 54, 54, 0.8);
+    border-color: rgba(var(--accent-rgb), 0.8);
 }
 
 textarea {
@@ -376,8 +376,8 @@ textarea {
 .submit-btn {
     width: 100%;
     padding: 1rem;
-    background-color: #E43636;
-    color: #fff;
+    background-color: var(--accent);
+    color: var(--heading);
     border: none;
     border-radius: 0.5rem;
     font-weight: bold;
@@ -392,7 +392,7 @@ textarea {
 
 .submit-btn:hover:not(:disabled) {
     transform: scale(1.05);
-    box-shadow: 0 20px 40px rgba(228, 54, 54, 0.5);
+    box-shadow: 0 20px 40px rgba(var(--accent-rgb), 0.5);
 }
 
 .submit-btn:disabled {
@@ -424,7 +424,7 @@ footer .container {
 }
 
 .footer-bottom {
-    border-top: 1px solid #1f2937;
+    border-top: 1px solid var(--border);
     padding-top: 2rem;
     text-align: center;
 }
@@ -531,13 +531,13 @@ footer .container {
     min-height: 1.15rem;
     margin-top: 0.35rem;
     font-size: 0.85rem;
-    color: #ff8080;
+    color: var(--danger);
 }
 
 input.has-error,
 textarea.has-error {
-    border-color: #ff8080;
-    box-shadow: 0 0 0 3px rgba(255, 128, 128, 0.12);
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(var(--danger-rgb), 0.12);
 }
 
 .form-status {
@@ -556,15 +556,15 @@ textarea.has-error {
 }
 
 .form-status.is-success {
-    background-color: rgba(52, 199, 123, 0.1);
-    border-color: rgba(52, 199, 123, 0.35);
-    color: #7ee2b0;
+    background-color: rgba(var(--success-rgb), 0.1);
+    border-color: rgba(var(--success-rgb), 0.35);
+    color: var(--success);
 }
 
 .form-status.is-error {
-    background-color: rgba(228, 54, 54, 0.1);
-    border-color: rgba(228, 54, 54, 0.4);
-    color: #ffa5a5;
+    background-color: rgba(var(--accent-rgb), 0.1);
+    border-color: rgba(var(--accent-rgb), 0.4);
+    color: var(--danger-soft);
 }
 
 .form-status a {
@@ -588,33 +588,33 @@ textarea.has-error {
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.25rem;
-    border: 1px solid #1f2937;
+    border: 1px solid var(--border);
     border-radius: 0.9rem;
-    background-color: #0b0b0b;
-    color: #E2DDB4;
+    background-color: var(--surface);
+    color: var(--text);
     text-decoration: none;
     transition: border-color 0.3s, transform 0.3s, background-color 0.3s;
 }
 
 .channel:hover {
     transform: translateY(-2px);
-    border-color: #E43636;
-    background-color: #111;
+    border-color: var(--accent);
+    background-color: var(--surface-hover);
 }
 
 .channel svg {
     width: 26px;
     height: 26px;
     flex-shrink: 0;
-    color: #E43636;
+    color: var(--accent);
 }
 
 .channel-whatsapp:hover {
-    border-color: #25D366;
+    border-color: var(--whatsapp);
 }
 
 .channel-whatsapp svg {
-    color: #25D366;
+    color: var(--whatsapp);
 }
 
 .channel-body {
@@ -627,13 +627,13 @@ textarea.has-error {
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #6b7280;
+    color: var(--text-dim);
 }
 
 .channel-value {
     font-size: 1.05rem;
     font-weight: 600;
-    color: #F6EFD2;
+    color: var(--heading);
 }
 
 .contact-divider {
@@ -642,7 +642,7 @@ textarea.has-error {
     gap: 1rem;
     max-width: 42rem;
     margin: 0 auto 2rem;
-    color: #6b7280;
+    color: var(--text-dim);
     font-size: 0.9rem;
 }
 
@@ -651,7 +651,7 @@ textarea.has-error {
     content: '';
     flex: 1;
     height: 1px;
-    background-color: #1f2937;
+    background-color: var(--border);
 }
 
 /* Channel links inside the error banner */
