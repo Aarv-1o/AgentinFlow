@@ -61,11 +61,28 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
         padding: 0 0.6rem 0 1.75rem;
 
         border-radius: 9999px;
-        border: 1px solid var(--border);
-        background-color: rgba(var(--bg-rgb), 0.72);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
+
+        /* Glass: a faint top-to-bottom sheen laid over a translucent
+           ground, a hairline border, and an inset highlight along the top
+           edge that reads as light catching the lip of a pane. saturate()
+           in the backdrop filter is what stops whatever passes underneath
+           going grey and flat. */
+        border: 1px solid var(--glass-border);
+        background-image: linear-gradient(180deg, var(--glass-sheen-top) 0%, var(--glass-sheen-bottom) 100%);
+        background-color: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow:
+            0 16px 40px rgba(0, 0, 0, 0.45),
+            inset 0 1px 0 var(--glass-highlight);
+    }
+
+    /* Without backdrop-filter there is nothing to frost, and a 55% ground
+       would just look washed out - so fall back to an opaque bar. */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        .site-nav {
+            background-color: var(--surface);
+        }
     }
 
     /* --- Wordmark --- */

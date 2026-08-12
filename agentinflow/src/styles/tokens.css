@@ -17,6 +17,17 @@
     --font-display: 'Domine', Georgia, 'Times New Roman', serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
+    /* --- Glass ---
+       Frosted surfaces are built from a translucent ground, a hairline
+       border and a one-pixel top highlight that reads as the lit edge of
+       a pane. Tokenised so cards can reuse the same recipe as the nav. */
+    --glass-bg: rgba(30, 30, 30, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.09);
+    --glass-highlight: rgba(255, 255, 255, 0.12);
+    --glass-sheen-top: rgba(255, 255, 255, 0.06);
+    --glass-sheen-bottom: rgba(255, 255, 255, 0.015);
+    --glass-blur: blur(22px) saturate(165%);
+
     /* --- Status colours --- */
     --whatsapp: #25d366;
     --danger: #ff8080;
