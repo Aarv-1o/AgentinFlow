@@ -9,9 +9,10 @@ import Footer from '../components/Footer.astro';
 // hiding. Each page imports global.css first, then its own sheet, so the
 // order is explicit and matches the original single-stylesheet ordering.
 
-// `bare` renders the page with no nav and no footer - used while the home
-// page is being rebuilt from a blank ground.
-const { title, description, canonical, bare = false } = Astro.props;
+// nav and footer are independently switchable: the home page is being
+// rebuilt from a blank ground and currently wants the nav but not the
+// footer.
+const { title, description, canonical, nav = true, footer = true } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -45,9 +46,9 @@ const { title, description, canonical, bare = false } = Astro.props;
 </head>
 
 <body>
-    {!bare && <Nav />}
+    {nav && <Nav />}
     <slot />
-    {!bare && <Footer />}
+    {footer && <Footer />}
 </body>
 
 </html>

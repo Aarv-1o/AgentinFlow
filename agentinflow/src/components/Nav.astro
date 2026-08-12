@@ -1,4 +1,8 @@
 ---
+// Floating nav bar: wordmark left, links centred, CTA right.
+// All nav styling lives here rather than being split across global.css and
+// the page stylesheets, which is where it used to be.
+//
 // Active state is derived from the URL instead of being hand-maintained
 // per page, which is how the old site did it.
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
@@ -9,17 +13,217 @@ const links = [
     { href: '/aboutus/', label: 'About Us' }
 ];
 
-const isActive = (href) => href.replace(/\/+$/, '') === path || (href === '/' && path === '/');
+const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
 ---
 
-<nav>
-    <div class="container">
-        <div class="logo"><a href="/" style="text-decoration: none; color: orangered;">AgentinFlow</a></div>
-        <div class="nav-links">
-            {links.map(({ href, label }) => (
-                <a href={href} class={isActive(href) ? 'nav-link active' : 'nav-link'}>{label}</a>
-            ))}
-            <a href="/#contact" style="text-decoration: none;" class="nav-btn">Contact Us</a>
-        </div>
-    </div>
+<nav class="site-nav" aria-label="Primary">
+    <a class="wordmark" href="/" aria-label="AgentinFlow home">AF</a>
+
+    <ul class="nav-links">
+        {links.map(({ href, label }) => (
+            <li>
+                <a href={href} class={isActive(href) ? 'is-active' : ''}
+                    aria-current={isActive(href) ? 'page' : undefined}>{label}</a>
+            </li>
+        ))}
+    </ul>
+
+    <a class="nav-cta" href="/#contact">
+        <span>Get In Touch</span>
+        <span class="nav-cta-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+            </svg>
+        </span>
+    </a>
 </nav>
+
+<style>
+    .site-nav {
+        position: fixed;
+        top: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+
+        width: calc(100% - 3rem);
+        max-width: 1320px;
+        height: 4.25rem;
+
+        /* Three tracks so the centre column stays centred on the bar
+           regardless of how wide the wordmark or the CTA get. */
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 1rem;
+        padding: 0 0.6rem 0 1.75rem;
+
+        border-radius: 9999px;
+        border: 1px solid var(--border);
+        background-color: rgba(var(--bg-rgb), 0.72);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
+    }
+
+    /* --- Wordmark --- */
+    .wordmark {
+        justify-self: start;
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        color: var(--accent);
+        text-decoration: none;
+        transition: color 0.25s ease;
+    }
+
+    .wordmark:hover,
+    .wordmark:focus-visible {
+        color: var(--cta-hover);
+    }
+
+    /* --- Centre links --- */
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 0.55rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+        text-decoration: none;
+        color: var(--text);
+        transition: color 0.25s ease, background-color 0.25s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+        color: var(--heading);
+        background-color: var(--surface);
+    }
+
+    .nav-links a.is-active {
+        color: var(--heading);
+        background-color: var(--surface);
+    }
+
+    /* --- CTA --- */
+    .nav-cta {
+        justify-self: end;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        height: 3.05rem;
+        padding: 0 0.35rem 0 1.35rem;
+        border-radius: 9999px;
+        border: 1px solid var(--border);
+        font-size: 0.95rem;
+        font-weight: 500;
+        white-space: nowrap;
+        text-decoration: none;
+        color: var(--heading);
+        transition: border-color 0.25s ease, background-color 0.25s ease;
+    }
+
+    .nav-cta:hover,
+    .nav-cta:focus-visible {
+        border-color: var(--accent);
+        background-color: var(--surface);
+    }
+
+    .nav-cta-icon {
+        display: grid;
+        place-items: center;
+        width: 2.35rem;
+        height: 2.35rem;
+        border-radius: 50%;
+        background-color: var(--cta-bg);
+        color: var(--cta-text);
+        transition: background-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .nav-cta-icon svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    .nav-cta:hover .nav-cta-icon,
+    .nav-cta:focus-visible .nav-cta-icon {
+        background-color: var(--cta-hover);
+        transform: rotate(45deg);
+    }
+
+    /* --- Narrow screens ---
+       The old nav hid its links below 640px. Here the links stay and the
+       CTA sheds its label instead, so navigation never disappears. */
+    @media (max-width: 900px) {
+        .site-nav {
+            padding-left: 1.25rem;
+        }
+
+        .nav-links a {
+            padding: 0.5rem 0.7rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 680px) {
+        .site-nav {
+            top: 1rem;
+            width: calc(100% - 1.5rem);
+            height: 3.75rem;
+            padding: 0 0.5rem 0 1rem;
+        }
+
+        .wordmark {
+            font-size: 1.25rem;
+        }
+
+        .nav-links a {
+            padding: 0.45rem 0.5rem;
+            font-size: 0.82rem;
+        }
+
+        .nav-cta span:not(.nav-cta-icon) {
+            display: none;
+        }
+
+        .nav-cta {
+            height: 2.75rem;
+            padding: 0.2rem;
+            border-color: transparent;
+        }
+
+        .nav-cta-icon {
+            width: 2.35rem;
+            height: 2.35rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .nav-links a,
+        .nav-cta,
+        .nav-cta-icon,
+        .wordmark {
+            transition: none;
+        }
+
+        .nav-cta:hover .nav-cta-icon {
+            transform: none;
+        }
+    }
+</style>

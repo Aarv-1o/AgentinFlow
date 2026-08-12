@@ -2,10 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/tokens.css';
 
-// Blank ground. Every previous section (hero, reviews marquee, services,
-// benefits, contact) has been cleared so the home page can be rebuilt from
-// scratch. tokens.css alone is imported - it carries the background colour
-// on `body`, so nothing else is needed to paint the page.
+// Blank ground with the floating nav on top. Every previous section (hero,
+// reviews marquee, services, benefits, contact) has been cleared so the page
+// can be rebuilt from scratch. tokens.css alone is imported - it carries the
+// background colour on `body`, and the nav styles itself.
 //
 // Still on disk and ready to be re-imported when the rebuild needs them:
 //   src/styles/home.css  - hero, cards, contact form, channel and status styles
@@ -18,5 +18,5 @@ const description = 'AgentinFlow is an AI automation agency in India providing A
 const canonical = 'https://www.agentinflow.com/';
 ---
 
-<BaseLayout title={title} description={description} canonical={canonical} bare>
+<BaseLayout title={title} description={description} canonical={canonical} footer={false}>
 </BaseLayout>

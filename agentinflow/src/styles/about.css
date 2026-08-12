@@ -6,17 +6,6 @@ body {
     line-height: 1.6;
 }
 
-.nav-btn {
-    padding: 0.5rem 1.5rem;
-    background-color: var(--accent);
-    color: var(--heading);
-    border: none;
-    border-radius: 9999px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.3s;
-}
-
 /* Hero Section */
 .about-hero {
     padding: 10rem 1.5rem 5rem;
@@ -252,15 +241,7 @@ body {
 
 /* Mobile devices (up to 640px) */
 @media (max-width: 640px) {
-    nav .nav-links {
-        gap: 1rem;
-    }
-
-    .nav-link {
-        font-size: 0.875rem;
-    }
-
-    .about-hero {
+            .about-hero {
         padding: 7rem 1rem 4rem;
     }
 
@@ -338,29 +319,3 @@ body {
     }
 }
 
-@media (max-width: 768px) {
-    .nav-links {
-        gap: 1rem;
-    }
-
-    .nav-link {
-        font-size: 0.875rem;
-    }
-
-    .nav-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-    }
-}
-
-@media (max-width: 640px) {
-    .nav-links {
-        display: none;
-        /* Hide links on very small screens */
-    }
-
-    /* Show only contact button on mobile */
-    .nav-btn {
-        display: block;
-    }
-}

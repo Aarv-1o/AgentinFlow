@@ -8,37 +8,6 @@
     box-sizing: border-box;
 }
 
-/* Navigation */
-nav {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background-color: rgba(var(--bg-rgb), 0.85);
-    backdrop-filter: blur(12px);
-    z-index: 50;
-    border-bottom: 1px solid var(--border);
-}
-
-nav .container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 1rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--accent);
-}
-
-.nav-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 25px rgba(var(--accent-rgb), 0.5);
-}
-
 .hero-content {
     text-align: center;
     max-width: 56rem;
@@ -56,14 +25,7 @@ footer {
     background-color: var(--footer-bg);
 }
 
-.footer-info .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--accent);
-    margin-bottom: 1rem;
-}
-
-.footer-text {
+.footer-info .footer-text {
     color: var(--text);
     max-width: 24rem;
     margin: 0 auto;
@@ -95,27 +57,3 @@ footer {
     color: var(--text-dim);
 }
 
-/* Add to your style.css file */
-
-/* Navigation Links */
-.nav-links {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-}
-
-.nav-link {
-    color: var(--text);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s;
-    font-size: 1rem;
-}
-
-.nav-link:hover {
-    color: var(--accent);
-}
-
-.nav-link.active {
-    color: var(--accent);
-}
