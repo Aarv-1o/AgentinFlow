@@ -3,8 +3,6 @@
    Every colour in the site resolves through here. Change a value
    in this file and it propagates everywhere.
 
-   Preview the combinations without editing anything by adding a
-   query string to any URL:  /?palette=b   /service/?palette=c
    ============================================================ */
 
 :root {
@@ -19,24 +17,18 @@
     --font-display: 'Domine', Georgia, 'Times New Roman', serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-    /* --- Fixed across every combination --- */
+    /* --- Status colours --- */
     --whatsapp: #25d366;
     --danger: #ff8080;
     --danger-soft: #ffa5a5;
     --danger-rgb: 255, 128, 128;
     --success: #7ee2b0;
     --success-rgb: 52, 199, 123;
-}
 
-/* ============================================================
-   COMBINATION A — Dark, wine buttons
-   Closest in spirit to the current site: dark ground, one warm
-   accent carrying both highlights and calls to action.
-   Note the raw wine (#5d1527) is very dark against #121212, so
-   interactive elements use a lifted tint for visibility.
-   ============================================================ */
-:root,
-[data-palette='a'] {
+    /* --- Applied palette: dark ground, wine accent ---
+       Raw wine sits at about 1.6:1 against #121212, so anything
+       interactive uses the lifted tint. True wine is kept as
+       --accent-strong for use on light surfaces. */
     --bg: #121212;
     --bg-rgb: 18, 18, 18;
     --bg-alt: #1a1a1a;
@@ -59,102 +51,13 @@
 }
 
 /* ============================================================
-   COMBINATION B — Dark, light call to action
-   Wine is demoted to an accent (highlights, active states, rules)
-   and the primary button becomes mist on ink. Highest contrast of
-   the three and the most restrained.
-   ============================================================ */
-[data-palette='b'] {
-    --bg: #121212;
-    --bg-rgb: 18, 18, 18;
-    --bg-alt: #191919;
-    --surface: #262626;
-    --surface-hover: #2f2f2f;
-    --footer-bg: #0d0d0d;
-    --border: #313131;
-
-    --heading: #ffffff;
-    --text: #c3cacf;
-    --text-dim: #808990;
-
-    --accent: #a32642;
-    --accent-strong: #5d1527;
-    --accent-rgb: 163, 38, 66;
-
-    --cta-bg: #c3cacf;
-    --cta-text: #121212;
-    --cta-hover: #ffffff;
-}
-
-/* ============================================================
-   COMBINATION C — Light, editorial
-   White ground, ink type, wine as the single accent. Wine on white
-   is the strongest contrast pairing available in this palette.
-   ============================================================ */
-[data-palette='c'] {
-    --bg: #ffffff;
-    --bg-rgb: 255, 255, 255;
-    --bg-alt: #f4f6f7;
-    --surface: #ffffff;
-    --surface-hover: #f4f6f7;
-    --footer-bg: #121212;
-    --border: #dfe4e7;
-
-    --heading: #121212;
-    --text: #3d4548;
-    --text-dim: #6d777d;
-
-    --accent: #5d1527;
-    --accent-strong: #45101d;
-    --accent-rgb: 93, 21, 39;
-
-    --cta-bg: #5d1527;
-    --cta-text: #ffffff;
-    --cta-hover: #7a1b32;
-}
-
-/* ============================================================
-   COMBINATION D — Warm: cream secondary, wine primary
-   Swaps the cool mist for a warm off-white, and warms the darks to
-   match so the cream does not read as a colour cast. Wine carries
-   both the accent and the buttons.
-   ============================================================ */
-[data-palette='d'] {
-    --bg: #121212;
-    --bg-rgb: 18, 18, 18;
-    --bg-alt: #1a1714;
-    --surface: #201d18;
-    --surface-hover: #292520;
-    --footer-bg: #0e0c0b;
-    --border: #322d26;
-
-    --heading: #f7f3ea;
-    --text: #e0d9ca;
-    --text-dim: #948c7e;
-
-    --accent: #7a1b32;
-    --accent-strong: #5d1527;
-    --accent-rgb: 122, 27, 50;
-
-    --cta-bg: #7a1b32;
-    --cta-text: #f7f3ea;
-    --cta-hover: #8e2039;
-}
-
-/* The footer stays dark in the light combination, so its own text
-   colours have to be re-stated rather than inherited. */
-[data-palette='c'] footer {
-    --text: #c3cacf;
-    --text-dim: #808990;
-    --heading: #ffffff;
-    --border: #2e2e2e;
-}
-
-/* ============================================================
    Type application
    ============================================================ */
 body {
     font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
 }
 
 h1,
@@ -178,8 +81,8 @@ h3 {
 }
 
 /* ============================================================
-   Buttons resolve through the CTA tokens rather than the accent,
-   so combination B can invert them without touching accent text.
+   Buttons resolve through the CTA tokens rather than --accent, so
+   button colour can be retuned without touching accent text.
    ============================================================ */
 .btn-primary,
 .nav-btn,

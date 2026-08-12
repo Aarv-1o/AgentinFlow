@@ -9,11 +9,13 @@ import Footer from '../components/Footer.astro';
 // hiding. Each page imports global.css first, then its own sheet, so the
 // order is explicit and matches the original single-stylesheet ordering.
 
-const { title, description, canonical } = Astro.props;
+// `bare` renders the page with no nav and no footer - used while the home
+// page is being rebuilt from a blank ground.
+const { title, description, canonical, bare = false } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="en" data-palette="a">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" />
@@ -40,100 +42,12 @@ const { title, description, canonical } = Astro.props;
         rel="stylesheet" />
 
     <slot name="head" />
-
-    <!-- Palette preview switch. Lets any URL be viewed in a different
-         combination (/?palette=b) while we are choosing. Runs before paint
-         so there is no flash. Delete this block once a palette is picked. -->
-    <script is:inline>
-        (function () {
-            var p = new URLSearchParams(location.search).get('palette');
-            if (p && ['a', 'b', 'c', 'd'].indexOf(p) !== -1) {
-                document.documentElement.setAttribute('data-palette', p);
-            }
-        })();
-    </script>
 </head>
 
 <body>
-    <Nav />
+    {!bare && <Nav />}
     <slot />
-    <Footer />
-
-    {import.meta.env.DEV && (
-        <div class="palette-switcher" aria-label="Palette preview (dev only)">
-            <span>palette</span>
-            <button type="button" data-set-palette="a" title="Dark, wine buttons">A</button>
-            <button type="button" data-set-palette="b" title="Dark, light CTA">B</button>
-            <button type="button" data-set-palette="c" title="Light, editorial">C</button>
-            <button type="button" data-set-palette="d" title="Cream secondary, wine primary">D</button>
-        </div>
-        <style is:inline>
-            .palette-switcher {
-                position: fixed;
-                right: 1rem;
-                bottom: 1rem;
-                z-index: 9999;
-                display: flex;
-                align-items: center;
-                gap: 0.35rem;
-                padding: 0.5rem 0.65rem;
-                border-radius: 9999px;
-                background: #000;
-                border: 1px solid #444;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-                font: 500 12px/1 ui-sans-serif, system-ui, sans-serif;
-                color: #999;
-            }
-
-            .palette-switcher span {
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
-                margin-right: 0.15rem;
-            }
-
-            .palette-switcher button {
-                width: 26px;
-                height: 26px;
-                border-radius: 50%;
-                cursor: pointer;
-                border: 1px solid #555;
-                background: #1c1c1c;
-                color: #ddd;
-                font: inherit;
-            }
-
-            .palette-switcher button[aria-pressed='true'] {
-                background: #fff;
-                color: #000;
-                border-color: #fff;
-            }
-        </style>
-        <script is:inline>
-            (function () {
-                var root = document.documentElement;
-                var btns = document.querySelectorAll('[data-set-palette]');
-
-                function mark() {
-                    var cur = root.getAttribute('data-palette');
-                    btns.forEach(function (b) {
-                        b.setAttribute('aria-pressed', String(b.dataset.setPalette === cur));
-                    });
-                }
-
-                btns.forEach(function (b) {
-                    b.addEventListener('click', function () {
-                        root.setAttribute('data-palette', b.dataset.setPalette);
-                        localStorage.setItem('palette', b.dataset.setPalette);
-                        mark();
-                    });
-                });
-
-                var saved = localStorage.getItem('palette');
-                if (saved) root.setAttribute('data-palette', saved);
-                mark();
-            })();
-        </script>
-    )}
+    {!bare && <Footer />}
 </body>
 
 </html>
