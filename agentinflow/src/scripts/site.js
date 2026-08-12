@@ -8,11 +8,9 @@
 //   2. The nav "active" state was set in JS by comparing filenames. Astro now
 //      derives it from the URL at build time, so the JS version is redundant
 //      (and would no longer match, since links are paths not filenames).
-
-const linkedInProfiles = {
-    aarv: 'https://www.linkedin.com/in/aarv-singh-chauhan-4a7987291',
-    chinmay: 'https://www.linkedin.com/in/chinmay-pratap-singh-bhadoria-6a8756221'
-};
+//   3. The LinkedIn open-in-new-tab handler is gone: the team list uses real
+//      anchors now, which is better for accessibility and lets the URL be
+//      seen, copied and crawled.
 
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach((link) => {
@@ -30,7 +28,7 @@ function initSmoothScroll() {
 }
 
 function initScrollReveal() {
-    const cards = document.querySelectorAll('.team-card, .mission-card');
+    const cards = document.querySelectorAll('.mission-card');
     if (cards.length === 0) return;
 
     const observer = new IntersectionObserver((entries) => {
@@ -50,24 +48,7 @@ function initScrollReveal() {
     });
 }
 
-// Was an inline onclick="openLinkedIn('aarv')". Inline handlers need a global
-// function, but bundled module scripts are scoped, so this is delegated from
-// a data attribute instead.
-function initLinkedInButtons() {
-    document.querySelectorAll('[data-linkedin]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            const url = linkedInProfiles[btn.dataset.linkedin];
-            if (url) {
-                window.open(url, '_blank', 'noopener,noreferrer');
-            } else {
-                console.error(`LinkedIn URL not found for ${btn.dataset.linkedin}`);
-            }
-        });
-    });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     initSmoothScroll();
     initScrollReveal();
-    initLinkedInButtons();
 });
