@@ -1,38 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+// Order matters: global first, page sheet second (matches the original
+// single-stylesheet cascade). See BaseLayout.astro for why.
+import '../../styles/global.css';
+import '../../styles/service.css';
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="AgentinFlow provides AI automation services in India, including AI agent automation, N8N workflow development, and custom business automation solutions.">
+const title = 'AI Automation Services in India | AI Agents & N8N Workflows – AgentinFlow';
+const description = 'AgentinFlow provides AI automation services in India, including AI agent automation, N8N workflow development, and custom business automation solutions.';
+const canonical = 'https://www.agentinflow.com/service/';
+---
 
-    <title>AI Automation Services in India | AI Agents & N8N Workflows – AgentinFlow</title>
-
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="../img/agentinflow-logo.png" type="img/agentinflow.png">
-    <link rel="canonical" href="https://www.agentinflow.com/service/">
-    <link rel="icon" href="../img/agentinflow-logo2.png" sizes="512x512" type="image/png">
-    <link rel="apple-touch-icon" href="../img/agentinflow-logo2.png">
-    <meta name="google-site-verification" content="ju9vQiPbb1cA_tEG0_ZDC5OvLYYloZi9xtFsKCrATUA" />
-
-
-</head>
-
-<body>
-    <!-- Navigation -->
-    <nav>
-        <div class="container">
-            <div class="logo"><a href="../index.html" style="text-decoration: none; color: orangered;">AgentinFlow</a></div>
-            <div class="nav-links">
-                <a href="../index.html" class="nav-link">Home</a>
-                <a href="../service/index.html" class="nav-link active">Services</a>
-                <a href="../aboutus/index.html" class="nav-link">About Us</a>
-                <a href="../index.html#contact" class="nav-btn">Contact Us</a>
-            </div>
-        </div>
-    </nav>
-
+<BaseLayout title={title} description={description} canonical={canonical}>
     <!-- Hero Section -->
     <section class="about-hero">
         <div class="container">
@@ -296,7 +274,7 @@
                         <li>✓ Mobile responsive</li>
                         <li>✓ 1 month support</li>
                     </ul>
-                    <a href="../index.html#contact" class="pricing-btn">Get Started</a>
+                    <a href="/#contact" class="pricing-btn">Get Started</a>
                 </div>
 
                 <div class="pricing-card featured">
@@ -310,7 +288,7 @@
                         <li>✓ 3 months support</li>
                         <li>✓ Training included</li>
                     </ul>
-                    <a href="../index.html#contact" class="pricing-btn">Get Started</a>
+                    <a href="/#contact" class="pricing-btn">Get Started</a>
                 </div>
 
                 <div class="pricing-card">
@@ -323,7 +301,7 @@
                         <li>✓ Ongoing optimization</li>
                         <li>✓ Dedicated manager</li>
                     </ul>
-                    <a href="../index.html#contact" class="pricing-btn">Get Started</a>
+                    <a href="/#contact" class="pricing-btn">Get Started</a>
                 </div>
             </div>
 
@@ -376,30 +354,13 @@
         <div class="container">
             <h2>Ready to Automate Your Business?</h2>
             <p>Let's create a custom solution for your business.</p>
-            <a href="../index.html#contact" class="cta-btn">Schedule Free Consultation</a>
+            <a href="/#contact" class="cta-btn">Schedule Free Consultation</a>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container-footer-grid">
-            <div class="footer-info">
-                <div class="logo">AgentinFlow</div>
-                <p class="footer-text">Transforming businesses through AI automation and web development</p>
-            </div>
-            <div class="footer-contact">
-                <h3>Contact Us</h3>
-                <p><a href="mailto:aarvsinghchauhan@gmail.com">aarvsinghchauhan@gmail.com</a></p>
-                <p><a href="https://wa.me/919584598779" target="_blank" rel="noopener">WhatsApp +91 95845 98779</a></p>
-                <p><a href="tel:+919343393388">Call +91 93433 93388</a></p>
-            </div>
-        </div>
-        <div class="container footer-bottom">
-            <p class="footer-copyright">© 2026 AgentinFlow. All rights reserved.</p>
-        </div>
-    </footer>
+    
+</BaseLayout>
 
-    <script src="script.js"></script>
-</body>
-
-</html>
+<script>
+    import '../../scripts/site.js';
+</script>

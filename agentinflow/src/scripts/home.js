@@ -66,9 +66,16 @@ const FALLBACK_CC = 'chinmaybhadoria1415@gmail.com';
 const WHATSAPP_NUMBER = '919584598779';
 const CALL_NUMBER = '+919343393388';
 
-// Scroll to Section
-function scrollToSection(id) {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+// Scroll to Section.
+// Was an inline onclick="scrollToSection('contact')". Inline handlers need a
+// global function, but bundled module scripts are scoped, so this is delegated
+// from a data attribute instead.
+function initScrollButtons() {
+    document.querySelectorAll('[data-scroll-to]').forEach((el) => {
+        el.addEventListener('click', () => {
+            document.getElementById(el.dataset.scrollTo)?.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
 }
 
 // Render Reviews
@@ -299,6 +306,7 @@ function initContactForm() {
 
 document.addEventListener('DOMContentLoaded', function () {
     renderReviews();
+    initScrollButtons();
     initContactForm();
 });
 

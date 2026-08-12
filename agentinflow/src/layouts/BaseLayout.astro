@@ -1,0 +1,43 @@
+---
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+// global.css is deliberately NOT imported here. Astro emitted the layout's
+// stylesheet AFTER the page's, which reversed the original cascade - page
+// media queries such as `@media (max-width:640px) { .nav-links{display:none} }`
+// lost to global's `.nav-links{display:flex}` and the mobile nav stopped
+// hiding. Each page imports global.css first, then its own sheet, so the
+// order is explicit and matches the original single-stylesheet ordering.
+
+const { title, description, canonical } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+
+    <!-- The old site pointed these at ../img/ from the site root, which
+         resolved above the document root and 404'd. Absolute paths now. -->
+    <link rel="icon" href="/img/agentinflow-logo.png" type="image/png" />
+    <link rel="icon" href="/img/agentinflow-logo2.png" sizes="512x512" type="image/png" />
+    <link rel="apple-touch-icon" href="/img/agentinflow-logo2.png" />
+
+    <meta name="google-site-verification" content="ju9vQiPbb1cA_tEG0_ZDC5OvLYYloZi9xtFsKCrATUA" />
+
+    <slot name="head" />
+</head>
+
+<body>
+    <Nav />
+    <slot />
+    <Footer />
+</body>
+
+</html>

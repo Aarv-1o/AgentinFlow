@@ -1,0 +1,25 @@
+---
+// Active state is derived from the URL instead of being hand-maintained
+// per page, which is how the old site did it.
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+const links = [
+    { href: '/', label: 'Home' },
+    { href: '/service/', label: 'Services' },
+    { href: '/aboutus/', label: 'About Us' }
+];
+
+const isActive = (href) => href.replace(/\/+$/, '') === path || (href === '/' && path === '/');
+---
+
+<nav>
+    <div class="container">
+        <div class="logo"><a href="/" style="text-decoration: none; color: orangered;">AgentinFlow</a></div>
+        <div class="nav-links">
+            {links.map(({ href, label }) => (
+                <a href={href} class={isActive(href) ? 'nav-link active' : 'nav-link'}>{label}</a>
+            ))}
+            <a href="/#contact" style="text-decoration: none;" class="nav-btn">Contact Us</a>
+        </div>
+    </div>
+</nav>

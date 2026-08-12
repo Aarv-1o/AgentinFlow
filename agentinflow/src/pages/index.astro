@@ -1,0 +1,236 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+// Order matters: global first, page sheet second (matches the original
+// single-stylesheet cascade). See BaseLayout.astro for why.
+import '../styles/global.css';
+import '../styles/home.css';
+
+const title = 'AgentinFlow – AI Automation Agency in India | AI Agents & N8N Workflows';
+const description = 'AgentinFlow is an AI automation agency in India providing AI agents, N8N workflows, and business automation solutions for modern businesses.';
+const canonical = 'https://www.agentinflow.com/';
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">     
+            <div class="hero-content">
+                <h1>
+                    AgentinFlow – <span class="hero-highlight">AI Automation Agency</span> for Businesses
+                </h1>
+
+                <p>
+                    AgentinFlow helps businesses automate operations using AI agents,
+                    N8N workflows, and custom automation solutions that work 24/7.
+                </p>
+                <p style="text-align:center; margin-top:20px;">
+                    <strong>AgentinFlow</strong> is an AI automation brand based in India.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" data-scroll-to="contact">Start Your Project</button>
+                    <a href="/service/" style="text-decoration: none;" class="btn-secondary">Learn More</a>
+                    <a href="/aboutus/" style="text-decoration: none;" class="btn-secondary">Meet the Team</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews">
+        <h2>Trusted by <span class="hero-highlight">Industry Leaders</span></h2>
+        <div class="reviews-scroll">
+            <div class="reviews-track" id="reviewsTrack"></div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2>What We <span class="hero-highlight">Deliver</span></h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <svg class="service-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <h3 class="service-title">Agent Automation</h3>
+                    <p class="service-desc">Custom AI agents that handle repetitive tasks, customer service, data
+                        processing, and workflow automation.</p>
+                </div>
+                <div class="service-card">
+                    <svg class="service-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6" />
+                        <polyline points="8 6 2 12 8 18" />
+                    </svg>
+                    <h3 class="service-title">Web Development</h3>
+                    <p class="service-desc">Modern, responsive websites and web applications built with the latest
+                        technologies and best practices.</p>
+                </div>
+                <div class="service-card">
+                    <svg class="service-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    <h3 class="service-title">Integration Solutions</h3>
+                    <p class="service-desc">Seamless integration of AI agents with your existing tools, databases, and
+                        business systems.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="container">
+            <div class="benefits-grid">
+                <div>
+                    <h2>Why Choose <span class="hero-highlight">AgentinFlow?</span></h2>
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">Save 20+ hours per week with intelligent automation</p>
+                        </div>
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">Scale your operations without scaling costs</p>
+                        </div>
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">Reduce human error with precision AI agents</p>
+                        </div>
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">Get 24/7 automated workflows</p>
+                        </div>
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">Custom solutions tailored to your business</p>
+                        </div>
+                        <div class="benefit-item">
+                            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <p class="benefit-text">N8N Workflow Automation</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">90%</div>
+                    <p class="stat-label">Reduction in Manual Tasks</p>
+                    <p class="stat-desc">Our clients typically see dramatic efficiency improvements within the first
+                        month of implementation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-header">
+                <h2>Ready to <span class="hero-highlight">Automate?</span></h2>
+                <p class="contact-subtitle">Get in touch and let's discuss how we can transform your business</p>
+            </div>
+
+            <!-- Direct contact channels -->
+            <div class="contact-channels">
+                <a class="channel channel-whatsapp"
+                    href="https://wa.me/919584598779?text=Hi%20AgentinFlow%2C%20I%20would%20like%20to%20discuss%20a%20project."
+                    target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.08-.3-.15-1.26-.47-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.67-1.62-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.38-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35z" />
+                        <path
+                            d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.13h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.37c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.25 8.24z" />
+                    </svg>
+                    <span class="channel-body">
+                        <span class="channel-label">Drop a message</span>
+                        <span class="channel-value">WhatsApp +91 95845 98779</span>
+                    </span>
+                </a>
+
+                <a class="channel" href="tel:+919343393388">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" aria-hidden="true">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                    <span class="channel-body">
+                        <span class="channel-label">Prefer to talk?</span>
+                        <span class="channel-value">Call +91 93433 93388</span>
+                    </span>
+                </a>
+            </div>
+
+            <p class="contact-divider"><span>or send us a message</span></p>
+            <form id="contactForm" novalidate>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" placeholder="Your name" required
+                            autocomplete="name" aria-describedby="nameError">
+                        <span class="field-error" id="nameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required
+                            autocomplete="email" aria-describedby="emailError">
+                        <span class="field-error" id="emailError"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" name="company" placeholder="Your company name"
+                        autocomplete="organization">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Tell us about your project..."
+                        required aria-describedby="messageError"></textarea>
+                    <span class="field-error" id="messageError"></span>
+                </div>
+
+                <!-- Anti-spam honeypot: hidden from humans, bots tend to fill it in -->
+                <div class="hp-field" aria-hidden="true">
+                    <label for="website">Website</label>
+                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                </div>
+
+                <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span id="btnText">Send Message</span>
+                    <svg id="btnIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    
+</BaseLayout>
+
+<script>
+    import '../scripts/home.js';
+</script>
