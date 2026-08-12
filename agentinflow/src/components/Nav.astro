@@ -99,31 +99,28 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
     .nav-links a {
         display: block;
         padding: 0.55rem 1rem;
-        border-radius: 9999px;
         font-size: 0.95rem;
         font-weight: 400;
         line-height: 1;
         white-space: nowrap;
         text-decoration: none;
         color: var(--text);
-        transition: color 0.25s ease, background-color 0.25s ease;
+        transition: color 0.25s ease;
     }
 
     .nav-links a:hover,
     .nav-links a:focus-visible {
         color: var(--heading);
-        background-color: var(--surface);
     }
 
-    /* Underline sweep. Applied to the first link only while the effect is
-       being judged; extending it is a matter of dropping :first-child.
-       The rule lives on .label rather than the anchor so the line spans the
-       text exactly - from the h of Home to the e - and not the padded box. */
-    .nav-links li:first-child .label {
+    /* Underline sweep. The rule lives on .label rather than the anchor so
+       the line spans the text exactly - from the h of Home to the e - and
+       not the padded box. */
+    .nav-links .label {
         position: relative;
     }
 
-    .nav-links li:first-child .label::after {
+    .nav-links .label::after {
         content: '';
         position: absolute;
         left: 0;
@@ -137,20 +134,22 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
         transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
-    .nav-links li:first-child a:hover .label::after,
-    .nav-links li:first-child a:focus-visible .label::after {
+    .nav-links a:hover .label::after,
+    .nav-links a:focus-visible .label::after {
         transform: scaleX(1);
     }
 
     /* Retract from the far end, so the line leaves the way it arrived
        rather than snapping back to the start. */
-    .nav-links li:first-child a:not(:hover) .label::after {
+    .nav-links a:not(:hover) .label::after {
         transform-origin: right center;
     }
 
+    /* The current page is marked by colour alone - the underline is purely
+       a hover response and never persists. aria-current carries the state
+       for assistive tech. */
     .nav-links a.is-active {
         color: var(--heading);
-        background-color: var(--surface);
     }
 
     /* --- CTA --- */
@@ -267,7 +266,7 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
             transition: none;
         }
 
-        .nav-links li:first-child .label::after {
+        .nav-links .label::after {
             transition: none;
         }
 
