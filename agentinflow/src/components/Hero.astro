@@ -1,59 +1,84 @@
 ---
 // Scroll-driven hero.
 //
-// Structure: a tall outer track holds a sticky viewport-height stage. How far
-// the track has passed the top of the screen becomes a 0-1 progress value,
-// published as the CSS custom property --p on the stage. Everything inside
-// reads that one number, so the animation is scrubbed by scroll position
-// rather than played on a timer.
+// A tall outer track holds a sticky viewport-height stage. How far the track
+// has passed the top of the screen becomes a 0-1 value published as the CSS
+// custom property --p on the stage. Everything inside reads that one number,
+// so the sequence is scrubbed by scroll position rather than played on a timer.
 //
-// The laptop is drawn as inline SVG rather than sourced as a 3D model: the
-// perspective is baked into the geometry, so it reads as a solid object at a
-// few kilobytes with no 3D runtime. If a rendered asset replaces it later,
-// only the <svg> and its part rules change - the progress mechanism and
-// layering stay as they are.
+// Layers: the wordmark sits behind (z-index 1), the keypad in front (z-index 2),
+// so the object occludes the letters.
 //
-// Layers: the wordmark sits behind (z-index 1), the stage object in front
-// (z-index 2), so the object occludes the letters.
+// The keypad is drawn as inline SVG in a true isometric projection rather than
+// sourced as a 3D model - a few kilobytes, no runtime, no asset licence, and it
+// resolves through the palette tokens.
 
-// Keyboard keys are generated rather than hand-written. The deck is drawn in
-// perspective - it widens towards the viewer - so each row sits at its own
-// depth. edgeAt() interpolates the deck's left and right edge for a given y,
-// and every key is measured against that.
-const DECK_TOP_Y = 384, DECK_BOT_Y = 470;
-const DECK_TOP_L = 110, DECK_TOP_R = 690;
-const DECK_BOT_L = 40, DECK_BOT_R = 760;
+// --- Isometric projection ---------------------------------------------------
+// Grid units in, screen coordinates out. z is a straight pixel lift, so key
+// height is independent of footprint.
+const U = 92;
+const CX = 400;
+const CY = 200;
+const COS30 = 0.8660254;
 
-const edgeAt = (y) => {
-    const t = (y - DECK_TOP_Y) / (DECK_BOT_Y - DECK_TOP_Y);
-    return {
-        left: DECK_TOP_L + (DECK_BOT_L - DECK_TOP_L) * t,
-        right: DECK_TOP_R + (DECK_BOT_R - DECK_TOP_R) * t
+const iso = (x, y, z = 0) => ({
+    X: CX + (x - y) * COS30 * U,
+    Y: CY + (x + y) * 0.5 * U - z
+});
+
+const p = (pt) => `${pt.X.toFixed(1)},${pt.Y.toFixed(1)}`;
+
+// A tapered slab: square footprint, smaller top face, two visible side walls.
+// The taper is what makes a keycap read as a keycap rather than a box.
+function slab(x0, y0, size, height, taper) {
+    const x1 = x0 + size;
+    const y1 = y0 + size;
+
+    const b = {
+        back: iso(x0, y0), right: iso(x1, y0),
+        front: iso(x1, y1), left: iso(x0, y1)
     };
-};
+    const t = {
+        back: iso(x0 + taper, y0 + taper, height),
+        right: iso(x1 - taper, y0 + taper, height),
+        front: iso(x1 - taper, y1 - taper, height),
+        left: iso(x0 + taper, y1 - taper, height)
+    };
 
-const ROWS = 5, PER_ROW = 14, GAP = 2.2;
-const keys = [];
-
-for (let r = 0; r < ROWS; r++) {
-    const y = 394 + r * 8.4;
-    const { left, right } = edgeAt(y);
-    const inset = 58 + r * 2;
-    const x0 = left + inset;
-    const kw = (right - inset - x0 - GAP * (PER_ROW - 1)) / PER_ROW;
-
-    for (let c = 0; c < PER_ROW; c++) {
-        keys.push({
-            x: +(x0 + c * (kw + GAP)).toFixed(2),
-            y: +y.toFixed(2),
-            w: +kw.toFixed(2),
-            h: 6.2,
-            // staggered reveal: left to right, back row to front
-            delay: +((r * PER_ROW + c) / (ROWS * PER_ROW) * 0.75).toFixed(3)
-        });
-    }
+    return {
+        top: `M${p(t.back)} L${p(t.right)} L${p(t.front)} L${p(t.left)} Z`,
+        // Only the two faces meeting at the front corner are visible.
+        wallR: `M${p(b.right)} L${p(b.front)} L${p(t.front)} L${p(t.right)} Z`,
+        wallL: `M${p(b.left)} L${p(b.front)} L${p(t.front)} L${p(t.left)} Z`,
+        centre: iso((x0 + x1) / 2, (y0 + y1) / 2, height)
+    };
 }
 
+const KEY_SIZE = 0.84;
+const KEY_H = 42;
+const KEY_TAPER = 0.12;
+
+const plate = slab(-0.2, -0.2, 2.24, 22, 0.02);
+
+const keys = [
+    { i: 0, j: 0, label: 'WEB' },
+    { i: 1, j: 0, label: 'AI' },
+    { i: 0, j: 1, label: 'N8N' },
+    { i: 1, j: 1, label: 'GO', go: true }
+].map((k) => ({
+    ...k,
+    ...slab(k.i, k.j, KEY_SIZE, KEY_H, KEY_TAPER),
+    // Back keys land first, so the stack builds away-to-near.
+    delay: (k.i + k.j) * 0.16,
+    // Larger i+j sits nearer the viewer and must paint last.
+    depth: k.i + k.j
+})).sort((a, b) => a.depth - b.depth);
+
+const goKey = keys.find((k) => k.go);
+
+// Labels must lie in the top plane rather than face the screen, or they float
+// above the cap. This matrix maps flat text onto that plane.
+const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 ---
 
 <section class="hero-track" id="heroTrack">
@@ -61,64 +86,51 @@ for (let r = 0; r < ROWS; r++) {
         <h1 class="wordmark-back" aria-label="AgentinFlow">AGENTINFLOW</h1>
 
         <div class="stage-object">
-            <svg class="laptop" viewBox="0 0 800 600" role="img"
-                aria-label="A laptop assembling itself, part by part">
+            <svg class="keypad" viewBox="0 0 800 600" role="img"
+                aria-label="An isometric keypad assembling, with keys labelled Web, AI, n8n and Go">
                 <defs>
-                    <linearGradient id="lidFace" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#2b2b2b" />
-                        <stop offset="100%" stop-color="#161616" />
+                    <linearGradient id="capTop" x1="0" y1="0" x2="0.6" y2="1">
+                        <stop offset="0%" stop-color="#ffffff" />
+                        <stop offset="100%" stop-color="#d7dade" />
                     </linearGradient>
-                    <linearGradient id="deckFace" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#242424" />
-                        <stop offset="100%" stop-color="#131313" />
+                    <linearGradient id="capTopGo" x1="0" y1="0" x2="0.6" y2="1">
+                        <stop offset="0%" stop-color="#b52c4b" />
+                        <stop offset="100%" stop-color="#6d1830" />
                     </linearGradient>
-                    <linearGradient id="edgeSheen" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.02" />
-                        <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16" />
-                        <stop offset="100%" stop-color="#ffffff" stop-opacity="0.02" />
+                    <linearGradient id="plateTop" x1="0" y1="0" x2="0.5" y2="1">
+                        <stop offset="0%" stop-color="#333333" />
+                        <stop offset="100%" stop-color="#1e1e1e" />
                     </linearGradient>
-                    <radialGradient id="screenGlow" cx="50%" cy="12%" r="85%">
-                        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.85" />
-                        <stop offset="55%" stop-color="var(--accent-strong)" stop-opacity="0.22" />
-                        <stop offset="100%" stop-color="var(--accent-strong)" stop-opacity="0" />
+                    <radialGradient id="goGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.75" />
+                        <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
                     </radialGradient>
                 </defs>
 
-                <!-- soft contact shadow, grounds the object -->
-                <ellipse class="pt shadow" cx="400" cy="482" rx="330" ry="20" />
+                <ellipse class="ground" cx="400" cy="350" rx="250" ry="70" />
 
-                <!-- lid -->
-                <g class="pt lid">
-                    <rect x="140" y="40" width="520" height="332" rx="15" fill="url(#lidFace)"
-                        stroke="var(--glass-border)" />
-                    <rect x="154" y="54" width="492" height="304" rx="8" fill="#0b0b0b" />
-                    <rect class="glow" x="154" y="54" width="492" height="304" rx="8" fill="url(#screenGlow)" />
-                    <rect x="154" y="54" width="492" height="304" rx="8" fill="none"
-                        stroke="var(--glass-highlight)" stroke-width="0.75" />
+                <!-- Base plate -->
+                <g class="plate">
+                    <path d={plate.wallL} fill="#101010" />
+                    <path d={plate.wallR} fill="#171717" />
+                    <path d={plate.top} fill="url(#plateTop)" />
                 </g>
 
-                <!-- hinge -->
-                <rect class="pt hinge" x="128" y="371" width="544" height="11" rx="5.5"
-                    fill="#1d1d1d" stroke="var(--glass-border)" />
+                <!-- Glow beneath GO, ramps as the key is pressed -->
+                <ellipse class="go-glow" cx={goKey.centre.X} cy={goKey.centre.Y + 26}
+                    rx="130" ry="64" fill="url(#goGlow)" />
 
-                <!-- deck, drawn in perspective -->
-                <g class="pt deck">
-                    <path d="M110 384 H690 L760 470 Q760 478 750 478 H50 Q40 478 40 470 Z"
-                        fill="url(#deckFace)" stroke="var(--glass-border)" />
-                    <path d="M110 385 H690" stroke="url(#edgeSheen)" stroke-width="1.5" fill="none" />
-                </g>
-
-                <!-- keys -->
-                <g class="pt keys">
-                    {keys.map((k) => (
-                        <rect x={k.x} y={k.y} width={k.w} height={k.h} rx="1.6"
-                            fill="#2c2c2c" style={`--d:${k.delay}`} />
-                    ))}
-                </g>
-
-                <!-- trackpad -->
-                <path class="pt pad" d="M338 442 H462 L472 468 H328 Z" fill="#1f1f1f"
-                    stroke="var(--glass-border)" />
+                <!-- Keycaps, painted back to front -->
+                {keys.map((k) => (
+                    <g class={k.go ? 'cap is-go' : 'cap'} style={`--d:${k.delay}`}>
+                        <path d={k.wallL} fill={k.go ? '#4d1122' : '#8f9499'} />
+                        <path d={k.wallR} fill={k.go ? '#5d1527' : '#a9aeb3'} />
+                        <path d={k.top} fill={k.go ? 'url(#capTopGo)' : 'url(#capTop)'} />
+                        <text x="0" y="0" class="cap-label"
+                            transform={`matrix(${LABEL_TF} ${k.centre.X} ${k.centre.Y})`}
+                            fill={k.go ? '#ffffff' : '#3a3f44'}>{k.label}</text>
+                    </g>
+                ))}
             </svg>
         </div>
 
@@ -127,11 +139,9 @@ for (let r = 0; r < ROWS; r++) {
 </section>
 
 <style>
-    /* The track is what gets scrolled through; its extra height is the
-       runway the animation plays across. */
     .hero-track {
         position: relative;
-        height: 260vh;
+        height: 240vh;
     }
 
     .hero-stage {
@@ -157,78 +167,62 @@ for (let r = 0; r < ROWS; r++) {
         white-space: nowrap;
         color: var(--heading);
         user-select: none;
-
-        /* Drifts up and fades back very slightly as the object assembles,
-           so the two layers feel like one move rather than two. */
         opacity: calc(1 - var(--p) * 0.55);
         transform: translateY(calc(var(--p) * -3vh));
     }
 
-    /* --- Object, in front --- */
+    /* --- Keypad, in front --- */
     .stage-object {
         grid-area: 1 / 1;
         z-index: 2;
         display: grid;
         place-items: center;
-        width: min(46vw, 520px);
+        width: min(52vw, 560px);
         aspect-ratio: 4 / 3;
     }
 
-    /* --- Laptop ---
-       Vector rather than a 3D asset: perspective is drawn into the geometry,
-       so it reads as a solid object while staying a few kilobytes and needing
-       no runtime. Every part is positioned by --p alone.
-
-       Transforms use px, which inside an SVG resolve to viewBox user units,
-       so the motion scales with the drawing rather than the viewport. */
-    .laptop {
+    .keypad {
         width: 100%;
         height: 100%;
         overflow: visible;
     }
 
-    .shadow {
+    .ground {
         fill: #000;
-        opacity: calc(var(--p) * 0.55);
+        opacity: calc(var(--p) * 0.5);
     }
 
-    /* Lid drops in from above and settles */
-    .lid {
-        transform: translateY(calc((1 - var(--p)) * -340px));
-        opacity: calc(0.15 + var(--p) * 0.85);
-    }
-
-    .glow {
-        opacity: calc(var(--p) * var(--p));
-    }
-
-    /* Hinge draws outward from the centre */
-    .hinge {
-        transform: scaleX(var(--p));
-        transform-origin: 400px 377px;
-        opacity: calc(0.2 + var(--p) * 0.8);
-    }
-
-    /* Deck rises from below */
-    .deck {
-        transform: translateY(calc((1 - var(--p)) * 320px));
-        opacity: calc(0.15 + var(--p) * 0.85);
-    }
-
-    /* Keys land in sequence. Each carries its own --d offset, so the row
-       fills left to right and front to back instead of appearing at once. */
-    .keys rect {
-        /* One reveal value per key, derived once and reused for both
-           properties, rather than nesting clamp inside calc twice. */
-        --reveal: clamp(0, calc((var(--p) - var(--d)) * 5), 1);
+    /* Plate settles first, before any cap arrives */
+    .plate {
+        --reveal: clamp(0, calc(var(--p) * 4), 1);
         opacity: var(--reveal);
-        transform: translateY(calc((1 - var(--reveal)) * 26px));
+        transform: translateY(calc((1 - var(--reveal)) * 90px));
     }
 
-    .pad {
-        --reveal: clamp(0, calc((var(--p) - 0.72) * 4), 1);
+    /* Caps drop in, back row first */
+    .cap {
+        --reveal: clamp(0, calc((var(--p) - 0.15 - var(--d)) * 3.4), 1);
         opacity: var(--reveal);
-        transform: translateY(calc((1 - var(--reveal)) * 22px));
+        transform: translateY(calc((1 - var(--reveal)) * -190px));
+    }
+
+    /* GO is pressed at the end of the scroll, glow arriving with it */
+    .is-go {
+        --press: clamp(0, calc((var(--p) - 0.84) * 6), 1);
+        transform: translateY(calc((1 - var(--reveal)) * -190px + var(--press) * 15px));
+    }
+
+    .go-glow {
+        opacity: clamp(0, calc((var(--p) - 0.84) * 6), 1);
+    }
+
+    .cap-label {
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-anchor: middle;
+        dominant-baseline: central;
     }
 
     /* --- Bottom line --- */
@@ -244,8 +238,8 @@ for (let r = 0; r < ROWS; r++) {
         transform: translateY(calc((1 - var(--p)) * 1.5rem));
     }
 
-    /* Without scroll the animation never advances, so hold it assembled
-       and drop the runway to a single screen. */
+    /* Without scroll the sequence never advances, so hold it assembled and
+       drop the runway to a single screen. */
     @media (prefers-reduced-motion: reduce) {
         .hero-track {
             height: 100vh;
@@ -267,8 +261,8 @@ for (let r = 0; r < ROWS; r++) {
         const update = () => {
             const runway = track.offsetHeight - window.innerHeight;
             const scrolled = -track.getBoundingClientRect().top;
-            const p = runway > 0 ? Math.min(1, Math.max(0, scrolled / runway)) : 0;
-            stage.style.setProperty('--p', p.toFixed(4));
+            const progress = runway > 0 ? Math.min(1, Math.max(0, scrolled / runway)) : 0;
+            stage.style.setProperty('--p', progress.toFixed(4));
             ticking = false;
         };
 
