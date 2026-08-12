@@ -23,7 +23,7 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
         {links.map(({ href, label }) => (
             <li>
                 <a href={href} class={isActive(href) ? 'is-active' : ''}
-                    aria-current={isActive(href) ? 'page' : undefined}>{label}</a>
+                    aria-current={isActive(href) ? 'page' : undefined}><span class="label">{label}</span></a>
             </li>
         ))}
     </ul>
@@ -73,7 +73,7 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
         justify-self: start;
         font-family: var(--font-display);
         font-size: 1.5rem;
-        font-weight: 700;
+        font-weight: 600;
         line-height: 1;
         letter-spacing: -0.02em;
         color: var(--accent);
@@ -101,7 +101,7 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
         padding: 0.55rem 1rem;
         border-radius: 9999px;
         font-size: 0.95rem;
-        font-weight: 500;
+        font-weight: 400;
         line-height: 1;
         white-space: nowrap;
         text-decoration: none;
@@ -113,6 +113,39 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
     .nav-links a:focus-visible {
         color: var(--heading);
         background-color: var(--surface);
+    }
+
+    /* Underline sweep. Applied to the first link only while the effect is
+       being judged; extending it is a matter of dropping :first-child.
+       The rule lives on .label rather than the anchor so the line spans the
+       text exactly - from the h of Home to the e - and not the padded box. */
+    .nav-links li:first-child .label {
+        position: relative;
+    }
+
+    .nav-links li:first-child .label::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -0.35rem;
+        height: 1.5px;
+        background-color: var(--accent);
+        border-radius: 1px;
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .nav-links li:first-child a:hover .label::after,
+    .nav-links li:first-child a:focus-visible .label::after {
+        transform: scaleX(1);
+    }
+
+    /* Retract from the far end, so the line leaves the way it arrived
+       rather than snapping back to the start. */
+    .nav-links li:first-child a:not(:hover) .label::after {
+        transform-origin: right center;
     }
 
     .nav-links a.is-active {
@@ -131,7 +164,7 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
         border-radius: 9999px;
         border: 1px solid var(--border);
         font-size: 0.95rem;
-        font-weight: 500;
+        font-weight: 400;
         white-space: nowrap;
         text-decoration: none;
         color: var(--heading);
@@ -160,10 +193,22 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
         height: 15px;
     }
 
+    /* A keyframe rather than a transition, so the turn is always clockwise.
+       A transition would unwind anticlockwise when the pointer leaves. */
+    @keyframes nav-arrow-spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
     .nav-cta:hover .nav-cta-icon,
     .nav-cta:focus-visible .nav-cta-icon {
         background-color: var(--cta-hover);
-        transform: rotate(45deg);
+        animation: nav-arrow-spin 0.6s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     /* --- Narrow screens ---
@@ -222,8 +267,12 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
             transition: none;
         }
 
+        .nav-links li:first-child .label::after {
+            transition: none;
+        }
+
         .nav-cta:hover .nav-cta-icon {
-            transform: none;
+            animation: none;
         }
     }
 </style>
