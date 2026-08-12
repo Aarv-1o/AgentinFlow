@@ -1,0 +1,208 @@
+---
+// Scroll-driven hero.
+//
+// Structure: a tall outer track holds a sticky viewport-height stage. How far
+// the track has passed the top of the screen becomes a 0-1 progress value,
+// published as the CSS custom property --p on the stage. Everything inside
+// reads that one number, so the animation is scrubbed by scroll position
+// rather than played on a timer.
+//
+// The laptop is a PLACEHOLDER built from divs, standing in until the real
+// asset arrives. Swapping it out means replacing the .laptop block and
+// nothing else - the progress mechanism and layering stay as they are.
+//
+// Layers: the wordmark sits behind (z-index 1), the stage object in front
+// (z-index 2), so the object occludes the letters.
+---
+
+<section class="hero-track" id="heroTrack">
+    <div class="hero-stage" id="heroStage">
+        <h1 class="wordmark-back" aria-label="AgentinFlow">AGENTINFLOW</h1>
+
+        <div class="stage-object">
+            <!-- PLACEHOLDER laptop. Each part slides in as --p advances. -->
+            <div class="laptop">
+                <div class="part screen"><span class="screen-glow"></span></div>
+                <div class="part hinge"></div>
+                <div class="part base"></div>
+                <div class="part keys"></div>
+                <div class="part pad"></div>
+            </div>
+        </div>
+
+        <p class="hero-line">We build what you ask</p>
+    </div>
+</section>
+
+<style>
+    /* The track is what gets scrolled through; its extra height is the
+       runway the animation plays across. */
+    .hero-track {
+        position: relative;
+        height: 260vh;
+    }
+
+    .hero-stage {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        --p: 0;
+    }
+
+    /* --- Wordmark, behind --- */
+    .wordmark-back {
+        grid-area: 1 / 1;
+        z-index: 1;
+        margin: 0;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: clamp(2.75rem, 12.5vw, 13rem);
+        line-height: 1;
+        letter-spacing: -0.03em;
+        white-space: nowrap;
+        color: var(--heading);
+        user-select: none;
+
+        /* Drifts up and fades back very slightly as the object assembles,
+           so the two layers feel like one move rather than two. */
+        opacity: calc(1 - var(--p) * 0.55);
+        transform: translateY(calc(var(--p) * -3vh));
+    }
+
+    /* --- Object, in front --- */
+    .stage-object {
+        grid-area: 1 / 1;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        width: min(46vw, 520px);
+        aspect-ratio: 4 / 3;
+    }
+
+    /* --- Placeholder laptop ---
+       Parts converge on the centre as --p goes 0 to 1. */
+    .laptop {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .part {
+        position: absolute;
+        border: 1px solid var(--glass-border);
+        background-color: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border-radius: 0.5rem;
+        opacity: calc(0.25 + var(--p) * 0.75);
+    }
+
+    .screen {
+        left: 12%;
+        top: 6%;
+        width: 76%;
+        height: 54%;
+        border-radius: 0.6rem 0.6rem 0.2rem 0.2rem;
+        transform: translateY(calc((1 - var(--p)) * -40vh)) scale(calc(0.85 + var(--p) * 0.15));
+    }
+
+    .screen-glow {
+        position: absolute;
+        inset: 8%;
+        border-radius: 0.35rem;
+        background: radial-gradient(120% 100% at 50% 0%,
+                rgba(var(--accent-rgb), calc(var(--p) * 0.55)) 0%,
+                transparent 70%);
+    }
+
+    .hinge {
+        left: 8%;
+        top: 60%;
+        width: 84%;
+        height: 3%;
+        transform: scaleX(var(--p));
+    }
+
+    .base {
+        left: 4%;
+        top: 64%;
+        width: 92%;
+        height: 22%;
+        transform: translateY(calc((1 - var(--p)) * 40vh));
+    }
+
+    .keys {
+        left: 12%;
+        top: 68%;
+        width: 76%;
+        height: 10%;
+        border-radius: 0.25rem;
+        transform: translateX(calc((1 - var(--p)) * -60vw));
+    }
+
+    .pad {
+        left: 40%;
+        top: 79%;
+        width: 20%;
+        height: 5%;
+        border-radius: 0.25rem;
+        transform: translateX(calc((1 - var(--p)) * 60vw));
+    }
+
+    /* --- Bottom line --- */
+    .hero-line {
+        position: absolute;
+        bottom: 3.5rem;
+        z-index: 3;
+        margin: 0;
+        font-size: clamp(1rem, 2vw, 1.35rem);
+        letter-spacing: 0.02em;
+        color: var(--text);
+        opacity: var(--p);
+        transform: translateY(calc((1 - var(--p)) * 1.5rem));
+    }
+
+    /* Without scroll the animation never advances, so hold it assembled
+       and drop the runway to a single screen. */
+    @media (prefers-reduced-motion: reduce) {
+        .hero-track {
+            height: 100vh;
+        }
+
+        .hero-stage {
+            --p: 1 !important;
+        }
+    }
+</style>
+
+<script>
+    const track = document.getElementById('heroTrack');
+    const stage = document.getElementById('heroStage');
+
+    if (track && stage && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        let ticking = false;
+
+        const update = () => {
+            const runway = track.offsetHeight - window.innerHeight;
+            const scrolled = -track.getBoundingClientRect().top;
+            const p = runway > 0 ? Math.min(1, Math.max(0, scrolled / runway)) : 0;
+            stage.style.setProperty('--p', p.toFixed(4));
+            ticking = false;
+        };
+
+        // rAF-throttled: scroll fires far more often than the screen repaints
+        const onScroll = () => {
+            if (!ticking) {
+                ticking = true;
+                requestAnimationFrame(update);
+            }
+        };
+
+        addEventListener('scroll', onScroll, { passive: true });
+        addEventListener('resize', onScroll, { passive: true });
+        update();
+    }
+</script>
