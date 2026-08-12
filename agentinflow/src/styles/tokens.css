@@ -113,6 +113,34 @@
     --cta-hover: #7a1b32;
 }
 
+/* ============================================================
+   COMBINATION D — Warm: cream secondary, wine primary
+   Swaps the cool mist for a warm off-white, and warms the darks to
+   match so the cream does not read as a colour cast. Wine carries
+   both the accent and the buttons.
+   ============================================================ */
+[data-palette='d'] {
+    --bg: #121212;
+    --bg-rgb: 18, 18, 18;
+    --bg-alt: #1a1714;
+    --surface: #201d18;
+    --surface-hover: #292520;
+    --footer-bg: #0e0c0b;
+    --border: #322d26;
+
+    --heading: #f7f3ea;
+    --text: #e0d9ca;
+    --text-dim: #948c7e;
+
+    --accent: #7a1b32;
+    --accent-strong: #5d1527;
+    --accent-rgb: 122, 27, 50;
+
+    --cta-bg: #7a1b32;
+    --cta-text: #f7f3ea;
+    --cta-hover: #8e2039;
+}
+
 /* The footer stays dark in the light combination, so its own text
    colours have to be re-stated rather than inherited. */
 [data-palette='c'] footer {

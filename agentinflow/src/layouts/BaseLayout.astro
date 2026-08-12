@@ -47,7 +47,7 @@ const { title, description, canonical } = Astro.props;
     <script is:inline>
         (function () {
             var p = new URLSearchParams(location.search).get('palette');
-            if (p && ['a', 'b', 'c'].indexOf(p) !== -1) {
+            if (p && ['a', 'b', 'c', 'd'].indexOf(p) !== -1) {
                 document.documentElement.setAttribute('data-palette', p);
             }
         })();
