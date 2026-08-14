@@ -8,14 +8,13 @@ import CtaObject from './CtaObject.astro';
 
 const CTA_HREF = '/service/#contact';
 
-// Flanking panels. Purely decorative: they rotate on their own, take no
-// pointer events, and are hidden from assistive tech. Each object gets its
-// own duration and direction so the four never fall into step.
+// Flanking panels. Purely decorative: they move on their own, take no
+// pointer events, and are hidden from assistive tech. One each side rather
+// than four - two well-made objects carry more than four competing ones,
+// and it leaves the copy as the loudest thing in the section.
 const panels = [
-    { side: 'left', shape: 'laptop', tone: 'cool', spin: '18s', dir: 'normal' },
-    { side: 'left', shape: 'cube', tone: 'warm', spin: '22s', dir: 'reverse' },
-    { side: 'right', shape: 'phone', tone: 'warm', spin: '20s', dir: 'reverse' },
-    { side: 'right', shape: 'hourglass', tone: 'cool', spin: '16s', dir: 'normal' }
+    { side: 'left', shape: 'glass', tone: 'cool', spin: '26s', dir: 'normal' },
+    { side: 'right', shape: 'grid', tone: 'warm', spin: '14s', dir: 'normal' }
 ];
 
 const bySide = (side) => panels.filter((pn) => pn.side === side);
@@ -142,6 +141,7 @@ const bySide = (side) => panels.filter((pn) => pn.side === side);
        the objects cannot swallow a click meant for the page. */
     .panel-col {
         display: grid;
+        align-content: center;
         gap: 1.25rem;
         pointer-events: none;
         user-select: none;
@@ -160,7 +160,7 @@ const bySide = (side) => panels.filter((pn) => pn.side === side);
         /* Fixed side columns. On fractional widths the panels stretched to
            whatever was left over and the objects were lost inside them. */
         .cta-grid {
-            grid-template-columns: 210px minmax(0, 1fr) 210px;
+            grid-template-columns: 168px minmax(0, 1fr) 168px;
             gap: clamp(1.5rem, 4vw, 3rem);
         }
     }
