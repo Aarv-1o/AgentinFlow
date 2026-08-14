@@ -218,21 +218,22 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
            never share a transform and the turn carries on underneath. */
     }
 
-    /* Rocks between 30 and 45 degrees - a 15 degree band, never crossing
-       back through square. The artwork is a flat isometric drawing, so
-       turning it about Y only foreshortens it: it is 87% of its width at
-       30 and 71% at 45, and the loop just breathes between those two.
-       rotateX is held constant here; with a band this narrow, varying it
-       as well read as a wobble rather than a turn. */
+    /* Turns out to 30 degrees and comes back to square.
+       The artwork is a flat isometric drawing, so turning it about Y only
+       foreshortens it - width scales with the cosine. Thirty degrees costs
+       13%; the old 30-to-45 band never returned to full width, so the
+       keypad read as permanently squashed rather than as turning. Coming
+       home to zero each cycle is what gives the eye a reference to measure
+       the turn against. */
     @keyframes keypad-sway {
 
         0%,
         100% {
-            transform: rotateY(30deg) rotateX(2deg);
+            transform: rotateY(0deg) rotateX(2deg);
         }
 
         50% {
-            transform: rotateY(45deg) rotateX(2deg);
+            transform: rotateY(30deg) rotateX(2deg);
         }
     }
 
