@@ -276,8 +276,12 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
         pointer-events: none;
     }
 
+    /* Extra clearance above the line. The grid gap is uniform, and the
+       keypad's own shadow already sits close to its lower edge, so the line
+       needs more breathing room beneath the artwork than the wordmark needs
+       above it. */
     .hero-line {
-        margin: 0;
+        margin: clamp(1.5rem, 5vh, 4rem) 0 0;
         font-size: clamp(1rem, 2vw, 1.35rem);
         letter-spacing: 0.02em;
         color: var(--text);
