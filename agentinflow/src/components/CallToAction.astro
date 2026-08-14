@@ -1,33 +1,79 @@
 ---
-// Closing call to action: centred pitch flanked by project panels.
+// Closing call to action: centred pitch flanked by rotating objects.
 //
 // The button points at the Services page form rather than a booking tool.
 // When a scheduling system exists, this href and the label are the only
 // things that change.
 const CTA_HREF = '/service/#contact';
 
-// Flanking panels. Purely decorative - each is a laptop lit in a different
-// tone so the two columns do not read as the same image twice.
+// Flanking panels. Purely decorative: they rotate on their own, take no
+// pointer events, and are hidden from assistive tech. Each object gets its
+// own duration and direction so the four never fall into step.
 const panels = [
-    { side: 'left', tone: 'cool', label: 'AF' },
-    { side: 'left', tone: 'warm', label: 'AF' },
-    { side: 'right', tone: 'warm', label: 'AF' },
-    { side: 'right', tone: 'cool', label: 'AF' }
+    { side: 'left', shape: 'laptop', tone: 'cool', spin: '18s', dir: 'normal' },
+    { side: 'left', shape: 'cube', tone: 'warm', spin: '22s', dir: 'reverse' },
+    { side: 'right', shape: 'phone', tone: 'warm', spin: '20s', dir: 'reverse' },
+    { side: 'right', shape: 'hourglass', tone: 'cool', spin: '16s', dir: 'normal' }
 ];
+
+const bySide = (side) => panels.filter((pn) => pn.side === side);
 ---
 
 <section class="cta">
     <div class="cta-grid">
-        <div class="panel-col">
-            {panels.filter((pn) => pn.side === 'left').map((pn) => (
-                <div class={`panel is-${pn.tone}`} aria-hidden="true">
-                    <div class="mini-laptop">
-                        <div class="mini-lid"><span>{pn.label}</span></div>
-                        <div class="mini-base"></div>
+        {['left', 'right'].map((side) => (
+            <div class={`panel-col is-${side}`} aria-hidden="true">
+                {bySide(side).map((pn) => (
+                    <div class={`panel is-${pn.tone}`}>
+                        <div class="stage">
+                            <div class={`obj is-${pn.shape}`}
+                                style={`--spin:${pn.spin}; --dir:${pn.dir}`}>
+
+                                {pn.shape === 'cube' && (
+                                    <>
+                                        <span class="f front"></span>
+                                        <span class="f back"></span>
+                                        <span class="f right"></span>
+                                        <span class="f left"></span>
+                                        <span class="f top"></span>
+                                        <span class="f bottom"></span>
+                                    </>
+                                )}
+
+                                {pn.shape === 'phone' && (
+                                    <>
+                                        <span class="p front"><i>AF</i></span>
+                                        <span class="p back"></span>
+                                        <span class="p right"></span>
+                                        <span class="p left"></span>
+                                    </>
+                                )}
+
+                                {pn.shape === 'laptop' && (
+                                    <>
+                                        <span class="l lid"><i>AF</i></span>
+                                        <span class="l deck"></span>
+                                    </>
+                                )}
+
+                                {/* Three silhouettes crossed at 60 degrees.
+                                    A single flat shape would vanish edge-on;
+                                    three give the impression of volume from
+                                    every angle for a fraction of the geometry
+                                    a real solid would need. */}
+                                {pn.shape === 'hourglass' && (
+                                    <>
+                                        <span class="h" style="--a:0deg"></span>
+                                        <span class="h" style="--a:60deg"></span>
+                                        <span class="h" style="--a:120deg"></span>
+                                    </>
+                                )}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            ))}
-        </div>
+                ))}
+            </div>
+        ))}
 
         <div class="cta-copy">
             <h2>Lead in your<br /><span>Industry</span></h2>
@@ -37,19 +83,8 @@ const panels = [
             </p>
             <a class="cta-button" href={CTA_HREF}>
                 <span class="cta-dot" aria-hidden="true"></span>
-                Book a call
+                Connect with us
             </a>
-        </div>
-
-        <div class="panel-col">
-            {panels.filter((pn) => pn.side === 'right').map((pn) => (
-                <div class={`panel is-${pn.tone}`} aria-hidden="true">
-                    <div class="mini-laptop">
-                        <div class="mini-lid"><span>{pn.label}</span></div>
-                        <div class="mini-base"></div>
-                    </div>
-                </div>
-            ))}
         </div>
     </div>
 </section>
@@ -61,7 +96,6 @@ const panels = [
     }
 
     .cta-grid {
-        position: relative;
         max-width: 1180px;
         margin: 0 auto;
         display: grid;
@@ -72,15 +106,15 @@ const panels = [
         border: 1px solid var(--border);
         border-radius: 1.5rem;
         /* Centre lit slightly, so the eye lands on the copy rather than on
-           the panels either side. */
+           the objects either side. */
         background:
             radial-gradient(70% 90% at 50% 50%, rgba(255, 255, 255, 0.035) 0%, transparent 70%),
             var(--bg-alt);
-        overflow: hidden;
     }
 
     /* --- Copy --- */
     .cta-copy {
+        grid-row: 1;
         text-align: center;
         padding: clamp(1rem, 4vh, 3rem) 0;
     }
@@ -131,8 +165,6 @@ const panels = [
         height: 2.5rem;
         border-radius: 50%;
         background-color: var(--accent);
-        /* Slow pulse, so the button has a pulse of life without animating
-           the whole control. */
         animation: cta-pulse 2.8s ease-in-out infinite;
     }
 
@@ -148,10 +180,14 @@ const panels = [
         }
     }
 
-    /* --- Flanking panels --- */
+    /* --- Panels ---
+       Decoration only: no pointer events, so hover and click do nothing and
+       the objects cannot swallow a click meant for the page. */
     .panel-col {
         display: grid;
         gap: 1.25rem;
+        pointer-events: none;
+        user-select: none;
     }
 
     .panel {
@@ -159,51 +195,189 @@ const panels = [
         place-items: center;
         aspect-ratio: 4 / 3;
         border-radius: 1rem;
-        background: radial-gradient(120% 100% at 50% 0%, #232323 0%, #131313 70%);
         border: 1px solid var(--border);
+        background: radial-gradient(120% 100% at 50% 0%, #242424 0%, #131313 70%);
         overflow: hidden;
     }
 
     .is-warm {
-        background: radial-gradient(120% 100% at 50% 0%, rgba(var(--accent-rgb), 0.28) 0%, #131313 70%);
+        background: radial-gradient(120% 100% at 50% 0%, rgba(var(--accent-rgb), 0.3) 0%, #131313 72%);
     }
 
-    /* --- Miniature laptop ---
-       A simplified two-part version rather than the full 3D build used in the
-       work cards: at this size the extra geometry would not be legible and
-       these are decoration, not the subject. */
-    .mini-laptop {
-        width: 62%;
-        transform: perspective(600px) rotateX(12deg);
+    /* perspective on the stage, never on the spinning element itself -
+       there it flattens the rotation. */
+    .stage {
+        perspective: 620px;
     }
 
-    .mini-lid {
+    .obj {
+        position: relative;
+        width: 92px;
+        height: 92px;
+        transform-style: preserve-3d;
+        /* Tilted slightly so the tops of the solids read, then spun about
+           the vertical. */
+        animation: spin-y var(--spin, 18s) linear infinite;
+        animation-direction: var(--dir, normal);
+    }
+
+    @keyframes spin-y {
+        from {
+            transform: rotateX(-14deg) rotateY(0deg);
+        }
+
+        to {
+            transform: rotateX(-14deg) rotateY(360deg);
+        }
+    }
+
+    /* --- Cube --- */
+    .f {
+        position: absolute;
+        inset: 0;
+        border: 1px solid #3d3d3d;
+        background: linear-gradient(150deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.5));
+        backdrop-filter: blur(2px);
+    }
+
+    .f.front {
+        transform: translateZ(46px);
+    }
+
+    .f.back {
+        transform: rotateY(180deg) translateZ(46px);
+    }
+
+    .f.right {
+        transform: rotateY(90deg) translateZ(46px);
+    }
+
+    .f.left {
+        transform: rotateY(-90deg) translateZ(46px);
+    }
+
+    .f.top {
+        transform: rotateX(90deg) translateZ(46px);
+        background: linear-gradient(150deg, rgba(var(--accent-rgb), 0.55), rgba(0, 0, 0, 0.5));
+    }
+
+    .f.bottom {
+        transform: rotateX(-90deg) translateZ(46px);
+    }
+
+    /* --- Phone --- */
+    .is-phone .p {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        border: 1px solid #3a3a3a;
+        border-radius: 8px;
+        background: linear-gradient(160deg, #2b2b2b, #141414);
+    }
+
+    .p.front,
+    .p.back {
+        width: 56px;
+        height: 104px;
+        margin: -52px 0 0 -28px;
+    }
+
+    .p.front {
         display: grid;
         place-items: center;
-        aspect-ratio: 16 / 10;
-        border-radius: 6px 6px 2px 2px;
+        background: #000;
+        transform: translateZ(7px);
+    }
+
+    .p.front i {
+        font-family: var(--font-display);
+        font-style: normal;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--accent);
+        text-shadow: 0 0 14px rgba(var(--accent-rgb), 0.65);
+    }
+
+    .p.back {
+        transform: rotateY(180deg) translateZ(7px);
+    }
+
+    .p.right,
+    .p.left {
+        width: 14px;
+        height: 104px;
+        margin: -52px 0 0 -7px;
+        border-radius: 3px;
+    }
+
+    .p.right {
+        transform: rotateY(90deg) translateZ(28px);
+    }
+
+    .p.left {
+        transform: rotateY(-90deg) translateZ(28px);
+    }
+
+    /* --- Laptop (simplified: screen plus deck) --- */
+    .is-laptop .l {
+        position: absolute;
+        left: 50%;
         border: 1px solid #3a3a3a;
+    }
+
+    .l.lid {
+        top: 6px;
+        display: grid;
+        place-items: center;
+        width: 104px;
+        height: 66px;
+        margin-left: -52px;
+        border-radius: 5px;
         background: #000;
     }
 
-    .mini-lid span {
+    .l.lid i {
         font-family: var(--font-display);
-        font-size: clamp(0.9rem, 2vw, 1.5rem);
+        font-style: normal;
+        font-size: 1.1rem;
         font-weight: 700;
         color: var(--accent);
-        text-shadow: 0 0 16px rgba(var(--accent-rgb), 0.6);
+        text-shadow: 0 0 14px rgba(var(--accent-rgb), 0.65);
     }
 
-    .mini-base {
-        height: 7px;
-        margin: 2px -9% 0;
-        border-radius: 0 0 5px 5px;
-        background: linear-gradient(180deg, #333 0%, #1b1b1b 100%);
+    .l.deck {
+        top: 74px;
+        width: 116px;
+        height: 58px;
+        margin-left: -58px;
+        border-radius: 4px;
+        background: linear-gradient(160deg, #2e2e2e, #161616);
+        transform-origin: top center;
+        transform: rotateX(78deg);
+    }
+
+    /* --- Hourglass ---
+       Each plane is the same silhouette, crossed at 60 degrees. */
+    .h {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 66px;
+        height: 88px;
+        margin: -44px 0 0 -33px;
+        transform: rotateY(var(--a));
+        background: linear-gradient(180deg,
+                rgba(var(--accent-rgb), 0.75) 0%,
+                rgba(var(--accent-rgb), 0.28) 48%,
+                rgba(var(--accent-rgb), 0.28) 52%,
+                rgba(var(--accent-rgb), 0.75) 100%);
+        clip-path: polygon(4% 0, 96% 0, 96% 8%, 56% 48%, 56% 52%, 96% 92%, 96% 100%,
+                4% 100%, 4% 92%, 44% 52%, 44% 48%, 4% 8%);
     }
 
     /* --- Layout ---
-       Panels only appear once there is room for them; below this the section
-       is the copy alone rather than a cramped three-column squeeze. */
+       Objects only appear once there is room; below this the section is the
+       copy alone rather than a cramped three-column squeeze. */
     @media (max-width: 900px) {
         .panel-col {
             display: none;
@@ -212,18 +386,39 @@ const panels = [
 
     @media (min-width: 901px) {
         .cta-grid {
-            grid-template-columns: minmax(180px, 1fr) minmax(0, 1.6fr) minmax(180px, 1fr);
+            grid-template-columns: minmax(170px, 1fr) minmax(0, 1.6fr) minmax(170px, 1fr);
             gap: clamp(1.5rem, 4vw, 3.5rem);
+        }
+
+        .panel-col.is-left {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .cta-copy {
+            grid-column: 2;
+        }
+
+        .panel-col.is-right {
+            grid-column: 3;
+            grid-row: 1;
         }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .cta-button {
+
+        .cta-button,
+        .obj {
             transition: none;
+            animation: none;
         }
 
         .cta-button:hover {
             transform: none;
+        }
+
+        .obj {
+            transform: rotateX(-14deg) rotateY(-28deg);
         }
 
         .cta-dot {

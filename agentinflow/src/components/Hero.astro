@@ -6,7 +6,8 @@
 // palette tokens.
 //
 // Motion: the keypad sways through a shallow angle on a loop, and individual
-// caps press when hovered or focused.
+// caps press when hovered. The caps are decoration, not controls - they are
+// not focusable and clicking them does nothing.
 
 // --- Isometric projection ---------------------------------------------------
 // Grid units in, screen coordinates out. z is a straight pixel lift, so
@@ -154,8 +155,7 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 
                 <!-- Caps, painted back to front -->
                 {keys.map((k) => (
-                    <g class={k.go ? 'cap is-go' : 'cap'} tabindex="0" role="button"
-                        aria-label={`${k.label} key`}>
+                    <g class={k.go ? 'cap is-go' : 'cap'}>
                         <path d={k.wallL} fill={k.go ? '#4d1122' : '#8f9499'} />
                         <path d={k.wallR} fill={k.go ? '#5d1527' : '#a9aeb3'} />
                         <path d={k.top} fill={k.go ? 'url(#capTopGo)' : 'url(#capTop)'} />
@@ -234,26 +234,19 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
         opacity: 0.5;
     }
 
-    /* --- Press on hover --- */
+    /* --- Press on hover ---
+       The caps are decoration, not controls: nothing is focusable, nothing
+       is announced as a button and there is no pointer cursor, so clicking
+       does nothing. Pointer events stay enabled - :hover needs them. */
     .cap {
-        cursor: pointer;
         transition: transform 0.16s cubic-bezier(0.34, 1.2, 0.64, 1);
     }
 
-    .cap:hover,
-    .cap:focus-visible {
+    .cap:hover {
         /* Straight down the screen: that is the plate normal in this
            projection. Travel stops short of the well depth so the cap
            seats rather than sinking through the floor. */
         transform: translateY(9px);
-    }
-
-    .cap:focus-visible {
-        outline: none;
-    }
-
-    .cap:focus-visible .cap-label {
-        text-decoration: underline;
     }
 
     .go-glow {
@@ -261,8 +254,7 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
         transition: opacity 0.25s ease;
     }
 
-    .keypad:has(.is-go:hover) .go-glow,
-    .keypad:has(.is-go:focus-visible) .go-glow {
+    .keypad:has(.is-go:hover) .go-glow {
         opacity: 1;
     }
 
