@@ -212,30 +212,27 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 
     .sway {
         transform-style: preserve-3d;
-        animation: keypad-sway 20s ease-in-out infinite;
+        animation: keypad-sway 14s ease-in-out infinite;
         /* Hovering a cap must not touch this. The animation lives on the
            wrapper and the hover lives on the cap inside it, so the two
            never share a transform and the turn carries on underneath. */
     }
 
-    /* Forty-five degrees each way, over twenty seconds.
-       The artwork is a flat isometric drawing, so turning it about Y only
-       foreshortens it - it never reveals a face that was not drawn. Width
-       scales with the cosine of the angle: 87% at 30 degrees, 71% here,
-       50% at 60, nothing at 90. Forty-five is the widest swing that still
-       reads as a turn rather than as the object being squashed.
-
-       If even this looks wrong, the settled version before any of it was
-       9 degrees each way over 11s. */
+    /* Rocks between 30 and 45 degrees - a 15 degree band, never crossing
+       back through square. The artwork is a flat isometric drawing, so
+       turning it about Y only foreshortens it: it is 87% of its width at
+       30 and 71% at 45, and the loop just breathes between those two.
+       rotateX is held constant here; with a band this narrow, varying it
+       as well read as a wobble rather than a turn. */
     @keyframes keypad-sway {
 
         0%,
         100% {
-            transform: rotateY(-45deg) rotateX(3deg);
+            transform: rotateY(30deg) rotateX(2deg);
         }
 
         50% {
-            transform: rotateY(45deg) rotateX(-2deg);
+            transform: rotateY(45deg) rotateX(2deg);
         }
     }
 
