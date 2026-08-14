@@ -1,0 +1,228 @@
+---
+// The bridge to the Services page: a glass pane with two hands reaching in
+// from either side, fingertips stopping just short of it.
+//
+// It sits between Our work and Our product, and it is also where the home
+// page finally says what we sell - the three service names live here, so a
+// visitor (and a crawler) does not have to reach /service/ to find them.
+//
+// The hands are one hand-authored path, mirrored. Deliberately graphic
+// rather than photographic: a traced silhouette at this size would need a
+// real cutout, and a half-traced one looks like a mistake. Swapping in a
+// transparent PNG later means replacing the two <svg> blocks and nothing
+// else.
+const HAND = `M0,62
+    C40,58 70,54 96,52
+    C114,49 124,43 140,41
+    C160,38 182,36 200,36
+    C208,36 212,39 211,42.5
+    C210,46 205,48 197,49
+    C178,51 162,54 150,57
+    C154,64 150,72 138,77
+    C126,82 110,84 96,82
+    C64,86 32,90 0,94 Z`;
+
+const services = ['Web & app development', 'AI agents', 'n8n automation'];
+---
+
+<section class="bridge-section" id="services">
+    <div class="bridge">
+        <svg class="hand is-left" viewBox="0 0 220 150" aria-hidden="true">
+            <defs>
+                <linearGradient id="skinL" x1="0" y1="0" x2="0.4" y2="1">
+                    <stop offset="0%" stop-color="#2f2f2f" />
+                    <stop offset="100%" stop-color="#101010" />
+                </linearGradient>
+            </defs>
+            <path d={HAND} fill="url(#skinL)" stroke="rgba(255,255,255,0.09)" stroke-width="1" />
+        </svg>
+
+        <a class="pane" href="/service/">
+            <span class="eyebrow">What we do</span>
+            <h2>Services</h2>
+            <ul class="service-names">
+                {services.map((s) => <li>{s}</li>)}
+            </ul>
+            <span class="pane-cta">
+                See what we build
+                <span class="arrow" aria-hidden="true">→</span>
+            </span>
+        </a>
+
+        {/* Same path, mirrored - so the two hands are guaranteed to match. */}
+        <svg class="hand is-right" viewBox="0 0 220 150" aria-hidden="true">
+            <defs>
+                <linearGradient id="skinR" x1="0" y1="0" x2="0.4" y2="1">
+                    <stop offset="0%" stop-color="#2f2f2f" />
+                    <stop offset="100%" stop-color="#101010" />
+                </linearGradient>
+            </defs>
+            <g transform="translate(220,0) scale(-1,1)">
+                <path d={HAND} fill="url(#skinR)" stroke="rgba(255,255,255,0.09)" stroke-width="1" />
+            </g>
+        </svg>
+    </div>
+</section>
+
+<style>
+    .bridge-section {
+        padding: clamp(4rem, 12vh, 8rem) 1.5rem;
+        background-color: var(--bg);
+    }
+
+    .bridge {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: clamp(0.25rem, 2vw, 1.25rem);
+    }
+
+    /* --- Hands --- */
+    .hand {
+        width: clamp(150px, 24vw, 280px);
+        height: auto;
+        /* Fades into the ground at the wrist, so the arm arrives from
+           offstage rather than being cut off by an edge. */
+        mask-image: linear-gradient(90deg, transparent 0%, #000 42%);
+        -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 42%);
+    }
+
+    .is-left {
+        justify-self: end;
+    }
+
+    .is-right {
+        justify-self: start;
+        mask-image: linear-gradient(270deg, transparent 0%, #000 42%);
+        -webkit-mask-image: linear-gradient(270deg, transparent 0%, #000 42%);
+    }
+
+    /* --- Glass pane --- */
+    .pane {
+        display: block;
+        width: min(100%, 380px);
+        padding: clamp(1.75rem, 4vw, 2.5rem);
+        text-align: center;
+        text-decoration: none;
+        border-radius: 1.75rem;
+
+        /* Same recipe as the nav bar: a faint sheen over a translucent
+           ground, a hairline border, and an inset highlight along the top
+           edge. saturate() is what stops what shows through going flat. */
+        border: 1px solid var(--glass-border);
+        background-image: linear-gradient(180deg, var(--glass-sheen-top) 0%, var(--glass-sheen-bottom) 100%);
+        background-color: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow:
+            0 24px 60px rgba(0, 0, 0, 0.55),
+            inset 0 1px 0 var(--glass-highlight);
+
+        transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    /* Nothing passes behind the pane to frost, so an opaque ground is the
+       honest fallback rather than a washed-out translucent one. */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        .pane {
+            background-color: var(--surface);
+        }
+    }
+
+    .pane:hover,
+    .pane:focus-visible {
+        transform: translateY(-4px);
+        border-color: rgba(var(--accent-rgb), 0.55);
+        box-shadow:
+            0 28px 70px rgba(0, 0, 0, 0.6),
+            0 0 40px rgba(var(--accent-rgb), 0.18),
+            inset 0 1px 0 var(--glass-highlight);
+    }
+
+    .eyebrow {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+    }
+
+    .pane h2 {
+        margin: 0 0 1.25rem;
+        font-family: var(--font-display);
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: var(--heading);
+    }
+
+    .service-names {
+        margin: 0 0 1.5rem;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    .service-names li {
+        font-size: 0.98rem;
+        line-height: 1.5;
+        color: var(--text);
+    }
+
+    .pane-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--heading);
+    }
+
+    .arrow {
+        transition: transform 0.35s ease;
+    }
+
+    .pane:hover .arrow,
+    .pane:focus-visible .arrow {
+        transform: translateX(4px);
+    }
+
+    /* --- Layout ---
+       The hands need room to read as hands. Below this they would be
+       thumbnails flanking a squeezed pane, so they go and the pane takes
+       the width. */
+    @media (max-width: 820px) {
+        .hand {
+            display: none;
+        }
+
+        .bridge {
+            grid-template-columns: minmax(0, 1fr);
+            justify-items: center;
+        }
+
+        .pane {
+            width: min(100%, 420px);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .pane,
+        .arrow {
+            transition: none;
+        }
+
+        .pane:hover {
+            transform: none;
+        }
+
+        .pane:hover .arrow {
+            transform: none;
+        }
+    }
+</style>
