@@ -99,7 +99,9 @@ const limbs = services.map((s, i) => {
                         stroke widens it without widening the drawing. */}
                     <path class="hit" d={lb.d} />
                     <path class="twig" d={lb.d} />
-                    <text class="limb-label" x={lb.tipX} y={lb.tipY - 18}>{lb.title}</text>
+                    {/* Sits close to the tip now that no knot separates the
+                        two - the label is what the twig ends in. */}
+                    <text class="limb-label" x={lb.tipX} y={lb.tipY - 9}>{lb.title}</text>
                 </g>
             ))}
 
@@ -108,7 +110,7 @@ const limbs = services.map((s, i) => {
                 <g class="stage">
                     <rect class="hit-box" x={st.x - 66} y={st.y} width="132" height={STUB + 56} />
                     <path class="stub" d={`M${f(st.x)},${f(st.y)} L${f(st.x)},${f(st.tipY)}`} />
-                    <text class="stage-title" x={st.x} y={st.tipY + 26}>{st.t}</text>
+                    <text class="stage-title" x={st.x} y={st.tipY + 17}>{st.t}</text>
                 </g>
             ))}
 
