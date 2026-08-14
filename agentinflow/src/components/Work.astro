@@ -14,6 +14,7 @@ const projects = [
         client: 'Bellemeade Advisors · Healthcare',
         title: 'Prescription price comparison platform',
         problem: 'Patients had no straightforward way to see what the same prescription costs at different pharmacies, so most paid whatever their usual one charged.',
+        url: 'https://bellemeade-advisors.onrender.com/',
         metric: null,
         metricLabel: null
     },
@@ -22,6 +23,7 @@ const projects = [
         client: 'Crossing Cultural Boundaries · Non-profit',
         title: 'Cultural exchange and scholarship programme site',
         problem: 'CCB promotes cultural exchange and youth leadership through scholarships and community impact, and needed a public home for that work.',
+        url: 'https://www.crossingculturalboundaries.com/',
         metric: null,
         metricLabel: null
     }
@@ -53,8 +55,11 @@ const projects = [
 
                     {/* Built from divs in real CSS 3D rather than drawn flat, so
                         the hover turn is an actual rotation and the lid keeps
-                        its correct angle to the base throughout. */}
-                    <div class="laptop-scene" aria-hidden="true">
+                        its correct angle to the base throughout.
+                        The laptop is the link to the live site - the title
+                        no longer carries one. */}
+                    <a class="laptop-scene" href={pr.url} target="_blank" rel="noopener"
+                        aria-label={`Visit the ${pr.client.split(' · ')[0]} site`}>
                         <div class="turntable">
                             <div class="laptop">
                                 <div class="lid">
@@ -66,7 +71,7 @@ const projects = [
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </li>
             ))}
         </ol>
@@ -122,7 +127,7 @@ const projects = [
         display: grid;
         gap: 2rem;
         align-items: center;
-        padding: clamp(1.75rem, 4vw, 2.75rem);
+        padding: clamp(1.5rem, 3vw, 2rem);
         background-color: var(--surface);
         border: 1px solid var(--border);
         border-radius: 1rem;
@@ -183,21 +188,27 @@ const projects = [
     /* ================= Laptop ================= */
     .laptop-scene {
         justify-self: center;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        width: 260px;
-        /* Tall enough for the upright lid, which stands roughly 130px above
-           the hinge once the whole machine is tilted back. */
-        height: 250px;
+        display: block;
+        width: 230px;
+        /* Sized to what the machine actually occupies: a 112px deck laid
+           back to ~42px plus a lid standing ~118px above the hinge. Any
+           taller and the card is padded out by empty scene. */
+        height: 172px;
         /* perspective belongs on the ancestor; on the rotating element
            itself it flattens the result. */
-        perspective: 1000px;
+        perspective: 900px;
+        cursor: pointer;
     }
 
     /* Spins about the world vertical. Kept on its own element so the
        laptop's own tilt is not fighting the hover rotation. */
     .turntable {
+        /* Flex, so the deck can be pinned to the bottom of the scene and the
+           lid grows upward into it. Without this the deck sat at the top of
+           the scene and the lid overflowed above the card. */
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
         width: 100%;
         height: 100%;
         transform-style: preserve-3d;
@@ -211,9 +222,8 @@ const projects = [
        stays legible rather than being seen edge-on from above. */
     .laptop {
         position: relative;
-        width: 230px;
-        height: 150px;
-        margin: 0 auto 14px;
+        width: 196px;
+        height: 112px;
         transform-style: preserve-3d;
         transform: rotateX(68deg);
     }
@@ -223,12 +233,12 @@ const projects = [
         position: absolute;
         top: 0;
         left: 0;
-        width: 230px;
-        border-radius: 6px;
+        width: 196px;
+        border-radius: 5px;
     }
 
     .base {
-        height: 150px;
+        height: 112px;
         background: linear-gradient(160deg, #2c2c2c 0%, #171717 100%);
         border: 1px solid #3a3a3a;
         box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
@@ -264,8 +274,8 @@ const projects = [
        -76deg opens it to 104 from the base: slightly past square, which is
        how a laptop actually sits, and it leaves the screen facing forward. */
     .lid {
-        top: -145px;
-        height: 145px;
+        top: -124px;
+        height: 124px;
         transform-origin: bottom center;
         transform: rotateX(-76deg);
         background: linear-gradient(160deg, #303030 0%, #1a1a1a 100%);
@@ -284,7 +294,7 @@ const projects = [
 
     .screen span {
         font-family: var(--font-display);
-        font-size: 2.6rem;
+        font-size: 2.1rem;
         font-weight: 700;
         letter-spacing: -0.02em;
         color: var(--accent);
@@ -294,9 +304,15 @@ const projects = [
     /* --- Layout --- */
     @media (min-width: 860px) {
         .project-card {
-            grid-template-columns: 1fr 260px;
+            grid-template-columns: 1fr 230px;
             gap: 3rem;
         }
+    }
+
+    .laptop-scene:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 6px;
+        border-radius: 8px;
     }
 
     @media (prefers-reduced-motion: reduce) {
