@@ -5,15 +5,15 @@
 // no 3D runtime, no asset licence, and every colour resolves through the
 // palette tokens.
 //
-// Motion is no longer scroll-driven. The keypad sways through a shallow angle
-// on a loop, and individual caps press when hovered.
+// Motion: the keypad sways through a shallow angle on a loop, and individual
+// caps press when hovered or focused.
 
 // --- Isometric projection ---------------------------------------------------
-// Grid units in, screen coordinates out. z is a straight pixel lift, so key
-// height is independent of footprint.
+// Grid units in, screen coordinates out. z is a straight pixel lift, so
+// heights are independent of footprint.
 const U = 92;
 const CX = 400;
-const CY = 210;
+const CY = 205;
 const COS30 = 0.8660254;
 
 const iso = (x, y, z = 0) => ({
@@ -23,37 +23,68 @@ const iso = (x, y, z = 0) => ({
 
 const p = (pt) => `${pt.X.toFixed(1)},${pt.Y.toFixed(1)}`;
 
-// A tapered slab: square footprint, smaller top face, two visible side walls.
-// The taper is what makes a keycap read as a keycap rather than a box.
-function slab(x0, y0, size, height, taper) {
+// Flat square face at a given height.
+function face(x0, y0, size, z) {
     const x1 = x0 + size;
     const y1 = y0 + size;
+    return `M${p(iso(x0, y0, z))} L${p(iso(x1, y0, z))} L${p(iso(x1, y1, z))} L${p(iso(x0, y1, z))} Z`;
+}
+
+// A tapered slab standing on z0: square footprint, smaller top face, and the
+// two side walls that meet at the front corner - the only ones visible.
+// The taper is what makes a keycap read as a keycap rather than a box.
+function slab(x0, y0, size, height, taper, z0 = 0) {
+    const x1 = x0 + size;
+    const y1 = y0 + size;
+    const zt = z0 + height;
 
     const b = {
-        back: iso(x0, y0), right: iso(x1, y0),
-        front: iso(x1, y1), left: iso(x0, y1)
+        right: iso(x1, y0, z0), front: iso(x1, y1, z0), left: iso(x0, y1, z0)
     };
     const t = {
-        back: iso(x0 + taper, y0 + taper, height),
-        right: iso(x1 - taper, y0 + taper, height),
-        front: iso(x1 - taper, y1 - taper, height),
-        left: iso(x0 + taper, y1 - taper, height)
+        back: iso(x0 + taper, y0 + taper, zt),
+        right: iso(x1 - taper, y0 + taper, zt),
+        front: iso(x1 - taper, y1 - taper, zt),
+        left: iso(x0 + taper, y1 - taper, zt)
     };
 
     return {
         top: `M${p(t.back)} L${p(t.right)} L${p(t.front)} L${p(t.left)} Z`,
-        // Only the two faces meeting at the front corner are visible.
         wallR: `M${p(b.right)} L${p(b.front)} L${p(t.front)} L${p(t.right)} Z`,
         wallL: `M${p(b.left)} L${p(b.front)} L${p(t.front)} L${p(t.left)} Z`,
-        centre: iso((x0 + x1) / 2, (y0 + y1) / 2, height)
+        centre: iso((x0 + x1) / 2, (y0 + y1) / 2, zt)
     };
 }
 
-const KEY_SIZE = 0.84;
+// --- Plate with a recessed well ---------------------------------------------
+const PLATE_X = -0.24;
+const PLATE_SIZE = 2.32;
+const PLATE_H = 26;
+
+const RECESS_INSET = 0.1;
+const RECESS_DEPTH = 7;
+
+const plate = slab(PLATE_X, PLATE_X, PLATE_SIZE, PLATE_H, 0.02);
+
+const rx0 = PLATE_X + RECESS_INSET;
+const rSize = PLATE_SIZE - RECESS_INSET * 2;
+const rx1 = rx0 + rSize;
+const FLOOR_Z = PLATE_H - RECESS_DEPTH;
+
+const recess = {
+    floor: face(rx0, rx0, rSize, FLOOR_Z),
+    // Only the two walls meeting at the BACK corner face the viewer inside a
+    // well - the mirror of which walls are visible on a solid slab.
+    wallBackR: `M${p(iso(rx0, rx0, PLATE_H))} L${p(iso(rx1, rx0, PLATE_H))} L${p(iso(rx1, rx0, FLOOR_Z))} L${p(iso(rx0, rx0, FLOOR_Z))} Z`,
+    wallBackL: `M${p(iso(rx0, rx0, PLATE_H))} L${p(iso(rx0, rx1, PLATE_H))} L${p(iso(rx0, rx1, FLOOR_Z))} L${p(iso(rx0, rx0, FLOOR_Z))} Z`
+};
+
+// --- Keys -------------------------------------------------------------------
+const KEY_SIZE = 0.82;
 const KEY_H = 42;
 const KEY_TAPER = 0.12;
-
-const plate = slab(-0.2, -0.2, 2.24, 22, 0.02);
+// Nudged back into the well so more of the plate shows at the front.
+const KEY_SHIFT = -0.06;
 
 const keys = [
     { i: 0, j: 0, label: 'WEB' },
@@ -62,9 +93,10 @@ const keys = [
     { i: 1, j: 1, label: 'GO', go: true }
 ].map((k) => ({
     ...k,
-    ...slab(k.i, k.j, KEY_SIZE, KEY_H, KEY_TAPER),
-    // Larger i+j sits nearer the viewer and must paint last: SVG has no
-    // z-buffer, so paint order is the depth order.
+    // Caps stand on the well floor, not on z=0. At z=0 they sat on the same
+    // plane as the plate's underside and cut straight through it.
+    ...slab(k.i + KEY_SHIFT, k.j + KEY_SHIFT, KEY_SIZE, KEY_H, KEY_TAPER, FLOOR_Z),
+    // SVG has no z-buffer, so paint order is depth order: nearer caps last.
     depth: k.i + k.j
 })).sort((a, b) => a.depth - b.depth);
 
@@ -80,7 +112,7 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 
     <div class="stage">
         <div class="sway">
-            <svg class="keypad" viewBox="0 0 800 480" role="img"
+            <svg class="keypad" viewBox="80 90 640 340" role="img"
                 aria-label="An isometric keypad with keys labelled Web, AI, n8n and Go">
                 <defs>
                     <linearGradient id="capTop" x1="0" y1="0" x2="0.6" y2="1">
@@ -92,8 +124,8 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
                         <stop offset="100%" stop-color="#6d1830" />
                     </linearGradient>
                     <linearGradient id="plateTop" x1="0" y1="0" x2="0.5" y2="1">
-                        <stop offset="0%" stop-color="#333333" />
-                        <stop offset="100%" stop-color="#1e1e1e" />
+                        <stop offset="0%" stop-color="#3a3a3a" />
+                        <stop offset="100%" stop-color="#212121" />
                     </linearGradient>
                     <radialGradient id="goGlow" cx="50%" cy="50%" r="50%">
                         <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.8" />
@@ -101,16 +133,24 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
                     </radialGradient>
                 </defs>
 
-                <ellipse class="ground" cx="400" cy="358" rx="250" ry="70" />
+                <ellipse class="ground" cx="400" cy="370" rx="245" ry="66" />
 
+                <!-- Plate body -->
                 <g class="plate">
-                    <path d={plate.wallL} fill="#101010" />
-                    <path d={plate.wallR} fill="#171717" />
+                    <path d={plate.wallL} fill="#0e0e0e" />
+                    <path d={plate.wallR} fill="#161616" />
                     <path d={plate.top} fill="url(#plateTop)" />
                 </g>
 
-                <ellipse class="go-glow" cx={goKey.centre.X} cy={goKey.centre.Y + 26}
-                    rx="130" ry="64" fill="url(#goGlow)" />
+                <!-- Recessed well the caps sit inside -->
+                <g class="recess">
+                    <path d={recess.floor} fill="#0a0a0a" />
+                    <path d={recess.wallBackL} fill="#151515" />
+                    <path d={recess.wallBackR} fill="#101010" />
+                </g>
+
+                <ellipse class="go-glow" cx={goKey.centre.X} cy={goKey.centre.Y + 24}
+                    rx="120" ry="58" fill="url(#goGlow)" />
 
                 <!-- Caps, painted back to front -->
                 {keys.map((k) => (
@@ -132,15 +172,14 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 </section>
 
 <style>
-    /* Three stacked rows, centred as a column. */
     .hero {
         min-height: 100vh;
         display: grid;
         grid-template-rows: auto auto auto;
         align-content: center;
         justify-items: center;
-        gap: clamp(1rem, 3vh, 2.5rem);
-        padding: 8rem 1.5rem 4rem;
+        gap: clamp(0.5rem, 2vh, 1.5rem);
+        padding: 7rem 1.5rem 3rem;
         text-align: center;
     }
 
@@ -148,19 +187,19 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
         margin: 0;
         font-family: var(--font-display);
         font-weight: 700;
-        font-size: clamp(2.25rem, 10vw, 9rem);
+        font-size: clamp(1.75rem, 5.5vw, 5rem);
         line-height: 1;
-        letter-spacing: -0.03em;
+        letter-spacing: -0.02em;
         white-space: nowrap;
         color: var(--heading);
         user-select: none;
     }
 
-    /* perspective has to sit on the parent for the child's rotation to have
-       any depth - applied to the child it flattens. */
+    /* perspective has to sit on the parent for the child's rotation to read
+       as depth - applied to the rotating element itself it flattens. */
     .stage {
-        width: min(70vw, 520px);
-        perspective: 1100px;
+        width: min(92vw, 760px);
+        perspective: 1300px;
     }
 
     .sway {
@@ -169,8 +208,8 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
     }
 
     /* A shallow oscillation rather than a full turn: the drawing is a fixed
-       isometric projection, so large angles would expose faces that were
-       never drawn. Kept under 10 degrees, where it reads as a sway. */
+       isometric projection, so a larger angle would swing round to faces that
+       were never drawn. */
     @keyframes keypad-sway {
 
         0%,
@@ -203,9 +242,10 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 
     .cap:hover,
     .cap:focus-visible {
-        /* Down the screen only. The caps travel along the plate normal, which
-           in this projection is straight down. */
-        transform: translateY(11px);
+        /* Straight down the screen: that is the plate normal in this
+           projection. Travel stops short of the well depth so the cap
+           seats rather than sinking through the floor. */
+        transform: translateY(9px);
     }
 
     .cap:focus-visible {
@@ -216,7 +256,6 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
         text-decoration: underline;
     }
 
-    /* GO lights the plate beneath it when pressed */
     .go-glow {
         opacity: 0;
         transition: opacity 0.25s ease;
