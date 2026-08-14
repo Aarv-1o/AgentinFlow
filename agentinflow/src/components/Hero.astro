@@ -9,18 +9,10 @@
 // caps press when hovered. The caps are decoration, not controls - they are
 // not focusable and clicking them does nothing.
 
-// --- Wordmark ---------------------------------------------------------------
-// The mark reads AF at rest and unfolds to AGENTINFLOW as the hero is
-// scrolled through, then folds back as it leaves. A and F are the two
-// letters that stay; everything between and after them collapses.
+// The wordmark here is static. The AF-to-AGENTINFLOW fold lives in the nav
+// instead: driven from the hero it was carried off screen by the same
+// scroll that played it, so it could never be watched. The nav is fixed.
 //
-//   A GENTIN F LOW
-//   ^        ^
-// index 0 and index 7.
-const WORD = 'AGENTINFLOW';
-const KEEP = new Set([0, 7]);
-const letters = [...WORD].map((ch, i) => ({ ch, keep: KEEP.has(i) }));
-
 // --- Isometric projection ---------------------------------------------------
 // Grid units in, screen coordinates out. z is a straight pixel lift, so
 // heights are independent of footprint.
@@ -121,13 +113,7 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 ---
 
 <section class="hero">
-    {/* aria-label carries the name: without it a screen reader meeting
-        eleven separate spans may spell the word out letter by letter. */}
-    <h1 class="hero-wordmark" aria-label="AgentinFlow">
-        {letters.map((l) => (
-            <span class={l.keep ? 'ltr is-keep' : 'ltr is-fold'} aria-hidden="true">{l.ch}</span>
-        ))}
-    </h1>
+    <h1 class="hero-wordmark">AGENTINFLOW</h1>
 
     <div class="stage">
         <div class="sway">
@@ -201,14 +187,8 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
         text-align: center;
     }
 
-    /* --p is the unfold: 0 is AF, 1 is the full word. It defaults to 1 so
-       that with no JS, or with reduced motion, the page simply shows the
-       name. */
     .hero-wordmark {
-        --p: 1;
         margin: 0;
-        display: flex;
-        justify-content: center;
         font-family: var(--font-wordmark);
         font-weight: 700;
         font-size: clamp(1.75rem, 5.5vw, 5rem);
@@ -217,31 +197,6 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
         white-space: nowrap;
         color: var(--heading);
         user-select: none;
-    }
-
-    .ltr {
-        display: inline-block;
-    }
-
-    /* A and F: wine at rest, white once open. The flat colour before it is
-       the fallback for browsers without color-mix. */
-    .is-keep {
-        color: var(--accent);
-        color: color-mix(in srgb, var(--heading) calc(var(--p) * 100%), var(--accent));
-    }
-
-    /* The folding letters. Width is driven from a measured natural width so
-       the collapse is exact - guessing an em value per letter drifts, and
-       the drift is visible when eleven of them accumulate. Until the
-       measurement lands, is-ready is absent and the width stays auto, so
-       the word is simply shown in full rather than collapsed to nothing. */
-    .is-fold {
-        overflow: hidden;
-        opacity: var(--p);
-    }
-
-    .is-ready .is-fold {
-        width: calc(var(--w, 0px) * var(--p));
     }
 
     /* perspective has to sit on the parent for the child's rotation to read
@@ -339,71 +294,3 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
         }
     }
 </style>
-
-<script>
-    // Drives the wordmark's unfold from scroll position.
-    //
-    // The curve is a tent, not a ramp: closed at the top of the page, fully
-    // open through the middle of the hero, closed again by the time the
-    // hero has left. min() of a rising and a falling edge gives that in one
-    // expression and cannot get stuck open at either end.
-    const mark = document.querySelector<HTMLElement>('.hero-wordmark');
-    const hero = document.querySelector<HTMLElement>('.hero');
-
-    if (mark && hero && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const folds = Array.from(mark.querySelectorAll<HTMLElement>('.is-fold'));
-
-        // Natural widths have to be read while the letters are at full size,
-        // so the class that constrains them is dropped first. Re-run on
-        // resize: the font size is a vw clamp, so the widths move with it.
-        const measure = () => {
-            mark.classList.remove('is-ready');
-            folds.forEach((el) => el.style.removeProperty('--w'));
-            const widths = folds.map((el) => el.getBoundingClientRect().width);
-            folds.forEach((el, i) => el.style.setProperty('--w', `${widths[i].toFixed(2)}px`));
-            mark.classList.add('is-ready');
-        };
-
-        // Fraction of the hero spent opening, and again closing.
-        const EDGE = 0.35;
-
-        const update = () => {
-            const h = hero.offsetHeight || 1;
-            const s = window.scrollY;
-            const edge = h * EDGE;
-            const opening = s / edge;
-            const closing = (h - s) / edge;
-            const p = Math.max(0, Math.min(1, Math.min(opening, closing)));
-            mark.style.setProperty('--p', p.toFixed(3));
-        };
-
-        let queued = false;
-        const onScroll = () => {
-            if (queued) return;
-            queued = true;
-            requestAnimationFrame(() => {
-                queued = false;
-                update();
-            });
-        };
-
-        const start = () => {
-            measure();
-            update();
-        };
-
-        // Measuring before the webfont swaps in records the fallback's
-        // metrics, and every letter then sits at the wrong width.
-        if (document.fonts?.ready) {
-            document.fonts.ready.then(start);
-        } else {
-            start();
-        }
-
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', () => {
-            measure();
-            update();
-        });
-    }
-</script>

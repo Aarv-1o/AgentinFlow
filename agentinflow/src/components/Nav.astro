@@ -14,10 +14,27 @@ const links = [
 ];
 
 const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
+
+// The logotype folds: full name at the top of the page, AF once scrolled.
+// A and F are the letters that stay, everything between and after them
+// collapses.
+//
+//   A GENTIN F LOW
+//   ^        ^
+// index 0 and index 7.
+const WORD = 'AGENTINFLOW';
+const KEEP = new Set([0, 7]);
+const letters = [...WORD].map((ch, i) => ({ ch, keep: KEEP.has(i) }));
 ---
 
 <nav class="site-nav" aria-label="Primary">
-    <a class="wordmark" href="/" aria-label="AgentinFlow home">AF</a>
+    {/* aria-label carries the name: without it a screen reader meeting
+        eleven separate spans may spell the word out letter by letter. */}
+    <a class="wordmark" href="/" aria-label="AgentinFlow home">
+        {letters.map((l) => (
+            <span class={l.keep ? 'ltr is-keep' : 'ltr is-fold'} aria-hidden="true">{l.ch}</span>
+        ))}
+    </a>
 
     <ul class="nav-links">
         {links.map(({ href, label }) => (
@@ -86,10 +103,13 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
     }
 
     /* --- Wordmark --- */
+    /* --p is the unfold: 0 is AF, 1 is the full name. It defaults to 1, so
+       with no JS or with reduced motion the bar simply shows the name. */
     .wordmark {
+        --p: 1;
         justify-self: start;
-        /* Same face as the hero mark: the hero collapses to AF, and the two
-           marks are then the same thing in two places. */
+        display: flex;
+        /* Same face as the hero mark. */
         font-family: var(--font-wordmark);
         font-size: 1.5rem;
         font-weight: 700;
@@ -97,11 +117,37 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
         letter-spacing: -0.02em;
         color: var(--accent);
         text-decoration: none;
-        transition: color 0.25s ease;
     }
 
-    .wordmark:hover,
-    .wordmark:focus-visible {
+    .ltr {
+        display: inline-block;
+    }
+
+    /* A and F: white while the name is open, wine once folded to AF. */
+    .is-keep {
+        color: var(--accent);
+        color: color-mix(in srgb, var(--heading) calc(var(--p) * 100%), var(--accent));
+    }
+
+    /* The folding letters. Width comes from a measured natural width rather
+       than a guessed em value - per-letter guesses drift, and the drift
+       shows once nine of them accumulate. Until the measurement lands
+       is-ready is absent and the width stays auto, so the name shows in
+       full rather than collapsing to nothing. */
+    .is-fold {
+        overflow: hidden;
+        opacity: var(--p);
+        color: var(--heading);
+    }
+
+    .is-ready .is-fold {
+        width: calc(var(--w, 0px) * var(--p));
+    }
+
+    /* Has to target the letters: each one sets its own colour, so a rule on
+       the anchor alone would never reach them. */
+    .wordmark:hover .ltr,
+    .wordmark:focus-visible .ltr {
         color: var(--cta-hover);
     }
 
@@ -294,3 +340,63 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
         }
     }
 </style>
+
+<script>
+    // Folds the logotype as the page leaves the top: full name at rest,
+    // AF once scrolled. Driven from the nav rather than the hero because
+    // the nav is fixed - anchored in the hero, the same scroll that played
+    // the fold carried it off screen.
+    const mark = document.querySelector<HTMLElement>('.site-nav .wordmark');
+
+    if (mark && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const folds = Array.from(mark.querySelectorAll<HTMLElement>('.is-fold'));
+
+        // Natural widths must be read at full size, so the class that
+        // constrains them is dropped first.
+        const measure = () => {
+            mark.classList.remove('is-ready');
+            folds.forEach((el) => el.style.removeProperty('--w'));
+            const widths = folds.map((el) => el.getBoundingClientRect().width);
+            folds.forEach((el, i) => el.style.setProperty('--w', `${widths[i].toFixed(2)}px`));
+            mark.classList.add('is-ready');
+        };
+
+        // Pixels of scroll the fold takes. Short on purpose: it should be
+        // finished well inside the first screen, not tracking the page.
+        const RANGE = 200;
+
+        const update = () => {
+            const p = Math.max(0, Math.min(1, 1 - window.scrollY / RANGE));
+            mark.style.setProperty('--p', p.toFixed(3));
+        };
+
+        let queued = false;
+        const onScroll = () => {
+            if (queued) return;
+            queued = true;
+            requestAnimationFrame(() => {
+                queued = false;
+                update();
+            });
+        };
+
+        const start = () => {
+            measure();
+            update();
+        };
+
+        // Measuring before the webfont swaps in records the fallback's
+        // metrics, and every letter then sits at the wrong width.
+        if (document.fonts?.ready) {
+            document.fonts.ready.then(start);
+        } else {
+            start();
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', () => {
+            measure();
+            update();
+        });
+    }
+</script>
