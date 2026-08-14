@@ -12,7 +12,42 @@ import Footer from '../components/Footer.astro';
 // nav and footer are independently switchable. Both are on everywhere now;
 // the flags stay because the home page was rebuilt from a blank ground with
 // the footer off, and a future landing page may want the same.
-const { title, description, canonical, nav = true, footer = true } = Astro.props;
+const {
+    title,
+    description,
+    canonical,
+    nav = true,
+    footer = true,
+    // Square logo, because it is the only image on the site big enough to
+    // serve. Social cards want 1200x630 - see the note by og:image.
+    ogImage = '/img/agentinflow-logo2.png',
+    noindex = false
+} = Astro.props;
+
+const SITE = 'https://www.agentinflow.com';
+const ogUrl = new URL(ogImage, SITE).href;
+
+// Organization data. Deliberately no sameAs: the LinkedIn and X handles
+// used elsewhere on the site have never been verified, and pointing
+// structured data at an account that is not ours is worse than omitting it.
+const orgLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'AgentinFlow',
+    url: `${SITE}/`,
+    logo: `${SITE}/img/agentinflow-logo2.png`,
+    description:
+        'AI automation and web development. AI agents, n8n workflows and custom web apps.',
+    address: { '@type': 'PostalAddress', addressCountry: 'IN' },
+    contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'sales',
+        telephone: '+91-93433-93388',
+        email: 'aarvsinghchauhan@gmail.com',
+        areaServed: 'IN',
+        availableLanguage: ['en', 'hi']
+    }
+};
 ---
 
 <!DOCTYPE html>
@@ -25,6 +60,30 @@ const { title, description, canonical, nav = true, footer = true } = Astro.props
     <meta name="description" content={description} />
 
     <link rel="canonical" href={canonical} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    <meta name="theme-color" content="#121212" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AgentinFlow" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_IN" />
+    <!-- TODO: this is the 512x512 app logo. Social platforms crop to 1.91:1,
+         so it will be letterboxed until a proper 1200x630 card exists. -->
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:alt" content="AgentinFlow" />
+
+    <!-- Twitter/X. summary rather than summary_large_image, because the
+         image is square - large_image with a square asset crops badly. -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
 
     <!-- The old site pointed these at ../img/ from the site root, which
          resolved above the document root and 404'd. Absolute paths now. -->
@@ -34,12 +93,13 @@ const { title, description, canonical, nav = true, footer = true } = Astro.props
 
     <meta name="google-site-verification" content="ju9vQiPbb1cA_tEG0_ZDC5OvLYYloZi9xtFsKCrATUA" />
 
-    <!-- Domine for headings and highlights, Inter for everything else.
-         Only the weights actually used are requested. -->
+    <!-- Domine for headings and highlights, Inter for everything else,
+         Space Grotesk for the logotype alone. Only the weights actually
+         used are requested. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@700&display=swap"
         rel="stylesheet" />
 
     <slot name="head" />

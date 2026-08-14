@@ -88,9 +88,11 @@ const isActive = (href) => (href.replace(/\/+$/, '') || '/') === path;
     /* --- Wordmark --- */
     .wordmark {
         justify-self: start;
-        font-family: var(--font-display);
+        /* Same face as the hero mark: the hero collapses to AF, and the two
+           marks are then the same thing in two places. */
+        font-family: var(--font-wordmark);
         font-size: 1.5rem;
-        font-weight: 600;
+        font-weight: 700;
         line-height: 1;
         letter-spacing: -0.02em;
         color: var(--accent);

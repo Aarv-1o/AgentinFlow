@@ -16,6 +16,12 @@
     /* --- Type --- */
     --font-display: 'Domine', Georgia, 'Times New Roman', serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* The logotype only - hero mark and nav mark, nothing else. Domine is a
+       text serif: at 5rem its thin strokes lose their edge, and the mark has
+       to hold at both that size and the nav's 1.1rem. Space Grotesk keeps
+       an even weight across that range and its letterforms stay distinct
+       when the word folds down to two of them. */
+    --font-wordmark: 'Space Grotesk', 'Domine', Georgia, serif;
 
     /* --- Glass ---
        Frosted surfaces are built from a translucent ground, a hairline
