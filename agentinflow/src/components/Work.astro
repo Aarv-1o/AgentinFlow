@@ -41,7 +41,6 @@ const projects = [
                     <div class="card-text">
                         <span class="project-num">{pr.num}</span>
                         <p class="project-client">{pr.client}</p>
-                        <h3 class="project-title">{pr.title}</h3>
                         <p class="project-problem">{pr.problem}</p>
 
                         {pr.metric && (
@@ -152,20 +151,11 @@ const projects = [
         color: var(--text-dim);
     }
 
-    .project-title {
-        margin: 0 0 1rem;
-        font-family: var(--font-display);
-        font-size: clamp(1.35rem, 2.6vw, 2rem);
-        line-height: 1.2;
-        letter-spacing: -0.01em;
-        color: var(--heading);
-    }
-
     .project-problem {
-        margin: 0;
+        margin: 0.75rem 0 0;
         max-width: 52ch;
         color: var(--text);
-        font-size: 1rem;
+        font-size: 1.05rem;
         line-height: 1.65;
     }
 
@@ -193,8 +183,13 @@ const projects = [
     /* ================= Laptop ================= */
     .laptop-scene {
         justify-self: center;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
         width: 260px;
-        height: 200px;
+        /* Tall enough for the upright lid, which stands roughly 130px above
+           the hinge once the whole machine is tilted back. */
+        height: 250px;
         /* perspective belongs on the ancestor; on the rotating element
            itself it flattens the result. */
         perspective: 1000px;
@@ -206,18 +201,21 @@ const projects = [
         width: 100%;
         height: 100%;
         transform-style: preserve-3d;
-        transform: rotateY(var(--ry, -22deg));
+        transform: rotateY(var(--ry, -18deg));
         transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* Lays the whole machine back so it is seen from above and in front. */
+    /* Front three-quarter view: the deck is laid back far enough to read as
+       a horizontal surface, while the lid - opening 104 degrees off it -
+       ends up only about 20 degrees off square to the viewer, so the screen
+       stays legible rather than being seen edge-on from above. */
     .laptop {
         position: relative;
         width: 230px;
         height: 150px;
-        margin: 0 auto;
+        margin: 0 auto 14px;
         transform-style: preserve-3d;
-        transform: rotateX(62deg);
+        transform: rotateX(68deg);
     }
 
     .base,
@@ -259,12 +257,17 @@ const projects = [
         border: 1px solid #333;
     }
 
-    /* Hinged at the far edge of the base and swung upright. Slightly past
-       90 degrees, which is how a laptop actually sits. */
+    /* The lid sits ABOVE the base and hinges on its own bottom edge, which
+       coincides with the base's far edge once the machine is tilted back.
+       Hinging it at the top edge instead swung it down underneath the base
+       and turned the screen away from the viewer.
+       -76deg opens it to 104 from the base: slightly past square, which is
+       how a laptop actually sits, and it leaves the screen facing forward. */
     .lid {
+        top: -145px;
         height: 145px;
-        transform-origin: top center;
-        transform: rotateX(-104deg);
+        transform-origin: bottom center;
+        transform: rotateX(-76deg);
         background: linear-gradient(160deg, #303030 0%, #1a1a1a 100%);
         border: 1px solid #3a3a3a;
     }
@@ -313,8 +316,8 @@ const projects = [
     // Map the pointer's horizontal position across the card onto the
     // turntable's rotation, so the laptop turns with the cursor rather than
     // snapping to a fixed angle. Vertical movement is ignored on purpose.
-    const REST = -22;
-    const SWING = 30;
+    const REST = -18;
+    const SWING = 26;
 
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         document.querySelectorAll('.project-card').forEach((card) => {
