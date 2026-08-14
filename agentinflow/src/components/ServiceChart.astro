@@ -30,7 +30,9 @@ const { services } = Astro.props;
             {services.map((s) => (
                 <li class="branch">
                     <article class="node">
-                        <span class="badge" aria-hidden="true">{s.num}</span>
+                        {/* No numbered badge here: three services are not a
+                            sequence, and numbering them implied one came
+                            before another. The root keeps its mark. */}
                         <h3>{s.title}</h3>
                         <p class="node-lead">{s.lead}</p>
 

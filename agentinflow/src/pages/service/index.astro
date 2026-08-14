@@ -7,6 +7,7 @@ import '../../styles/global.css';
 import '../../styles/service.css';
 import Contact from '../../components/Contact.astro';
 import ServiceChart from '../../components/ServiceChart.astro';
+import FlowTree from '../../components/FlowTree.astro';
 
 const title = 'AI Automation Services in India | AI Agents & N8N Workflows – AgentinFlow';
 const description = 'AgentinFlow provides AI automation services in India, including AI agent automation, N8N workflow development, and custom business automation solutions.';
@@ -108,15 +109,10 @@ const steps = [
                 ))}
             </div>
 
-            <ol class="steps-strip">
-                {steps.map((s) => (
-                    <li>
-                        <span class="step-number">{s.n}</span>
-                        <h4>{s.t}</h4>
-                        <p>{s.d}</p>
-                    </li>
-                ))}
-            </ol>
+            {/* The numbered strip is gone: the branch says the same thing,
+                and says it as a flow rather than as five boxes. Its rules
+                in service.css (.steps-strip, .step-number) are now dead. */}
+            <FlowTree steps={steps} services={services} />
         </div>
     </section>
 
