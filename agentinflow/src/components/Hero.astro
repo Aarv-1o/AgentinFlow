@@ -1,24 +1,19 @@
 ---
-// Scroll-driven hero.
+// Hero: three stacked rows - wordmark, keypad, line.
 //
-// A tall outer track holds a sticky viewport-height stage. How far the track
-// has passed the top of the screen becomes a 0-1 value published as the CSS
-// custom property --p on the stage. Everything inside reads that one number,
-// so the sequence is scrubbed by scroll position rather than played on a timer.
+// The keypad is inline SVG in a true isometric projection: a few kilobytes,
+// no 3D runtime, no asset licence, and every colour resolves through the
+// palette tokens.
 //
-// Layers: the wordmark sits behind (z-index 1), the keypad in front (z-index 2),
-// so the object occludes the letters.
-//
-// The keypad is drawn as inline SVG in a true isometric projection rather than
-// sourced as a 3D model - a few kilobytes, no runtime, no asset licence, and it
-// resolves through the palette tokens.
+// Motion is no longer scroll-driven. The keypad sways through a shallow angle
+// on a loop, and individual caps press when hovered.
 
 // --- Isometric projection ---------------------------------------------------
 // Grid units in, screen coordinates out. z is a straight pixel lift, so key
 // height is independent of footprint.
 const U = 92;
 const CX = 400;
-const CY = 200;
+const CY = 210;
 const COS30 = 0.8660254;
 
 const iso = (x, y, z = 0) => ({
@@ -68,9 +63,8 @@ const keys = [
 ].map((k) => ({
     ...k,
     ...slab(k.i, k.j, KEY_SIZE, KEY_H, KEY_TAPER),
-    // Back keys land first, so the stack builds away-to-near.
-    delay: (k.i + k.j) * 0.16,
-    // Larger i+j sits nearer the viewer and must paint last.
+    // Larger i+j sits nearer the viewer and must paint last: SVG has no
+    // z-buffer, so paint order is the depth order.
     depth: k.i + k.j
 })).sort((a, b) => a.depth - b.depth);
 
@@ -81,13 +75,13 @@ const goKey = keys.find((k) => k.go);
 const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 ---
 
-<section class="hero-track" id="heroTrack">
-    <div class="hero-stage" id="heroStage">
-        <h1 class="wordmark-back" aria-label="AgentinFlow">AGENTINFLOW</h1>
+<section class="hero">
+    <h1 class="wordmark">AGENTINFLOW</h1>
 
-        <div class="stage-object">
-            <svg class="keypad" viewBox="0 0 800 600" role="img"
-                aria-label="An isometric keypad assembling, with keys labelled Web, AI, n8n and Go">
+    <div class="stage">
+        <div class="sway">
+            <svg class="keypad" viewBox="0 0 800 480" role="img"
+                aria-label="An isometric keypad with keys labelled Web, AI, n8n and Go">
                 <defs>
                     <linearGradient id="capTop" x1="0" y1="0" x2="0.6" y2="1">
                         <stop offset="0%" stop-color="#ffffff" />
@@ -102,27 +96,26 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
                         <stop offset="100%" stop-color="#1e1e1e" />
                     </linearGradient>
                     <radialGradient id="goGlow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.75" />
+                        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.8" />
                         <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
                     </radialGradient>
                 </defs>
 
-                <ellipse class="ground" cx="400" cy="350" rx="250" ry="70" />
+                <ellipse class="ground" cx="400" cy="358" rx="250" ry="70" />
 
-                <!-- Base plate -->
                 <g class="plate">
                     <path d={plate.wallL} fill="#101010" />
                     <path d={plate.wallR} fill="#171717" />
                     <path d={plate.top} fill="url(#plateTop)" />
                 </g>
 
-                <!-- Glow beneath GO, ramps as the key is pressed -->
                 <ellipse class="go-glow" cx={goKey.centre.X} cy={goKey.centre.Y + 26}
                     rx="130" ry="64" fill="url(#goGlow)" />
 
-                <!-- Keycaps, painted back to front -->
+                <!-- Caps, painted back to front -->
                 {keys.map((k) => (
-                    <g class={k.go ? 'cap is-go' : 'cap'} style={`--d:${k.delay}`}>
+                    <g class={k.go ? 'cap is-go' : 'cap'} tabindex="0" role="button"
+                        aria-label={`${k.label} key`}>
                         <path d={k.wallL} fill={k.go ? '#4d1122' : '#8f9499'} />
                         <path d={k.wallR} fill={k.go ? '#5d1527' : '#a9aeb3'} />
                         <path d={k.top} fill={k.go ? 'url(#capTopGo)' : 'url(#capTop)'} />
@@ -133,87 +126,105 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
                 ))}
             </svg>
         </div>
-
-        <p class="hero-line">We build what you ask</p>
     </div>
+
+    <p class="hero-line">We build what you ask</p>
 </section>
 
 <style>
-    .hero-track {
-        position: relative;
-        height: 240vh;
-    }
-
-    .hero-stage {
-        position: sticky;
-        top: 0;
-        height: 100vh;
+    /* Three stacked rows, centred as a column. */
+    .hero {
+        min-height: 100vh;
         display: grid;
-        place-items: center;
-        overflow: hidden;
-        --p: 0;
+        grid-template-rows: auto auto auto;
+        align-content: center;
+        justify-items: center;
+        gap: clamp(1rem, 3vh, 2.5rem);
+        padding: 8rem 1.5rem 4rem;
+        text-align: center;
     }
 
-    /* --- Wordmark, behind --- */
-    .wordmark-back {
-        grid-area: 1 / 1;
-        z-index: 1;
+    .wordmark {
         margin: 0;
         font-family: var(--font-display);
         font-weight: 700;
-        font-size: clamp(2.75rem, 12.5vw, 13rem);
+        font-size: clamp(2.25rem, 10vw, 9rem);
         line-height: 1;
         letter-spacing: -0.03em;
         white-space: nowrap;
         color: var(--heading);
         user-select: none;
-        opacity: calc(1 - var(--p) * 0.55);
-        transform: translateY(calc(var(--p) * -3vh));
     }
 
-    /* --- Keypad, in front --- */
-    .stage-object {
-        grid-area: 1 / 1;
-        z-index: 2;
-        display: grid;
-        place-items: center;
-        width: min(52vw, 560px);
-        aspect-ratio: 4 / 3;
+    /* perspective has to sit on the parent for the child's rotation to have
+       any depth - applied to the child it flattens. */
+    .stage {
+        width: min(70vw, 520px);
+        perspective: 1100px;
+    }
+
+    .sway {
+        transform-style: preserve-3d;
+        animation: keypad-sway 11s ease-in-out infinite;
+    }
+
+    /* A shallow oscillation rather than a full turn: the drawing is a fixed
+       isometric projection, so large angles would expose faces that were
+       never drawn. Kept under 10 degrees, where it reads as a sway. */
+    @keyframes keypad-sway {
+
+        0%,
+        100% {
+            transform: rotateY(-9deg) rotateX(2.5deg);
+        }
+
+        50% {
+            transform: rotateY(9deg) rotateX(-1.5deg);
+        }
     }
 
     .keypad {
+        display: block;
         width: 100%;
-        height: 100%;
+        height: auto;
         overflow: visible;
     }
 
     .ground {
         fill: #000;
-        opacity: calc(var(--p) * 0.5);
+        opacity: 0.5;
     }
 
-    /* Plate settles first, before any cap arrives */
-    .plate {
-        --reveal: clamp(0, calc(var(--p) * 4), 1);
-        opacity: var(--reveal);
-        transform: translateY(calc((1 - var(--reveal)) * 90px));
-    }
-
-    /* Caps drop in, back row first */
+    /* --- Press on hover --- */
     .cap {
-        --reveal: clamp(0, calc((var(--p) - 0.15 - var(--d)) * 3.4), 1);
-        opacity: var(--reveal);
-        transform: translateY(calc((1 - var(--reveal)) * -190px));
+        cursor: pointer;
+        transition: transform 0.16s cubic-bezier(0.34, 1.2, 0.64, 1);
     }
 
-    /* GO is pressed at the end of the scroll, glow arriving with it */
-    .is-go {
-        --press: clamp(0, calc((var(--p) - 0.84) * 6), 1);
-        transform: translateY(calc((1 - var(--reveal)) * -190px + var(--press) * 15px));
+    .cap:hover,
+    .cap:focus-visible {
+        /* Down the screen only. The caps travel along the plate normal, which
+           in this projection is straight down. */
+        transform: translateY(11px);
     }
 
+    .cap:focus-visible {
+        outline: none;
+    }
+
+    .cap:focus-visible .cap-label {
+        text-decoration: underline;
+    }
+
+    /* GO lights the plate beneath it when pressed */
     .go-glow {
-        opacity: clamp(0, calc((var(--p) - 0.84) * 6), 1);
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+
+    .keypad:has(.is-go:hover) .go-glow,
+    .keypad:has(.is-go:focus-visible) .go-glow {
+        opacity: 1;
     }
 
     .cap-label {
@@ -223,59 +234,24 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
         letter-spacing: 0.08em;
         text-anchor: middle;
         dominant-baseline: central;
+        pointer-events: none;
     }
 
-    /* --- Bottom line --- */
     .hero-line {
-        position: absolute;
-        bottom: 3.5rem;
-        z-index: 3;
         margin: 0;
         font-size: clamp(1rem, 2vw, 1.35rem);
         letter-spacing: 0.02em;
         color: var(--text);
-        opacity: var(--p);
-        transform: translateY(calc((1 - var(--p)) * 1.5rem));
     }
 
-    /* Without scroll the sequence never advances, so hold it assembled and
-       drop the runway to a single screen. */
     @media (prefers-reduced-motion: reduce) {
-        .hero-track {
-            height: 100vh;
+        .sway {
+            animation: none;
+            transform: rotateY(-4deg);
         }
 
-        .hero-stage {
-            --p: 1 !important;
+        .cap {
+            transition: none;
         }
     }
 </style>
-
-<script>
-    const track = document.getElementById('heroTrack');
-    const stage = document.getElementById('heroStage');
-
-    if (track && stage && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        let ticking = false;
-
-        const update = () => {
-            const runway = track.offsetHeight - window.innerHeight;
-            const scrolled = -track.getBoundingClientRect().top;
-            const progress = runway > 0 ? Math.min(1, Math.max(0, scrolled / runway)) : 0;
-            stage.style.setProperty('--p', progress.toFixed(4));
-            ticking = false;
-        };
-
-        // rAF-throttled: scroll fires far more often than the screen repaints
-        const onScroll = () => {
-            if (!ticking) {
-                ticking = true;
-                requestAnimationFrame(update);
-            }
-        };
-
-        addEventListener('scroll', onScroll, { passive: true });
-        addEventListener('resize', onScroll, { passive: true });
-        update();
-    }
-</script>
