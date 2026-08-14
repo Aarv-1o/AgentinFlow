@@ -87,7 +87,7 @@ const projects = [
     }
 
     .work-inner {
-        max-width: 1080px;
+        max-width: 880px;
         margin: 0 auto;
     }
 
@@ -189,6 +189,10 @@ const projects = [
     .laptop-scene {
         justify-self: center;
         display: block;
+        /* Held off the card's top-right corner. The lid is the tallest and
+           right-most part of the machine, so without this it sits almost on
+           the corner radius. */
+        margin: 1.25rem 0.75rem 0 0;
         width: 230px;
         /* Sized to what the machine actually occupies: a 112px deck laid
            back to ~42px plus a lid standing ~118px above the hinge. Any
