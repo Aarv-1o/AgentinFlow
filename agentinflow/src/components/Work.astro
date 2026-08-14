@@ -1,30 +1,37 @@
 ---
 // "Our work" - the proof section, sitting directly after the hero.
 //
-// PLACEHOLDER CONTENT. Every field below is invented and must be replaced
-// with the two real client projects before this goes anywhere near
-// production. Values are deliberately obvious rather than plausible so that
-// nobody mistakes them for real figures.
+// Copy below describes only what is verifiable from the live sites and their
+// shipped bundles: features visible on the page, and stacks read from the
+// build output. Nothing is inferred about budgets, timelines or outcomes.
+//
+// `metric` is deliberately absent on both entries. A result figure is the
+// most persuasive thing here and the one thing that cannot be derived from
+// the outside - it has to come from the client. The layout collapses to a
+// single column when metric is missing, so no empty slot is shown and no
+// invented number ships in the meantime.
 const projects = [
     {
         num: '01',
-        client: 'PLACEHOLDER — client or sector',
-        title: 'Placeholder project title',
-        problem: 'One or two lines on what was broken before you: the manual process, the bottleneck, the thing that did not scale.',
-        built: 'One line on what you built and how.',
-        metric: '00%',
-        metricLabel: 'placeholder result',
-        stack: ['n8n', 'OpenAI', 'Google Sheets']
+        client: 'Bellemeade Advisors · Healthcare',
+        title: 'Prescription price comparison platform',
+        problem: 'Patients had no straightforward way to see what the same prescription costs at different pharmacies, so most paid whatever their usual one charged.',
+        built: 'A search platform comparing prices across pharmacies in one place, with an AI assistant for plain-language questions, a nearby-pharmacy finder, saved medicines and user accounts.',
+        stack: ['Next.js', 'React', 'AI assistant', 'Render'],
+        url: 'https://bellemeade-advisors.onrender.com/',
+        metric: null,
+        metricLabel: null
     },
     {
         num: '02',
-        client: 'PLACEHOLDER — client or sector',
-        title: 'Placeholder project title',
-        problem: 'One or two lines on what was broken before you: the manual process, the bottleneck, the thing that did not scale.',
-        built: 'One line on what you built and how.',
-        metric: '00h',
-        metricLabel: 'placeholder result',
-        stack: ['Astro', 'Postgres', 'WhatsApp API']
+        client: 'Crossing Cultural Boundaries · Non-profit',
+        title: 'Cultural exchange and scholarship programme site',
+        problem: 'CCB promotes cultural exchange and youth leadership through scholarships and community impact, and needed a public home for that work.',
+        built: 'A single-page application with client-side routing and a Firebase backend handling accounts and data.',
+        stack: ['React', 'Vite', 'Firebase', 'React Router'],
+        url: 'https://www.crossingculturalboundaries.com/',
+        metric: null,
+        metricLabel: null
     }
 ];
 ---
@@ -38,11 +45,25 @@ const projects = [
 
         <ol class="project-list">
             {projects.map((pr) => (
-                <li class="project">
+                <li class={pr.metric ? 'project has-metric' : 'project'}>
                     <div class="project-main">
                         <span class="project-num">{pr.num}</span>
                         <p class="project-client">{pr.client}</p>
-                        <h3 class="project-title">{pr.title}</h3>
+
+                        <h3 class="project-title">
+                            {pr.url
+                                ? <a href={pr.url} target="_blank" rel="noopener">
+                                    {pr.title}
+                                    <svg class="visit-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        aria-hidden="true">
+                                        <line x1="7" y1="17" x2="17" y2="7" />
+                                        <polyline points="7 7 17 7 17 17" />
+                                    </svg>
+                                </a>
+                                : pr.title}
+                        </h3>
+
                         <p class="project-problem">{pr.problem}</p>
                         <p class="project-built">{pr.built}</p>
 
@@ -51,10 +72,12 @@ const projects = [
                         </ul>
                     </div>
 
-                    <div class="project-metric">
-                        <span class="metric-value">{pr.metric}</span>
-                        <span class="metric-label">{pr.metricLabel}</span>
-                    </div>
+                    {pr.metric && (
+                        <div class="project-metric">
+                            <span class="metric-value">{pr.metric}</span>
+                            <span class="metric-label">{pr.metricLabel}</span>
+                        </div>
+                    )}
                 </li>
             ))}
         </ol>
@@ -128,6 +151,34 @@ const projects = [
         color: var(--text-dim);
     }
 
+    .project-title a {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.25s ease;
+    }
+
+    .project-title a:hover,
+    .project-title a:focus-visible {
+        color: var(--accent);
+    }
+
+    .visit-arrow {
+        width: 0.6em;
+        height: 0.6em;
+        flex-shrink: 0;
+        opacity: 0.45;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .project-title a:hover .visit-arrow,
+    .project-title a:focus-visible .visit-arrow {
+        opacity: 1;
+        transform: translate(2px, -2px);
+    }
+
     .project-title {
         margin: 0 0 1rem;
         font-family: var(--font-display);
@@ -193,9 +244,9 @@ const projects = [
     }
 
     @media (min-width: 820px) {
-        .project {
-            /* Metric column is fixed so the figures line up down the page
-               rather than shifting with each project's text length. */
+        /* Only rows that actually carry a figure get the second column, so a
+           project without one runs full width instead of leaving a gap. */
+        .project.has-metric {
             grid-template-columns: 1fr 15rem;
             gap: 4rem;
         }
@@ -206,6 +257,18 @@ const projects = [
 
         .metric-label {
             margin-left: auto;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .project-title a,
+        .visit-arrow {
+            transition: none;
+        }
+
+        .project-title a:hover .visit-arrow {
+            transform: none;
         }
     }
 </style>
