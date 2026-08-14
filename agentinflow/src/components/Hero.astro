@@ -123,7 +123,7 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 <section class="hero">
     {/* aria-label carries the name: without it a screen reader meeting
         eleven separate spans may spell the word out letter by letter. */}
-    <h1 class="wordmark" aria-label="AgentinFlow">
+    <h1 class="hero-wordmark" aria-label="AgentinFlow">
         {letters.map((l) => (
             <span class={l.keep ? 'ltr is-keep' : 'ltr is-fold'} aria-hidden="true">{l.ch}</span>
         ))}
@@ -204,7 +204,7 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
     /* --p is the unfold: 0 is AF, 1 is the full word. It defaults to 1 so
        that with no JS, or with reduced motion, the page simply shows the
        name. */
-    .wordmark {
+    .hero-wordmark {
         --p: 1;
         margin: 0;
         display: flex;
@@ -347,7 +347,7 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
     // open through the middle of the hero, closed again by the time the
     // hero has left. min() of a rising and a falling edge gives that in one
     // expression and cannot get stuck open at either end.
-    const mark = document.querySelector<HTMLElement>('.wordmark');
+    const mark = document.querySelector<HTMLElement>('.hero-wordmark');
     const hero = document.querySelector<HTMLElement>('.hero');
 
     if (mark && hero && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
