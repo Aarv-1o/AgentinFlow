@@ -212,28 +212,30 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 
     .sway {
         transform-style: preserve-3d;
-        animation: keypad-sway 30s ease-in-out infinite;
+        animation: keypad-sway 20s ease-in-out infinite;
         /* Hovering a cap must not touch this. The animation lives on the
            wrapper and the hover lives on the cap inside it, so the two
            never share a transform and the turn carries on underneath. */
     }
 
-    /* Sixty degrees each way, over thirty seconds.
+    /* Forty-five degrees each way, over twenty seconds.
        The artwork is a flat isometric drawing, so turning it about Y only
        foreshortens it - it never reveals a face that was not drawn. Width
-       scales with the cosine of the angle: 13% narrower at 30 degrees,
-       half as wide at 60. The slow cycle is what keeps that readable as a
-       turn rather than as a squash, and it still stops well short of the
-       90 degrees where the plate would vanish edge-on. */
+       scales with the cosine of the angle: 87% at 30 degrees, 71% here,
+       50% at 60, nothing at 90. Forty-five is the widest swing that still
+       reads as a turn rather than as the object being squashed.
+
+       If even this looks wrong, the settled version before any of it was
+       9 degrees each way over 11s. */
     @keyframes keypad-sway {
 
         0%,
         100% {
-            transform: rotateY(-60deg) rotateX(3deg);
+            transform: rotateY(-45deg) rotateX(3deg);
         }
 
         50% {
-            transform: rotateY(60deg) rotateX(-2deg);
+            transform: rotateY(45deg) rotateX(-2deg);
         }
     }
 
