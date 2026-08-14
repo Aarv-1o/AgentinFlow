@@ -1,0 +1,16 @@
+# Build output and tooling caches. The Astro project has its own .gitignore;
+# this one exists because .astro/ and node_modules/ were being created at the
+# repo root as well, and four of those files ended up tracked.
+node_modules/
+dist/
+.astro/
+.vercel/
+.output/
+
+# Env
+.env
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
