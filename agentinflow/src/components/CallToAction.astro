@@ -92,7 +92,7 @@ const bySide = (side) => panels.filter((pn) => pn.side === side);
     }
 
     .cta-copy p {
-        max-width: 34rem;
+        max-width: 40rem;
         margin: 0 auto 2rem;
         color: var(--text);
         font-size: 1.05rem;
@@ -160,11 +160,12 @@ const bySide = (side) => panels.filter((pn) => pn.side === side);
     }
 
     @media (min-width: 901px) {
-        /* Copy takes the free track, the panel a fixed one. Fractional
-           widths let the panel stretch and the object get lost inside it. */
+        /* Copy takes the free track, the panel a small fixed one. Fractional
+           widths let the panel stretch and swallow the copy - the object is
+           punctuation, so it gets a width and never a share. */
         .cta-grid {
-            grid-template-columns: minmax(0, 1fr) 168px;
-            gap: clamp(2rem, 5vw, 4rem);
+            grid-template-columns: minmax(0, 1fr) 132px;
+            gap: clamp(2.5rem, 6vw, 5rem);
         }
     }
 
