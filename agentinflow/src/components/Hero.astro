@@ -212,21 +212,26 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 
     .sway {
         transform-style: preserve-3d;
-        animation: keypad-sway 11s ease-in-out infinite;
+        animation: keypad-sway 14s ease-in-out infinite;
+        /* Hovering a cap must not touch this. The animation lives on the
+           wrapper and the hover lives on the cap inside it, so the two
+           never share a transform and the turn carries on underneath. */
     }
 
-    /* A shallow oscillation rather than a full turn: the drawing is a fixed
-       isometric projection, so a larger angle would swing round to faces that
-       were never drawn. */
+    /* A wide horizontal turn, but a turn that reverses rather than a full
+       revolution. The artwork is a fixed isometric projection: past about
+       90 degrees the plate goes edge-on and the drawing is then seen from
+       behind, which mirrors every cap label. Thirty degrees each way is as
+       far as it can swing while still reading as one solid object. */
     @keyframes keypad-sway {
 
         0%,
         100% {
-            transform: rotateY(-9deg) rotateX(2.5deg);
+            transform: rotateY(-30deg) rotateX(3deg);
         }
 
         50% {
-            transform: rotateY(9deg) rotateX(-1.5deg);
+            transform: rotateY(30deg) rotateX(-2deg);
         }
     }
 
