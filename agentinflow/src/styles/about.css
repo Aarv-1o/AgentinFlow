@@ -121,6 +121,34 @@ body {
     color: var(--text-dim);
 }
 
+/* Team rows are shorter than the Connect rows below them: three names in a
+   list do not need the same presence as the two places to reach us, and at
+   the shared size the section ran well past a screen.
+   Scoped to .team-section so Connect keeps its original scale. */
+.team-section .link-item {
+    padding: 1.15rem 0.5rem;
+}
+
+.team-section .link-title {
+    font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+}
+
+/* A row with no destination. The hover rules above are written against
+   .link-item, so they have to be undone here rather than simply not
+   applied. */
+.link-item.is-static {
+    cursor: default;
+}
+
+.link-item.is-static:hover {
+    padding-left: 0.5rem;
+    background-color: transparent;
+}
+
+.link-item.is-static:hover .link-title {
+    color: var(--heading);
+}
+
 .link-arrow {
     width: 16px;
     height: 16px;
