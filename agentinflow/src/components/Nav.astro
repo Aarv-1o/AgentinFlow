@@ -378,18 +378,11 @@ const letters = [...WORD].map((ch, i) => ({ ch, keep: KEEP.has(i) }));
         // finished well inside the first screen, not tracking the page.
         const RANGE = 200;
 
-        // AF at the top of the page, opening to the full name as you scroll.
-        // Once open it stays open - the value only ever climbs, so scrolling
-        // back up does not fold it shut again.
-        // Starts below zero so the very first call always writes: at the top
-        // of the page --p has to be pushed to 0, or the CSS default of 1
-        // leaves the full name showing until something scrolls.
-        let peak = -1;
-
+        // AF at the top of the page, opening to the full name as you scroll
+        // down and folding back to AF as you return. It tracks the scroll
+        // position both ways rather than latching open.
         const update = () => {
             const p = Math.max(0, Math.min(1, window.scrollY / RANGE));
-            if (p <= peak) return;
-            peak = p;
             mark.style.setProperty('--p', p.toFixed(3));
         };
 

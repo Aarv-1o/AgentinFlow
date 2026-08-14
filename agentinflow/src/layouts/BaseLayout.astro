@@ -20,7 +20,7 @@ const {
     footer = true,
     // Square logo, because it is the only image on the site big enough to
     // serve. Social cards want 1200x630 - see the note by og:image.
-    ogImage = '/img/agentinflow-logo2.png',
+    ogImage = '/img/agentinflow-mark.png',
     noindex = false
 } = Astro.props;
 
@@ -35,7 +35,7 @@ const orgLd = {
     '@type': 'Organization',
     name: 'AgentinFlow',
     url: `${SITE}/`,
-    logo: `${SITE}/img/agentinflow-logo2.png`,
+    logo: `${SITE}/img/agentinflow-mark.png`,
     description:
         'AI automation and web development. AI agents, n8n workflows and custom web apps.',
     address: { '@type': 'PostalAddress', addressCountry: 'IN' },
@@ -85,11 +85,13 @@ const orgLd = {
 
     <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
 
-    <!-- The old site pointed these at ../img/ from the site root, which
-         resolved above the document root and 404'd. Absolute paths now. -->
-    <link rel="icon" href="/img/agentinflow-logo.png" type="image/png" />
-    <link rel="icon" href="/img/agentinflow-logo2.png" sizes="512x512" type="image/png" />
-    <link rel="apple-touch-icon" href="/img/agentinflow-logo2.png" />
+    <!-- The AF monogram. One 2000x2000 source for every slot: browsers and
+         iOS both downscale, and a single file cannot fall out of sync with
+         itself the way the old two-file pair did.
+         Absolute paths - the old site used ../img/ from the site root,
+         which resolved above the document root and 404'd. -->
+    <link rel="icon" href="/img/agentinflow-mark.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/img/agentinflow-mark.png" />
 
     <meta name="google-site-verification" content="ju9vQiPbb1cA_tEG0_ZDC5OvLYYloZi9xtFsKCrATUA" />
 
