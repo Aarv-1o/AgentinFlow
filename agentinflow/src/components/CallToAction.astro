@@ -8,12 +8,11 @@ import CtaObject from './CtaObject.astro';
 
 const CTA_HREF = '/service/#contact';
 
-// Flanking panels. Purely decorative: they move on their own, take no
-// pointer events, and are hidden from assistive tech. One each side rather
-// than four - two well-made objects carry more than four competing ones,
-// and it leaves the copy as the loudest thing in the section.
+// A single decorative panel, on the right. Purely decorative: it moves on
+// its own, takes no pointer events and is hidden from assistive tech.
+// The copy takes everything else, which is the point of a CTA - one object
+// is punctuation, two start competing with the thing being asked for.
 const panels = [
-    { side: 'left', shape: 'glass', tone: 'cool', spin: '26s', dir: 'normal' },
     { side: 'right', shape: 'grid', tone: 'warm', spin: '14s', dir: 'normal' }
 ];
 
@@ -23,9 +22,11 @@ const bySide = (side) => panels.filter((pn) => pn.side === side);
 
 <section class="cta">
     <div class="cta-grid">
-        <div class="panel-col" aria-hidden="true">
-            {bySide('left').map((pn) => <CtaObject shape={pn.shape} tone={pn.tone} spin={pn.spin} dir={pn.dir} />)}
-        </div>
+        {bySide('left').length > 0 && (
+            <div class="panel-col" aria-hidden="true">
+                {bySide('left').map((pn) => <CtaObject shape={pn.shape} tone={pn.tone} spin={pn.spin} dir={pn.dir} />)}
+            </div>
+        )}
 
         <div class="cta-copy">
             <h2>Lead in your<br /><span>Industry</span></h2>
@@ -39,9 +40,11 @@ const bySide = (side) => panels.filter((pn) => pn.side === side);
             </a>
         </div>
 
-        <div class="panel-col" aria-hidden="true">
-            {bySide('right').map((pn) => <CtaObject shape={pn.shape} tone={pn.tone} spin={pn.spin} dir={pn.dir} />)}
-        </div>
+        {bySide('right').length > 0 && (
+            <div class="panel-col" aria-hidden="true">
+                {bySide('right').map((pn) => <CtaObject shape={pn.shape} tone={pn.tone} spin={pn.spin} dir={pn.dir} />)}
+            </div>
+        )}
     </div>
 </section>
 
@@ -157,11 +160,11 @@ const bySide = (side) => panels.filter((pn) => pn.side === side);
     }
 
     @media (min-width: 901px) {
-        /* Fixed side columns. On fractional widths the panels stretched to
-           whatever was left over and the objects were lost inside them. */
+        /* Copy takes the free track, the panel a fixed one. Fractional
+           widths let the panel stretch and the object get lost inside it. */
         .cta-grid {
-            grid-template-columns: 168px minmax(0, 1fr) 168px;
-            gap: clamp(1.5rem, 4vw, 3rem);
+            grid-template-columns: minmax(0, 1fr) 168px;
+            gap: clamp(2rem, 5vw, 4rem);
         }
     }
 
