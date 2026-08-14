@@ -1,6 +1,12 @@
 /* Shared across every page. Rules here were byte-identical in all three
    original stylesheets. Page stylesheets load AFTER this file and may
-   legitimately override (e.g. footer layout differs on home vs inner pages). */
+   legitimately override.
+
+   The footer rules that used to live here are gone: Footer.astro carries
+   its own scoped styles under sf- prefixed classes, and nothing in the
+   markup matches .footer-info, .footer-contact or .footer-copyright any
+   more. The bare `footer` rule went with them - .sf sets its own padding,
+   background and top border, so it only ever overrode it. */
 
 * {
     margin: 0;
@@ -17,43 +23,3 @@
 .hero-highlight {
     color: var(--accent);
 }
-
-/* Footer */
-footer {
-    padding: 4rem 1.5rem 2rem;
-    border-top: 1px solid var(--border);
-    background-color: var(--footer-bg);
-}
-
-.footer-info .footer-text {
-    color: var(--text);
-    max-width: 24rem;
-    margin: 0 auto;
-}
-
-.footer-contact h3 {
-    color: var(--heading);
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.footer-contact p {
-    margin-bottom: 0.5rem;
-}
-
-.footer-contact a {
-    color: var(--text);
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-contact a:hover {
-    color: var(--accent);
-}
-
-.footer-copyright {
-    color: var(--text-dim);
-}
-

@@ -30,86 +30,6 @@
     margin: 0 auto;
 }
 
-/* ---------- Service cards (stacked) ---------- */
-.services-stack {
-    padding: 4rem 0 5rem;
-    background-color: var(--bg-alt);
-}
-
-.service-row {
-    display: grid;
-    gap: 2rem;
-    padding: 2.5rem;
-    margin-bottom: 1.5rem;
-    background-color: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    transition: border-color 0.3s, transform 0.3s;
-}
-
-.service-row:last-child {
-    margin-bottom: 0;
-}
-
-.service-row:hover {
-    border-color: var(--accent);
-    transform: translateY(-3px);
-}
-
-.service-num {
-    display: block;
-    font-size: 0.9rem;
-    letter-spacing: 0.18em;
-    color: var(--accent);
-    margin-bottom: 0.75rem;
-}
-
-.service-row-head h2 {
-    font-size: clamp(1.75rem, 3vw, 2.25rem);
-    color: var(--heading);
-    margin-bottom: 0.75rem;
-}
-
-.service-lead {
-    color: var(--text);
-    font-size: 1.05rem;
-    max-width: 34rem;
-}
-
-.service-row-body {
-    display: grid;
-    gap: 2rem;
-}
-
-.service-builds {
-    list-style: none;
-    display: grid;
-    gap: 0.85rem;
-    align-content: start;
-}
-
-.service-builds li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    color: var(--text);
-}
-
-.service-builds svg {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-    margin-top: 0.25rem;
-    color: var(--accent);
-}
-
-.service-figures {
-    display: flex;
-    gap: 2.5rem;
-    align-items: flex-start;
-    padding-top: 0.25rem;
-}
-
 .metric-value {
     display: block;
     font-family: var(--font-display);
@@ -173,38 +93,6 @@
     font-size: 0.975rem;
 }
 
-/* ---------- Process strip ---------- */
-.steps-strip {
-    list-style: none;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    counter-reset: step;
-}
-
-.steps-strip li {
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--border);
-}
-
-.step-number {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--accent);
-    margin-bottom: 0.5rem;
-}
-
-.steps-strip h4 {
-    font-size: 1.05rem;
-    color: var(--heading);
-    margin-bottom: 0.35rem;
-}
-
-.steps-strip p {
-    font-size: 0.9rem;
-    color: var(--text-dim);
-}
-
 /* ---------- CTA ---------- */
 .cta-section {
     padding: 5rem 1.5rem;
@@ -241,24 +129,12 @@
 
 /* ---------- Responsive ---------- */
 @media (min-width: 768px) {
-    .service-row {
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        padding: 3rem;
-    }
-
     .principles-grid {
         grid-template-columns: repeat(3, 1fr);
-    }
-
-    .steps-strip {
-        grid-template-columns: repeat(5, 1fr);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
-    .service-row:hover,
     .cta-btn:hover {
         transform: none;
     }

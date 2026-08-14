@@ -227,25 +227,6 @@ body {
     box-shadow: 0 10px 25px rgba(var(--bg-rgb), 0.3);
 }
 
-.container-footer-grid {
-    max-width: 1280px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    text-align: center;
-}
-
-.footer-bottom {
-    border-top: 1px solid var(--border);
-    padding-top: 2rem;
-    text-align: center;
-    width: 100%;
-    max-width: 1280px;
-    margin: 2rem auto 0;
-}
 
 /* ============================================ */
 /* RESPONSIVE DESIGN */
@@ -276,32 +257,11 @@ body {
     }
 }
 
-/* Tablets (640px and up) */
-@media (min-width: 640px) {
-    .container-footer-grid {
-        flex-direction: row;
-        gap: 3rem;
-        justify-content: space-around;
-    }
-
-    .footer-info,
-    .footer-contact {
-        text-align: left;
-    }
-
-    .footer-text {
-        margin: 0;
-    }
-}
 
 /* Large tablets and small desktops (768px and up) */
 @media (min-width: 768px) {
     .about-hero h1 {
         font-size: 4.5rem;
-    }
-
-            .container-footer-grid {
-        gap: 4rem;
     }
 }
 
@@ -316,20 +276,12 @@ body {
     .cta-section h2 {
         font-size: 3.5rem;
     }
-
-    .container-footer-grid {
-        gap: 8rem;
-    }
 }
 
 /* Extra large screens (1280px and up) */
 @media (min-width: 1280px) {
     .about-hero h1 {
         font-size: 5.5rem;
-    }
-
-    .container-footer-grid {
-        gap: 12rem;
     }
 }
 

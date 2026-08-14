@@ -20,7 +20,12 @@ const bySide = (side) => panels.filter((pn) => pn.side === side);
 
 ---
 
-<section class="cta">
+{/* id="contact" so agentinflow.com/#contact still lands somewhere. The old
+    home page had the form here; it lives on the Services page now, and
+    this section is the thing that sends you to it. Only the home page
+    renders this component, so it cannot collide with the form's own
+    id="contact" over on /service/. */}
+<section class="cta" id="contact">
     <div class="cta-grid">
         {bySide('left').length > 0 && (
             <div class="panel-col" aria-hidden="true">
