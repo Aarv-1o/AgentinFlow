@@ -1,0 +1,262 @@
+---
+// "Our product" - the one thing we ship for ourselves rather than for a
+// client. Sits below Our work, with its own top padding for the gap.
+//
+// The mark is redrawn as inline SVG rather than shipping the store icon as
+// a PNG: it scales, it costs a couple of kilobytes, and the glow can be a
+// real blur instead of being baked into the image.
+//
+// Only the Play Store link is listed. The github.com/rraval/git-nomad repo
+// is a different project - a Rust CLI by rraval for syncing work-in-progress
+// branches - not the source for this app, so linking it here would credit
+// someone else's work as ours.
+const PRODUCT = {
+    name: 'GitNomad',
+    tagline: 'Mobile Git IDE',
+    // Kept deliberately close to what the store listing itself claims.
+    blurb: 'Git that travels with you. Browse repositories, read and edit code, and keep your branches moving from an Android device - no laptop required.',
+    store: 'https://play.google.com/store/apps/details?id=dev.gitnomad.app',
+    platform: 'Android · Google Play'
+};
+---
+
+<section class="product" id="product">
+    <div class="product-inner">
+        <header class="product-head">
+            <span class="eyebrow">Our product</span>
+            <h2>What we build when the brief is ours</h2>
+        </header>
+
+        <div class="product-card">
+            <div class="mark-wrap" aria-hidden="true">
+                <svg class="mark" viewBox="0 0 120 120" role="presentation">
+                    <defs>
+                        <linearGradient id="nomadBg" x1="0" y1="0" x2="0.55" y2="1">
+                            <stop offset="0%" stop-color="#24344f" />
+                            <stop offset="55%" stop-color="#182742" />
+                            <stop offset="100%" stop-color="#0f1626" />
+                        </linearGradient>
+                        <radialGradient id="dotGlow" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#f79b2c" stop-opacity="0.55" />
+                            <stop offset="100%" stop-color="#f79b2c" stop-opacity="0" />
+                        </radialGradient>
+                    </defs>
+
+                    <rect x="2" y="2" width="116" height="116" rx="30" fill="url(#nomadBg)" />
+
+                    <!-- Halo behind the ring, clipped by the tile's corner radius -->
+                    <clipPath id="tileClip">
+                        <rect x="2" y="2" width="116" height="116" rx="30" />
+                    </clipPath>
+                    <g clip-path="url(#tileClip)">
+                        <circle cx="86" cy="30" r="40" fill="url(#dotGlow)" />
+                    </g>
+
+                    <!-- The N: two uprights and a diagonal, ball terminals -->
+                    <g stroke="#f2ece1" stroke-width="11" stroke-linecap="round" fill="none">
+                        <path d="M36 32 L36 89" />
+                        <path d="M36 32 L86 89" />
+                        <path d="M86 89 L86 34" />
+                    </g>
+                    <g fill="#f2ece1">
+                        <circle cx="36" cy="32" r="7.5" />
+                        <circle cx="36" cy="89" r="7.5" />
+                        <circle cx="86" cy="89" r="7.5" />
+                    </g>
+
+                    <!-- Ring terminal, the one accent on the mark -->
+                    <circle cx="86" cy="30" r="10" fill="none" stroke="#f79b2c" stroke-width="6" />
+                    <circle cx="86" cy="30" r="3.4" fill="#f79b2c" />
+                </svg>
+            </div>
+
+            <div class="product-text">
+                <h3>
+                    {PRODUCT.name}
+                    <span class="product-tagline">{PRODUCT.tagline}</span>
+                </h3>
+                <p>{PRODUCT.blurb}</p>
+
+                <div class="product-foot">
+                    <a class="store-link" href={PRODUCT.store} target="_blank" rel="noopener">
+                        Get it on Google Play
+                        <span class="arrow" aria-hidden="true">↗</span>
+                    </a>
+                    <span class="platform">{PRODUCT.platform}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Same ground as Our work above it. The clear top padding is the gap
+       between the two sections - no divider rule. */
+    .product {
+        padding: clamp(5rem, 14vh, 9rem) 1.5rem clamp(4rem, 12vh, 8rem);
+        background-color: var(--bg);
+    }
+
+    /* Matches the Our work column so the two stack on one axis. */
+    .product-inner {
+        max-width: 880px;
+        margin: 0 auto;
+    }
+
+    .product-head {
+        margin-bottom: clamp(2.5rem, 6vh, 4rem);
+    }
+
+    .eyebrow {
+        display: block;
+        margin-bottom: 0.85rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+    }
+
+    .product-head h2 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.75rem, 4vw, 3rem);
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        color: var(--heading);
+    }
+
+    /* --- Card --- */
+    .product-card {
+        display: grid;
+        gap: 2rem;
+        align-items: center;
+        padding: clamp(1.5rem, 3vw, 2.25rem);
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .product-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+    }
+
+    .mark-wrap {
+        justify-self: center;
+        width: clamp(108px, 26vw, 132px);
+    }
+
+    .mark {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 26%;
+        /* The tile is its own object on the card, so it casts rather than
+           sitting flat against the surface. */
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .product-card:hover .mark {
+        transform: translateY(-4px) rotate(-2deg);
+    }
+
+    .product-text h3 {
+        margin: 0 0 0.85rem;
+        font-family: var(--font-display);
+        font-size: clamp(1.5rem, 3.2vw, 2rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: var(--heading);
+    }
+
+    /* Reads as a subtitle, not a second heading. */
+    .product-tagline {
+        display: block;
+        margin-top: 0.5rem;
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        font-weight: 400;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+    }
+
+    .product-text p {
+        margin: 0;
+        max-width: 46ch;
+        color: var(--text);
+        font-size: 1.05rem;
+        line-height: 1.65;
+    }
+
+    .product-foot {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.85rem 1.5rem;
+        margin-top: 1.75rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .store-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.7rem 1.4rem;
+        border-radius: 9999px;
+        background-color: var(--cta-bg);
+        color: var(--cta-text);
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .store-link:hover,
+    .store-link:focus-visible {
+        background-color: var(--cta-hover);
+        transform: translateY(-2px);
+    }
+
+    .arrow {
+        font-size: 0.9em;
+        line-height: 1;
+    }
+
+    .platform {
+        font-size: 0.85rem;
+        letter-spacing: 0.06em;
+        color: var(--text-dim);
+    }
+
+    /* --- Layout ---
+       Mark to the left of the copy once there is room, mirroring the work
+       cards, which put their object on the right. */
+    @media (min-width: 720px) {
+        .product-card {
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: clamp(2rem, 5vw, 3rem);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .product-card,
+        .mark,
+        .store-link {
+            transition: none;
+        }
+
+        .product-card:hover {
+            transform: none;
+        }
+
+        .product-card:hover .mark,
+        .store-link:hover {
+            transform: none;
+        }
+    }
+</style>
