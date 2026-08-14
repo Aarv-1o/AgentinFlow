@@ -6,6 +6,7 @@ import '../../styles/tokens.css';
 import '../../styles/global.css';
 import '../../styles/service.css';
 import Contact from '../../components/Contact.astro';
+import ServiceChart from '../../components/ServiceChart.astro';
 
 const title = 'AI Automation Services in India | AI Agents & N8N Workflows – AgentinFlow';
 const description = 'AgentinFlow provides AI automation services in India, including AI agent automation, N8N workflow development, and custom business automation solutions.';
@@ -85,41 +86,9 @@ const steps = [
         </div>
     </section>
 
-    <!-- Services -->
-    <section class="services-stack">
-        <div class="container">
-            {services.map((s) => (
-                <article class="service-row">
-                    <div class="service-row-head">
-                        <span class="service-num">{s.num}</span>
-                        <h2>{s.title}</h2>
-                        <p class="service-lead">{s.lead}</p>
-                    </div>
-
-                    <div class="service-row-body">
-                        <ul class="service-builds">
-                            {s.builds.map((b) => (
-                                <li>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <polyline points="20 6 9 17 4 12" />
-                                    </svg>
-                                    <span>{b}</span>
-                                </li>
-                            ))}
-                        </ul>
-
-                        <div class="service-figures">
-                            <div class="service-metric">
-                                <span class="metric-value">{s.metric}</span>
-                                <span class="metric-label">{s.metricLabel}</span>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-            ))}
-        </div>
-    </section>
+    <!-- Services, drawn as a chart. The old .services-stack markup is gone;
+         its rules in service.css are now dead and can be removed. -->
+    <ServiceChart services={services} />
 
     <!-- How we work -->
     <section class="how-we-work">

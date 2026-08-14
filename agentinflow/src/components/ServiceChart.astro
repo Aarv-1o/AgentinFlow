@@ -1,0 +1,289 @@
+---
+// The three services drawn as an org chart: one root, a trunk, a bus, and
+// three branches.
+//
+// The connectors are CSS, not an SVG overlay - a drawn overlay has to be
+// re-measured whenever a card reflows, and these lines only ever need to
+// find the centre of a grid column.
+//
+// The horizontal bus has to stop at the centre of the first and last cards,
+// not at the edge of the row. With three equal columns and gap g, a column
+// is (W - 2g)/3 wide, so half a column is W/6 - g/3 - which is exactly the
+// inset used below. That is why the gap is a custom property: the grid and
+// the bus have to read the same number or the line misses the stems.
+const { services } = Astro.props;
+---
+
+<section class="chart-section">
+    <div class="chart" style="--g: clamp(1rem, 3vw, 2rem)">
+        <div class="chart-root">
+            <div class="node is-root">
+                <span class="badge" aria-hidden="true">AF</span>
+                <h2>AgentinFlow</h2>
+                <p class="node-lead">Three services, one team, one process.</p>
+            </div>
+        </div>
+
+        <div class="trunk" aria-hidden="true"></div>
+
+        <ol class="branches">
+            {services.map((s) => (
+                <li class="branch">
+                    <article class="node">
+                        <span class="badge" aria-hidden="true">{s.num}</span>
+                        <h3>{s.title}</h3>
+                        <p class="node-lead">{s.lead}</p>
+
+                        <ul class="builds">
+                            {s.builds.map((b) => (
+                                <li>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                    <span>{b}</span>
+                                </li>
+                            ))}
+                        </ul>
+
+                        <div class="metric">
+                            <span class="metric-value">{s.metric}</span>
+                            <span class="metric-label">{s.metricLabel}</span>
+                        </div>
+                    </article>
+                </li>
+            ))}
+        </ol>
+    </div>
+</section>
+
+<style>
+    .chart-section {
+        padding: clamp(3rem, 9vh, 6rem) 1.5rem clamp(4rem, 12vh, 8rem);
+        background-color: var(--bg);
+    }
+
+    .chart {
+        max-width: 1080px;
+        margin: 0 auto;
+    }
+
+    /* --- Nodes --- */
+    .chart-root {
+        display: flex;
+        justify-content: center;
+    }
+
+    .is-root {
+        width: min(100%, 420px);
+        text-align: center;
+    }
+
+    .node {
+        position: relative;
+        padding: 2rem 1.5rem 1.5rem;
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    /* The glow: the border takes the accent and throws light past itself.
+       Three stacked shadows - a tight ring, a near bloom and a wide haze -
+       read as a lit edge, where one large shadow reads as a drop shadow. */
+    .node:hover,
+    .node:focus-within {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+        box-shadow:
+            0 0 0 1px rgba(var(--accent-rgb), 0.55),
+            0 0 22px rgba(var(--accent-rgb), 0.35),
+            0 0 64px rgba(var(--accent-rgb), 0.14);
+    }
+
+    /* Sits astride the top edge, like the icons in the reference chart. */
+    .badge {
+        position: absolute;
+        top: -1.1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: grid;
+        place-items: center;
+        width: 2.2rem;
+        height: 2.2rem;
+        border-radius: 50%;
+        background-color: var(--bg-alt);
+        border: 1px solid var(--border);
+        font-family: var(--font-display);
+        font-size: 0.8rem;
+        letter-spacing: 0.02em;
+        color: var(--text-dim);
+        transition: border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .node:hover .badge,
+    .node:focus-within .badge {
+        border-color: var(--accent);
+        color: var(--accent);
+        box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.45);
+    }
+
+    .node h2,
+    .node h3 {
+        margin: 0 0 0.6rem;
+        font-family: var(--font-display);
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        color: var(--heading);
+    }
+
+    .node h2 {
+        font-size: clamp(1.35rem, 3vw, 1.75rem);
+    }
+
+    .node h3 {
+        font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+    }
+
+    .node-lead {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: var(--text);
+    }
+
+    /* --- Lists and metric --- */
+    .builds {
+        margin: 1.25rem 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.6rem;
+    }
+
+    .builds li {
+        display: grid;
+        grid-template-columns: 1rem minmax(0, 1fr);
+        gap: 0.6rem;
+        align-items: start;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: var(--text-dim);
+    }
+
+    .builds svg {
+        width: 1rem;
+        height: 1rem;
+        margin-top: 0.2rem;
+        color: var(--accent);
+    }
+
+    .metric {
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .metric-value {
+        display: block;
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        color: var(--accent);
+    }
+
+    .metric-label {
+        display: block;
+        margin-top: 0.4rem;
+        font-size: 0.8rem;
+        line-height: 1.4;
+        color: var(--text-dim);
+    }
+
+    /* --- Connectors --- */
+    .trunk {
+        width: 1px;
+        height: 2.75rem;
+        margin: 0 auto;
+        background-color: var(--border);
+    }
+
+    .branches {
+        position: relative;
+        display: grid;
+        gap: var(--g);
+        /* Room for the stems above each card, and for the badges that hang
+           over the top edge. */
+        padding: 3.75rem 0 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .branch {
+        position: relative;
+    }
+
+    /* Stem: from the bus down to the top of the card. Its height matches
+       the row's top padding exactly, so it starts on the bus and ends on
+       the card with no break at either end. Its lower stretch runs behind
+       the badge, which is opaque and sits on the same centre line. */
+    .branch::before {
+        content: '';
+        position: absolute;
+        top: -3.75rem;
+        left: 50%;
+        width: 1px;
+        height: 3.75rem;
+        background-color: var(--border);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .branch:hover::before {
+        background-color: var(--accent);
+        box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.7);
+    }
+
+    /* --- Layout --- */
+    @media (min-width: 860px) {
+        .branches {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        /* Bus: spans centre of first card to centre of last, and sits at
+           the very top of the row so the trunk lands on it. */
+        .branches::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: calc(16.6667% - var(--g) / 3);
+            right: calc(16.6667% - var(--g) / 3);
+            height: 1px;
+            background-color: var(--border);
+        }
+    }
+
+    /* Stacked: the chart becomes a chain, each card hanging off the one
+       above. The bus is meaningless with a single column, so it is not
+       drawn at all rather than left as a stub. The gap has to clear the
+       stem, or the stem would run over the card above it. */
+    @media (max-width: 859px) {
+        .branches {
+            gap: 3.75rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .node,
+        .badge,
+        .branch::before {
+            transition: none;
+        }
+
+        .node:hover,
+        .node:focus-within {
+            transform: none;
+        }
+    }
+</style>
