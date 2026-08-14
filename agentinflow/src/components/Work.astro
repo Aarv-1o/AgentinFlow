@@ -4,10 +4,12 @@
 // Copy describes only what is verifiable from the live sites. Nothing is
 // inferred about budgets, timelines or outcomes.
 //
-// `metric` is deliberately absent on both entries. A result figure is the
-// most persuasive thing here and the one thing that cannot be derived from
-// outside - it has to come from the client. Cards omit the block entirely
-// when metric is null, so no empty slot shows and no invented number ships.
+// The metric is delivery time, not an outcome figure. Neither client has
+// reported numbers back, so there is nothing to claim on their side - but
+// turnaround is ours to state and we can stand behind it. It also matches
+// what the Services page promises about agreed scope and visible progress,
+// so the two pages say the same thing.
+// Cards omit the block entirely when metric is null.
 const projects = [
     {
         num: '01',
@@ -15,8 +17,8 @@ const projects = [
         title: 'Prescription price comparison platform',
         problem: 'Patients had no straightforward way to see what the same prescription costs at different pharmacies, so most paid whatever their usual one charged.',
         url: 'https://bellemeade-advisors.onrender.com/',
-        metric: null,
-        metricLabel: null
+        metric: '2 weeks',
+        metricLabel: 'brief to live, progress shared at every stage'
     },
     {
         num: '02',
@@ -24,8 +26,8 @@ const projects = [
         title: 'Cultural exchange and scholarship programme site',
         problem: 'CCB promotes cultural exchange and youth leadership through scholarships and community impact, and needed a public home for that work.',
         url: 'https://www.crossingculturalboundaries.com/',
-        metric: null,
-        metricLabel: null
+        metric: '1 week',
+        metricLabel: 'brief to live, progress shared at every stage'
     }
 ];
 ---
@@ -165,13 +167,15 @@ const projects = [
     }
 
     .project-metric {
-        margin-top: 1.75rem;
+        margin-top: 1.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border);
     }
 
     .metric-value {
         display: block;
         font-family: var(--font-display);
-        font-size: clamp(2rem, 5vw, 3rem);
+        font-size: clamp(1.5rem, 3vw, 2rem);
         line-height: 1;
         letter-spacing: -0.02em;
         color: var(--accent);
