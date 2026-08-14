@@ -1,9 +1,8 @@
 ---
 // "Our work" - the proof section, sitting after the hero.
 //
-// Copy describes only what is verifiable from the live sites: features
-// visible on the page, and stacks read from the shipped build output.
-// Nothing is inferred about budgets, timelines or outcomes.
+// Copy describes only what is verifiable from the live sites. Nothing is
+// inferred about budgets, timelines or outcomes.
 //
 // `metric` is deliberately absent on both entries. A result figure is the
 // most persuasive thing here and the one thing that cannot be derived from
@@ -15,7 +14,6 @@ const projects = [
         client: 'Bellemeade Advisors · Healthcare',
         title: 'Prescription price comparison platform',
         problem: 'Patients had no straightforward way to see what the same prescription costs at different pharmacies, so most paid whatever their usual one charged.',
-        url: 'https://bellemeade-advisors.onrender.com/',
         metric: null,
         metricLabel: null
     },
@@ -24,7 +22,6 @@ const projects = [
         client: 'Crossing Cultural Boundaries · Non-profit',
         title: 'Cultural exchange and scholarship programme site',
         problem: 'CCB promotes cultural exchange and youth leadership through scholarships and community impact, and needed a public home for that work.',
-        url: 'https://www.crossingculturalboundaries.com/',
         metric: null,
         metricLabel: null
     }
@@ -41,31 +38,36 @@ const projects = [
         <ol class="project-list">
             {projects.map((pr) => (
                 <li class="project-card">
-                    <span class="project-num">{pr.num}</span>
-                    <p class="project-client">{pr.client}</p>
+                    <div class="card-text">
+                        <span class="project-num">{pr.num}</span>
+                        <p class="project-client">{pr.client}</p>
+                        <h3 class="project-title">{pr.title}</h3>
+                        <p class="project-problem">{pr.problem}</p>
 
-                    <h3 class="project-title">
-                        {pr.url
-                            ? <a href={pr.url} target="_blank" rel="noopener">
-                                {pr.title}
-                                <svg class="visit-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                    aria-hidden="true">
-                                    <line x1="7" y1="17" x2="17" y2="7" />
-                                    <polyline points="7 7 17 7 17 17" />
-                                </svg>
-                            </a>
-                            : pr.title}
-                    </h3>
+                        {pr.metric && (
+                            <div class="project-metric">
+                                <span class="metric-value">{pr.metric}</span>
+                                <span class="metric-label">{pr.metricLabel}</span>
+                            </div>
+                        )}
+                    </div>
 
-                    <p class="project-problem">{pr.problem}</p>
-
-                    {pr.metric && (
-                        <div class="project-metric">
-                            <span class="metric-value">{pr.metric}</span>
-                            <span class="metric-label">{pr.metricLabel}</span>
+                    {/* Built from divs in real CSS 3D rather than drawn flat, so
+                        the hover turn is an actual rotation and the lid keeps
+                        its correct angle to the base throughout. */}
+                    <div class="laptop-scene" aria-hidden="true">
+                        <div class="turntable">
+                            <div class="laptop">
+                                <div class="lid">
+                                    <div class="screen"><span>AF</span></div>
+                                </div>
+                                <div class="base">
+                                    <div class="keyboard"></div>
+                                    <div class="trackpad"></div>
+                                </div>
+                            </div>
                         </div>
-                    )}
+                    </div>
                 </li>
             ))}
         </ol>
@@ -108,7 +110,7 @@ const projects = [
         color: var(--heading);
     }
 
-    /* --- Cards, stacked --- */
+    /* --- Cards --- */
     .project-list {
         display: grid;
         gap: 1.25rem;
@@ -118,6 +120,9 @@ const projects = [
     }
 
     .project-card {
+        display: grid;
+        gap: 2rem;
+        align-items: center;
         padding: clamp(1.75rem, 4vw, 2.75rem);
         background-color: var(--surface);
         border: 1px solid var(--border);
@@ -156,43 +161,14 @@ const projects = [
         color: var(--heading);
     }
 
-    .project-title a {
-        display: inline-flex;
-        align-items: baseline;
-        gap: 0.5rem;
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.25s ease;
-    }
-
-    .project-title a:hover,
-    .project-title a:focus-visible {
-        color: var(--accent);
-    }
-
-    .visit-arrow {
-        width: 0.6em;
-        height: 0.6em;
-        flex-shrink: 0;
-        opacity: 0.45;
-        transition: opacity 0.25s ease, transform 0.25s ease;
-    }
-
-    .project-title a:hover .visit-arrow,
-    .project-title a:focus-visible .visit-arrow {
-        opacity: 1;
-        transform: translate(2px, -2px);
-    }
-
     .project-problem {
         margin: 0;
-        max-width: 56ch;
+        max-width: 52ch;
         color: var(--text);
         font-size: 1rem;
         line-height: 1.65;
     }
 
-    /* --- Metric (rendered only when one exists) --- */
     .project-metric {
         margin-top: 1.75rem;
     }
@@ -214,20 +190,147 @@ const projects = [
         color: var(--text-dim);
     }
 
+    /* ================= Laptop ================= */
+    .laptop-scene {
+        justify-self: center;
+        width: 260px;
+        height: 200px;
+        /* perspective belongs on the ancestor; on the rotating element
+           itself it flattens the result. */
+        perspective: 1000px;
+    }
+
+    /* Spins about the world vertical. Kept on its own element so the
+       laptop's own tilt is not fighting the hover rotation. */
+    .turntable {
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transform: rotateY(var(--ry, -22deg));
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Lays the whole machine back so it is seen from above and in front. */
+    .laptop {
+        position: relative;
+        width: 230px;
+        height: 150px;
+        margin: 0 auto;
+        transform-style: preserve-3d;
+        transform: rotateX(62deg);
+    }
+
+    .base,
+    .lid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 230px;
+        border-radius: 6px;
+    }
+
+    .base {
+        height: 150px;
+        background: linear-gradient(160deg, #2c2c2c 0%, #171717 100%);
+        border: 1px solid #3a3a3a;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .keyboard {
+        position: absolute;
+        inset: 12% 8% 32%;
+        border-radius: 3px;
+        background: #101010;
+        /* Key rows suggested with a repeating gradient rather than 60 divs. */
+        background-image:
+            repeating-linear-gradient(90deg, #2a2a2a 0 8%, transparent 8% 10%),
+            repeating-linear-gradient(0deg, #2a2a2a 0 16%, transparent 16% 20%);
+    }
+
+    .trackpad {
+        position: absolute;
+        left: 50%;
+        bottom: 8%;
+        width: 34%;
+        height: 18%;
+        transform: translateX(-50%);
+        border-radius: 3px;
+        background: #202020;
+        border: 1px solid #333;
+    }
+
+    /* Hinged at the far edge of the base and swung upright. Slightly past
+       90 degrees, which is how a laptop actually sits. */
+    .lid {
+        height: 145px;
+        transform-origin: top center;
+        transform: rotateX(-104deg);
+        background: linear-gradient(160deg, #303030 0%, #1a1a1a 100%);
+        border: 1px solid #3a3a3a;
+    }
+
+    .screen {
+        position: absolute;
+        inset: 7px;
+        display: grid;
+        place-items: center;
+        border-radius: 3px;
+        background: #000;
+        box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+    }
+
+    .screen span {
+        font-family: var(--font-display);
+        font-size: 2.6rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--accent);
+        text-shadow: 0 0 22px rgba(var(--accent-rgb), 0.55);
+    }
+
+    /* --- Layout --- */
+    @media (min-width: 860px) {
+        .project-card {
+            grid-template-columns: 1fr 260px;
+            gap: 3rem;
+        }
+    }
+
     @media (prefers-reduced-motion: reduce) {
 
         .project-card,
-        .project-title a,
-        .visit-arrow {
+        .turntable {
             transition: none;
         }
 
         .project-card:hover {
             transform: none;
         }
-
-        .project-title a:hover .visit-arrow {
-            transform: none;
-        }
     }
 </style>
+
+<script>
+    // Map the pointer's horizontal position across the card onto the
+    // turntable's rotation, so the laptop turns with the cursor rather than
+    // snapping to a fixed angle. Vertical movement is ignored on purpose.
+    const REST = -22;
+    const SWING = 30;
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.project-card').forEach((card) => {
+            const turntable = card.querySelector('.turntable');
+            if (!turntable) return;
+
+            card.addEventListener('pointermove', (e) => {
+                const { left, width } = card.getBoundingClientRect();
+                // -1 at the left edge, +1 at the right
+                const t = ((e.clientX - left) / width) * 2 - 1;
+                turntable.style.setProperty('--ry', `${REST + t * SWING}deg`);
+            });
+
+            card.addEventListener('pointerleave', () => {
+                turntable.style.removeProperty('--ry');
+            });
+        });
+    }
+</script>
