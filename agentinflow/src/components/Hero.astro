@@ -1,0 +1,307 @@
+---
+// Hero: three stacked rows - wordmark, keypad, line.
+//
+// The keypad is inline SVG in a true isometric projection: a few kilobytes,
+// no 3D runtime, no asset licence, and every colour resolves through the
+// palette tokens.
+//
+// Motion: the keypad sways through a shallow angle on a loop, and individual
+// caps press when hovered. The caps are decoration, not controls - they are
+// not focusable and clicking them does nothing.
+
+// The wordmark here is static. The AF-to-AGENTINFLOW fold lives in the nav
+// instead: driven from the hero it was carried off screen by the same
+// scroll that played it, so it could never be watched. The nav is fixed.
+//
+// --- Isometric projection ---------------------------------------------------
+// Grid units in, screen coordinates out. z is a straight pixel lift, so
+// heights are independent of footprint.
+const U = 92;
+const CX = 400;
+const CY = 205;
+const COS30 = 0.8660254;
+
+const iso = (x, y, z = 0) => ({
+    X: CX + (x - y) * COS30 * U,
+    Y: CY + (x + y) * 0.5 * U - z
+});
+
+const p = (pt) => `${pt.X.toFixed(1)},${pt.Y.toFixed(1)}`;
+
+// Flat square face at a given height.
+function face(x0, y0, size, z) {
+    const x1 = x0 + size;
+    const y1 = y0 + size;
+    return `M${p(iso(x0, y0, z))} L${p(iso(x1, y0, z))} L${p(iso(x1, y1, z))} L${p(iso(x0, y1, z))} Z`;
+}
+
+// A tapered slab standing on z0: square footprint, smaller top face, and the
+// two side walls that meet at the front corner - the only ones visible.
+// The taper is what makes a keycap read as a keycap rather than a box.
+function slab(x0, y0, size, height, taper, z0 = 0) {
+    const x1 = x0 + size;
+    const y1 = y0 + size;
+    const zt = z0 + height;
+
+    const b = {
+        right: iso(x1, y0, z0), front: iso(x1, y1, z0), left: iso(x0, y1, z0)
+    };
+    const t = {
+        back: iso(x0 + taper, y0 + taper, zt),
+        right: iso(x1 - taper, y0 + taper, zt),
+        front: iso(x1 - taper, y1 - taper, zt),
+        left: iso(x0 + taper, y1 - taper, zt)
+    };
+
+    return {
+        top: `M${p(t.back)} L${p(t.right)} L${p(t.front)} L${p(t.left)} Z`,
+        wallR: `M${p(b.right)} L${p(b.front)} L${p(t.front)} L${p(t.right)} Z`,
+        wallL: `M${p(b.left)} L${p(b.front)} L${p(t.front)} L${p(t.left)} Z`,
+        centre: iso((x0 + x1) / 2, (y0 + y1) / 2, zt)
+    };
+}
+
+// --- Plate with a recessed well ---------------------------------------------
+const PLATE_X = -0.24;
+const PLATE_SIZE = 2.32;
+const PLATE_H = 26;
+
+const RECESS_INSET = 0.1;
+const RECESS_DEPTH = 7;
+
+const plate = slab(PLATE_X, PLATE_X, PLATE_SIZE, PLATE_H, 0.02);
+
+const rx0 = PLATE_X + RECESS_INSET;
+const rSize = PLATE_SIZE - RECESS_INSET * 2;
+const rx1 = rx0 + rSize;
+const FLOOR_Z = PLATE_H - RECESS_DEPTH;
+
+const recess = {
+    floor: face(rx0, rx0, rSize, FLOOR_Z),
+    // Only the two walls meeting at the BACK corner face the viewer inside a
+    // well - the mirror of which walls are visible on a solid slab.
+    wallBackR: `M${p(iso(rx0, rx0, PLATE_H))} L${p(iso(rx1, rx0, PLATE_H))} L${p(iso(rx1, rx0, FLOOR_Z))} L${p(iso(rx0, rx0, FLOOR_Z))} Z`,
+    wallBackL: `M${p(iso(rx0, rx0, PLATE_H))} L${p(iso(rx0, rx1, PLATE_H))} L${p(iso(rx0, rx1, FLOOR_Z))} L${p(iso(rx0, rx0, FLOOR_Z))} Z`
+};
+
+// --- Keys -------------------------------------------------------------------
+const KEY_SIZE = 0.82;
+const KEY_H = 42;
+const KEY_TAPER = 0.12;
+// Nudged back into the well so more of the plate shows at the front.
+const KEY_SHIFT = -0.06;
+
+const keys = [
+    { i: 0, j: 0, label: 'WEB' },
+    { i: 1, j: 0, label: 'AI' },
+    { i: 0, j: 1, label: 'N8N' },
+    { i: 1, j: 1, label: 'GO', go: true }
+].map((k) => ({
+    ...k,
+    // Caps stand on the well floor, not on z=0. At z=0 they sat on the same
+    // plane as the plate's underside and cut straight through it.
+    ...slab(k.i + KEY_SHIFT, k.j + KEY_SHIFT, KEY_SIZE, KEY_H, KEY_TAPER, FLOOR_Z),
+    // SVG has no z-buffer, so paint order is depth order: nearer caps last.
+    depth: k.i + k.j
+})).sort((a, b) => a.depth - b.depth);
+
+const goKey = keys.find((k) => k.go);
+
+// Labels must lie in the top plane rather than face the screen, or they float
+// above the cap. This matrix maps flat text onto that plane.
+const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
+---
+
+<section class="hero">
+    <h1 class="hero-wordmark">AGENTINFLOW</h1>
+
+    <div class="stage">
+        <div class="sway">
+            <svg class="keypad" viewBox="80 90 640 340" role="img"
+                aria-label="An isometric keypad with keys labelled Web, AI, n8n and Go">
+                <defs>
+                    <linearGradient id="capTop" x1="0" y1="0" x2="0.6" y2="1">
+                        <stop offset="0%" stop-color="#ffffff" />
+                        <stop offset="100%" stop-color="#d7dade" />
+                    </linearGradient>
+                    <linearGradient id="capTopGo" x1="0" y1="0" x2="0.6" y2="1">
+                        <stop offset="0%" stop-color="#b52c4b" />
+                        <stop offset="100%" stop-color="#6d1830" />
+                    </linearGradient>
+                    <linearGradient id="plateTop" x1="0" y1="0" x2="0.5" y2="1">
+                        <stop offset="0%" stop-color="#3a3a3a" />
+                        <stop offset="100%" stop-color="#212121" />
+                    </linearGradient>
+                    <radialGradient id="goGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.8" />
+                        <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
+                    </radialGradient>
+                </defs>
+
+                <ellipse class="ground" cx="400" cy="370" rx="245" ry="66" />
+
+                <!-- Plate body -->
+                <g class="plate">
+                    <path d={plate.wallL} fill="#0e0e0e" />
+                    <path d={plate.wallR} fill="#161616" />
+                    <path d={plate.top} fill="url(#plateTop)" />
+                </g>
+
+                <!-- Recessed well the caps sit inside -->
+                <g class="recess">
+                    <path d={recess.floor} fill="#0a0a0a" />
+                    <path d={recess.wallBackL} fill="#151515" />
+                    <path d={recess.wallBackR} fill="#101010" />
+                </g>
+
+                <ellipse class="go-glow" cx={goKey.centre.X} cy={goKey.centre.Y + 24}
+                    rx="120" ry="58" fill="url(#goGlow)" />
+
+                <!-- Caps, painted back to front -->
+                {keys.map((k) => (
+                    <g class={k.go ? 'cap is-go' : 'cap'}>
+                        <path d={k.wallL} fill={k.go ? '#4d1122' : '#8f9499'} />
+                        <path d={k.wallR} fill={k.go ? '#5d1527' : '#a9aeb3'} />
+                        <path d={k.top} fill={k.go ? 'url(#capTopGo)' : 'url(#capTop)'} />
+                        <text x="0" y="0" class="cap-label"
+                            transform={`matrix(${LABEL_TF} ${k.centre.X} ${k.centre.Y})`}
+                            fill={k.go ? '#ffffff' : '#3a3f44'}>{k.label}</text>
+                    </g>
+                ))}
+            </svg>
+        </div>
+    </div>
+
+    <p class="hero-line">We build what you ask</p>
+</section>
+
+<style>
+    .hero {
+        /* svh is the viewport with the mobile browser's chrome showing. On
+           100vh the hero is sized to the chrome-hidden height, so the line
+           at the bottom sits under the address bar until you scroll. */
+        min-height: 100vh;
+        min-height: 100svh;
+        display: grid;
+        grid-template-rows: auto auto auto;
+        align-content: center;
+        justify-items: center;
+        gap: clamp(0.5rem, 2vh, 1.5rem);
+        padding: 7rem 1.5rem 3rem;
+        text-align: center;
+    }
+
+    .hero-wordmark {
+        margin: 0;
+        font-family: var(--font-wordmark);
+        font-weight: 700;
+        font-size: clamp(1.75rem, 5.5vw, 5rem);
+        line-height: 1;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+        color: var(--heading);
+        user-select: none;
+    }
+
+    /* perspective has to sit on the parent for the child's rotation to read
+       as depth - applied to the rotating element itself it flattens. */
+    .stage {
+        width: min(92vw, 760px);
+        perspective: 1300px;
+    }
+
+    .sway {
+        transform-style: preserve-3d;
+        animation: keypad-sway 14s ease-in-out infinite;
+        /* Hovering a cap must not touch this. The animation lives on the
+           wrapper and the hover lives on the cap inside it, so the two
+           never share a transform and the turn carries on underneath. */
+    }
+
+    /* Turns out to 30 degrees and comes back to square.
+       The artwork is a flat isometric drawing, so turning it about Y only
+       foreshortens it - width scales with the cosine. Thirty degrees costs
+       13%; the old 30-to-45 band never returned to full width, so the
+       keypad read as permanently squashed rather than as turning. Coming
+       home to zero each cycle is what gives the eye a reference to measure
+       the turn against. */
+    @keyframes keypad-sway {
+
+        0%,
+        100% {
+            transform: rotateY(0deg) rotateX(2deg);
+        }
+
+        50% {
+            transform: rotateY(30deg) rotateX(2deg);
+        }
+    }
+
+    .keypad {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    .ground {
+        fill: #000;
+        opacity: 0.5;
+    }
+
+    /* --- Press on hover ---
+       The caps are decoration, not controls: nothing is focusable, nothing
+       is announced as a button and there is no pointer cursor, so clicking
+       does nothing. Pointer events stay enabled - :hover needs them. */
+    .cap {
+        transition: transform 0.16s cubic-bezier(0.34, 1.2, 0.64, 1);
+    }
+
+    .cap:hover {
+        /* Straight down the screen: that is the plate normal in this
+           projection. Travel stops short of the well depth so the cap
+           seats rather than sinking through the floor. */
+        transform: translateY(9px);
+    }
+
+    .go-glow {
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+
+    .keypad:has(.is-go:hover) .go-glow {
+        opacity: 1;
+    }
+
+    .cap-label {
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-anchor: middle;
+        dominant-baseline: central;
+        pointer-events: none;
+    }
+
+    /* Extra clearance above the line. The grid gap is uniform, and the
+       keypad's own shadow already sits close to its lower edge, so the line
+       needs more breathing room beneath the artwork than the wordmark needs
+       above it. */
+    .hero-line {
+        margin: clamp(1.5rem, 5vh, 4rem) 0 0;
+        font-size: clamp(1rem, 2vw, 1.35rem);
+        letter-spacing: 0.02em;
+        color: var(--text);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .sway {
+            animation: none;
+            transform: rotateY(-4deg);
+        }
+
+        .cap {
+            transition: none;
+        }
+    }
+</style>

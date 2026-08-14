@@ -1,0 +1,315 @@
+---
+// The way a job runs, drawn as a branch.
+//
+// The trunk carries the work from us at the thick end to the client at the
+// tip, with each stage of the job hanging beneath it. The limbs growing off
+// the top are what we bring to it - the three services.
+//
+// Geometry is computed rather than hand-typed so the drawing survives a
+// change to either list: add a stage and it re-spaces itself.
+//
+// The trunk is a filled outline, not a stroke, because a stroke cannot
+// taper - and the taper is the whole reason it reads as a branch instead
+// of a pipe.
+const { steps, services } = Astro.props;
+
+const X0 = 70;
+const X1 = 1130;
+const SPAN = X1 - X0;
+
+// Centreline: a gentle rise left to right, plus a slow wave so the branch
+// is not a ruler. Everything that attaches to the trunk reads this, or the
+// joins would float off it.
+const yc = (x) => 255 - 0.045 * (x - X0) + Math.sin((x - X0) / 95) * 3.5;
+
+// Thick at the base, thin at the tip.
+const wAt = (x) => 16 - 12 * ((x - X0) / SPAN);
+
+// Sampled densely enough that the facets do not show at this scale.
+const SAMPLES = 44;
+const spine = [];
+for (let i = 0; i <= SAMPLES; i++) {
+    const x = X0 + (SPAN * i) / SAMPLES;
+    spine.push({ x, y: yc(x), w: wAt(x) });
+}
+const f = (n) => n.toFixed(1);
+const trunkPath =
+    spine.map((p, i) => `${i ? 'L' : 'M'}${f(p.x)},${f(p.y - p.w / 2)}`).join(' ') +
+    ' ' +
+    [...spine].reverse().map((p) => `L${f(p.x)},${f(p.y + p.w / 2)}`).join(' ') +
+    ' Z';
+
+// --- Stages, hanging below the trunk ---
+const STUB = 52;
+const stages = steps.map((s, i) => {
+    const x = X0 + (SPAN * (i + 1)) / (steps.length + 1);
+    const y = yc(x);
+    return { ...s, x, y, tipY: y + STUB };
+});
+
+// --- Limbs, growing above it ---
+// Fractions chosen to miss the stage positions above: a limb rising from
+// the same point a stub drops reads as a mistake rather than a node.
+const LIMB_AT = [0.2, 0.45, 0.72];
+const LIMB_DX = [-46, 22, 62];
+const LIMB_DY = [-108, -132, -112];
+
+const limbs = services.map((s, i) => {
+    const x = X0 + SPAN * (LIMB_AT[i % 3] ?? (i + 1) / (services.length + 1));
+    const y = yc(x);
+    const tipX = x + (LIMB_DX[i % 3] ?? 0);
+    const tipY = y + (LIMB_DY[i % 3] ?? -110);
+    const dx = tipX - x;
+    return {
+        title: s.title,
+        tipX,
+        tipY,
+        d: `M${f(x)},${f(y)} C${f(x + dx * 0.15)},${f(y - 42)} ${f(x + dx * 0.62)},${f(tipY + 44)} ${f(tipX)},${f(tipY)}`
+    };
+});
+---
+
+<section class="flow">
+    <div class="flow-inner">
+        <header class="flow-head">
+            <h3>How a job runs</h3>
+            <p>
+                It starts as a conversation with us and ends as something working
+                in your hands. What grows off it is what we bring along the way.
+            </p>
+        </header>
+
+        {/* The drawing is decoration over content that already exists in the
+            list below - screen readers and narrow screens get the list. */}
+        <svg class="branch" viewBox="0 60 1200 330" role="img"
+            aria-label="A branching diagram of the stages of a project, from us to the client">
+            <defs>
+                <linearGradient id="barkFill" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#4a4a4a" />
+                    <stop offset="100%" stop-color="#2c2c2c" />
+                </linearGradient>
+            </defs>
+
+            <path class="trunk" d={trunkPath} fill="url(#barkFill)" />
+
+            {/* Limbs: our services */}
+            {limbs.map((lb) => (
+                <g class="limb">
+                    {/* A 2px line is a miserable hover target - this invisible
+                        stroke widens it without widening the drawing. */}
+                    <path class="hit" d={lb.d} />
+                    <path class="twig" d={lb.d} />
+                    {/* Sits close to the tip now that no knot separates the
+                        two - the label is what the twig ends in. */}
+                    <text class="limb-label" x={lb.tipX} y={lb.tipY - 9}>{lb.title}</text>
+                </g>
+            ))}
+
+            {/* Stages: the run of the job */}
+            {stages.map((st) => (
+                <g class="stage">
+                    <rect class="hit-box" x={st.x - 66} y={st.y} width="132" height={STUB + 56} />
+                    <path class="stub" d={`M${f(st.x)},${f(st.y)} L${f(st.x)},${f(st.tipY)}`} />
+                    <text class="stage-title" x={st.x} y={st.tipY + 17}>{st.t}</text>
+                </g>
+            ))}
+
+            {/* Ends */}
+            <g class="end">
+                <circle class="end-dot" cx={X0} cy={yc(X0)} r="9" />
+                <text class="end-label" x={X0} y={yc(X0) - 28}>Us</text>
+                <text class="end-sub" x={X0} y={yc(X0) - 12}>AgentinFlow</text>
+            </g>
+            <g class="end">
+                <circle class="end-dot" cx={X1} cy={yc(X1)} r="6" />
+                <text class="end-label" x={X1} y={yc(X1) - 30}>You</text>
+                <text class="end-sub" x={X1} y={yc(X1) - 14}>the client</text>
+            </g>
+        </svg>
+
+        {/* Same content, no drawing. Shown on narrow screens, where the
+            branch would shrink its labels to nothing. */}
+        <div class="flow-list">
+            <p class="flow-ends"><strong>Us</strong> <span aria-hidden="true">→</span> <strong>you</strong></p>
+            <ol>
+                {steps.map((s) => <li><strong>{s.t}</strong> {s.d}</li>)}
+            </ol>
+            <p class="flow-limbs">
+                Along the way: {services.map((s) => s.title).join(', ')}.
+            </p>
+        </div>
+    </div>
+</section>
+
+<style>
+    .flow {
+        padding: clamp(3rem, 8vh, 5rem) 0 0;
+    }
+
+    .flow-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+    }
+
+    .flow-head {
+        margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+        text-align: center;
+    }
+
+    .flow-head h3 {
+        margin: 0 0 0.75rem;
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 2.6vw, 1.6rem);
+        letter-spacing: -0.02em;
+        color: var(--heading);
+    }
+
+    .flow-head p {
+        max-width: 46rem;
+        margin: 0 auto;
+        font-size: 0.98rem;
+        line-height: 1.65;
+        color: var(--text-dim);
+    }
+
+    .branch {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    /* --- Lines --- */
+    .twig,
+    .stub {
+        fill: none;
+        stroke: #3d3d3d;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        transition: stroke 0.3s ease, filter 0.3s ease;
+    }
+
+    .stub {
+        stroke-width: 1.5;
+    }
+
+    .hit,
+    .hit-box {
+        fill: none;
+        stroke: transparent;
+        stroke-width: 26;
+    }
+
+    .hit-box {
+        fill: transparent;
+    }
+
+    /* --- Text --- */
+    .limb-label,
+    .stage-title,
+    .end-label,
+    .end-sub {
+        font-family: var(--font-body);
+        text-anchor: middle;
+        transition: fill 0.3s ease;
+    }
+
+    .limb-label {
+        font-size: 18px;
+        font-weight: 500;
+        fill: var(--text);
+    }
+
+    .stage-title {
+        font-family: var(--font-display);
+        font-size: 17px;
+        fill: var(--heading);
+    }
+
+    .end-label {
+        font-family: var(--font-display);
+        font-size: 20px;
+        fill: var(--accent);
+    }
+
+    .end-sub {
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        fill: var(--text-dim);
+    }
+
+    .end-dot {
+        fill: var(--accent);
+    }
+
+    /* --- Hover --- */
+    .limb:hover .twig,
+    .stage:hover .stub {
+        stroke: var(--accent);
+        filter: drop-shadow(0 0 6px rgba(var(--accent-rgb), 0.8));
+    }
+
+    .limb:hover .limb-label {
+        fill: var(--heading);
+    }
+
+    .stage:hover .stage-title {
+        fill: var(--accent);
+    }
+
+    /* --- Narrow screens --- */
+    /* No horizontal padding: the section's .container already supplies it,
+       and a second helping indents the list past everything around it. */
+    .flow-list {
+        display: none;
+    }
+
+    .flow-ends {
+        margin: 0 0 1.25rem;
+        font-family: var(--font-display);
+        color: var(--accent);
+    }
+
+    .flow-list ol {
+        margin: 0;
+        padding-left: 1.2rem;
+        display: grid;
+        gap: 0.75rem;
+        color: var(--text-dim);
+        line-height: 1.6;
+    }
+
+    .flow-list ol strong {
+        color: var(--heading);
+        font-weight: 600;
+    }
+
+    .flow-limbs {
+        margin: 1.5rem 0 0;
+        font-size: 0.9rem;
+        color: var(--text-dim);
+    }
+
+    /* Below this the labels inside the viewBox scale down past readable, so
+       the drawing is dropped for the list rather than shrunk. */
+    @media (max-width: 900px) {
+        .branch {
+            display: none;
+        }
+
+        .flow-list {
+            display: block;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .twig,
+        .stub,
+        .limb-label,
+        .stage-title {
+            transition: none;
+        }
+    }
+</style>

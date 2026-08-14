@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+// Order matters: global first, page sheet second (matches the original
+// single-stylesheet cascade). See BaseLayout.astro for why.
+import '../../styles/tokens.css';
+import '../../styles/global.css';
+import '../../styles/about.css';
+
+const title = 'About AgentinFlow – AI Automation Company in India | Our Team';
+const description = 'Learn about AgentinFlow, an AI automation company in India, and meet our founders Aarv Singh Chauhan and Chinmay Bhadouria, experts in AI agents and N8N workflows.';
+const canonical = 'https://www.agentinflow.com/aboutus/';
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>
+                    About <span class="hero-highlight">AgentinFlow</span> – AI Automation Company in India
+                </h1>
+
+                <p class="hero-subtitle">Transforming businesses through intelligent automation</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Introduction Section -->
+    <section class="introduction">
+        <div class="container">
+            <div class="intro-content">
+                <h2>Who We Are</h2>
+                <p class="intro-text">
+                    <strong>AgentinFlow</strong> is an AI automation company in India specializing in AI agents,
+                    N8N workflow automation, and custom business automation solutions for startups and enterprises.
+                </p>
+                <p class="intro-text">
+                    Founded with a vision to democratize business automation, we combine cutting-edge AI technology with
+                    practical workflow solutions to deliver tangible results. Our clients typically see a 90% reduction
+                    in manual tasks and save over 20 hours per week within the first month of implementation.
+                </p>
+                <p class="intro-text">
+                    From small startups to established enterprises, we've helped businesses across India transform their
+                    operations with intelligent automation, custom n8n workflows, and modern web solutions.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <h2 class="section-title">Meet the <span class="hero-highlight">team</span></h2>
+
+            <ul class="link-list">
+                <li class="link-row">
+                    <a class="link-item"
+                        href="https://www.linkedin.com/in/aarv-singh-chauhan-4a7987291"
+                        target="_blank" rel="noopener"
+                        aria-label="Aarv Singh Chauhan on LinkedIn">
+                        <span class="link-title">Aarv Singh Chauhan</span>
+                        <span class="link-meta">
+                            Co-Founder
+                            <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="7" y1="17" x2="17" y2="7" />
+                                <polyline points="7 7 17 7 17 17" />
+                            </svg>
+                        </span>
+                    </a>
+                </li>
+
+                <li class="link-row">
+                    <a class="link-item"
+                        href="https://www.linkedin.com/in/chinmay-pratap-singh-bhadoria-6a8756221"
+                        target="_blank" rel="noopener"
+                        aria-label="Chinmay Bhadouria on LinkedIn">
+                        <span class="link-title">Chinmay Bhadouria</span>
+                        <span class="link-meta">
+                            Co-Founder
+                            <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="7" y1="17" x2="17" y2="7" />
+                                <polyline points="7 7 17 7 17 17" />
+                            </svg>
+                        </span>
+                    </a>
+                </li>
+
+                <li class="link-row">
+                    <a class="link-item"
+                        href="https://www.linkedin.com/in/ayush-bhatt-60310422a/"
+                        target="_blank" rel="noopener"
+                        aria-label="Ayush Bhatt on LinkedIn">
+                        <span class="link-title">Ayush Bhatt</span>
+                        <span class="link-meta">
+                            Co-Founder
+                            <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="7" y1="17" x2="17" y2="7" />
+                                <polyline points="7 7 17 7 17 17" />
+                            </svg>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Connect -->
+    <section class="connect-section">
+        <div class="container">
+            <h2 class="section-title">Connect with <span class="hero-highlight">us</span></h2>
+
+            <ul class="link-list">
+                <li class="link-row">
+                    <a class="link-item" href="https://www.linkedin.com/company/agentinflow"
+                        target="_blank" rel="noopener" aria-label="AgentinFlow on LinkedIn">
+                        <span class="link-title">LinkedIn</span>
+                        <span class="link-meta">
+                            @agentinflow
+                            <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="7" y1="17" x2="17" y2="7" />
+                                <polyline points="7 7 17 7 17 17" />
+                            </svg>
+                        </span>
+                    </a>
+                </li>
+
+                <li class="link-row">
+                    <a class="link-item" href="https://x.com/agentinflow"
+                        target="_blank" rel="noopener" aria-label="AgentinFlow on X">
+                        <span class="link-title">Twitter / X</span>
+                        <span class="link-meta">
+                            @agentinflow
+                            <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="7" y1="17" x2="17" y2="7" />
+                                <polyline points="7 7 17 7 17 17" />
+                            </svg>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Transform Your Business?</h2>
+            <p>Let's discuss how we can help automate your workflows and scale your operations.</p>
+            <a href="/service/#contact" class="cta-btn">Get In Touch</a>
+        </div>
+    </section>
+
+    
+</BaseLayout>
+
+<script>
+    import '../../scripts/site.js';
+</script>

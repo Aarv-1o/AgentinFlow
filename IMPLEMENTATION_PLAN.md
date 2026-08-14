@@ -1,7 +1,7 @@
 # AgentinFlow — Implementation Plan
 
 **Created:** 2026-08-12
-**Status:** Awaiting inputs (see [Blocked On](#blocked-on)) — no code written yet
+**Status:** Phase 1 complete and verified live (2026-08-12). Phase 2 awaiting inputs — see [Blocked On](#blocked-on).
 
 ---
 
@@ -9,7 +9,7 @@
 
 | Question | Decision |
 |---|---|
-| Hosting | Vercel |
+| Hosting | **Vercel** — migrating from Render (decided 2026-08-12). Hobby tier's non-commercial restriction was raised and accepted as a known risk |
 | Framework | **Astro** (migrate from plain static) |
 | Order of work | **Phase 1 email → Phase 2 redesign → Phase 3 social** |
 | Social publishing rail | **Deferred** — to be discussed before Phase 3 |
@@ -35,7 +35,9 @@ agentinflow/
 
 - CSS is duplicated three times (~1,980 lines total) with no shared tokens. A palette change means editing three files.
 - Nav and footer are copy-pasted per page; the "active" link state is hand-maintained.
-- The Search Console verification file is duplicated into every folder (two of the three copies are empty, i.e. broken).
+- The Search Console verification file is duplicated into every folder. All three are valid (53 bytes);
+  only the root copy is actually needed. Note the site is *also* verified via a `google-site-verification`
+  meta tag on every page, so verification survives even if the file moves.
 - Design: pure `#000` background, `#E43636` red, `#E2DDB4` cream, system font stack. No scroll animations, no motion design, no portfolio section.
 - EmailJS public key is inline in client JS — anyone can burn the free-tier quota.
 
@@ -70,43 +72,90 @@ Two gaps:
 
 ### Work items
 
-- [ ] **1.a** — Audit the live EmailJS template and align variable names end to end.
+- [x] **1.a** — Audit the live EmailJS template and align variable names end to end.
       Standardise on: `from_name`, `from_email`, `company`, `message`, `submitted_at`.
-- [ ] **1.b** — Rewrite the notification template (clean HTML, all fields visible, Reply-To = `{{from_email}}`).
-- [ ] **1.c** — Create a **second template: auto-reply to the visitor**. Sent to `{{from_email}}`,
+- [x] **1.b** — Rewrite the notification template (clean HTML, all fields visible, Reply-To = `{{from_email}}`).
+- [x] **1.c** — Create a **second template: auto-reply to the visitor**. Sent to `{{from_email}}`,
       confirms receipt, restates their message, sets a response-time expectation, signs off as AgentinFlow.
-- [ ] **1.d** — Rewrite the form handler:
+- [x] **1.d** — Rewrite the form handler:
       - inline toast/banner for success and error (no `alert()`)
       - read and surface the real EmailJS response text on failure
       - honeypot hidden field + minimum-time-on-form check for bot filtering
       - client-side validation with per-field error messages
       - button states: idle → sending → sent → reset
       - `aria-live` region so screen readers announce the outcome
-- [ ] **1.e** — Fallback path: if the send fails, show a `mailto:` link pre-filled with their message
+- [x] **1.e** — Fallback path: if the send fails, show a `mailto:` link pre-filled with their message
       so the lead is never silently lost.
-- [ ] **1.f** — End-to-end test: submit → confirm both emails land → confirm Reply goes to the lead.
+- [x] **1.f** — End-to-end test: submit → confirm both emails land → confirm Reply goes to the lead.
 
 ### Note on wasted work
 
-Phase 2 replaces the client-side call with a Vercel API route. That is deliberate and cheap:
+Phase 2 revisits the send path (see below). That is deliberate and cheap:
 items **1.a–1.c** are dashboard work that carries over 100% unchanged, and **1.f** is a test.
 Only the ~60-line handler from **1.d** gets rewritten. Fixing this now stops leads leaking
 during the redesign.
 
-### Phase 2 upgrade (deferred to the migration)
+### Phase 2 upgrade — send path on Vercel
 
-Once on Astro/Vercel, the send moves to `POST /api/contact`:
-- EmailJS private key server-side, out of the browser
-- Rate limiting by IP (Vercel KV or Upstash)
-- Server-side validation and spam scoring
-- Optional: append every lead to a Google Sheet / Notion DB as a durable backup, so a mail
-  failure never means a lost lead
+Render Static Sites had no serverless functions, which briefly killed this. The move to Vercel
+restores it: Hobby includes 1M function invocations/month, far beyond this site's needs.
+
+Planned for **2B** (not 2A — 2A changes structure only):
+- `POST /api/contact` as a Vercel function; EmailJS key becomes a server-side env var and leaves
+  the browser entirely
+- Real IP-based rate limiting
+- Server-side validation and spam scoring, backing up the client-side honeypot
+- Append every lead to a Google Sheet as a durable backup, so a mail failure never loses a lead
+
+**Do regardless, and do now (free, 2 minutes):** EmailJS dashboard → Account → Security →
+enable the allowed-origins allowlist for `agentinflow.com` and disable "Allow EmailJS API for
+non-browser applications". This is the main protection until the API route exists.
+
+**Latency note:** Vercel Hobby runs functions in a single region, defaulting to Washington DC.
+Static pages are unaffected (global edge CDN), but a form submit from India round-trips to the US
+— roughly +250-300ms. Set the function region to Mumbai (`bom1`) if Hobby permits it.
 
 ---
 
 ## Phase 2 — Astro migration + design overhaul
 
-### 2.1 Migration
+Split into two independently verifiable stages. **2A must ship a visually identical site** — same
+CSS, same rendered markup, same URLs. Any visual difference after 2A is a bug, not a design choice.
+Only once that is confirmed does 2B begin. This keeps "did the restructure break something?" and
+"do I like the new design?" as separate questions.
+
+| Stage | Goal | Done when |
+|---|---|---|
+| **2A** | Structure only — Astro, components, shared CSS, zero visual change | Site looks pixel-identical, all URLs work, form still sends |
+| **2B** | Design system, premium type/palette, motion, Portfolio section | Redesign approved page by page |
+
+---
+
+### 2A — Restructure (no visual change)
+
+Ordered so each step is individually revertible:
+
+- [ ] **2A.1** — Scaffold Astro at repo root. `package.json`, `astro.config.mjs`, `.gitignore`.
+      Note: this moves the site from `agentinflow/` to the repo root, so Vercel's Root Directory
+      setting changes from `agentinflow` to `.` and a build command appears. One settings change.
+- [ ] **2A.2** — Move `img/`, `robots.txt`, and the Search Console file into `public/`.
+      Delete the two duplicate verification copies in `service/` and `aboutus/` — only the root
+      copy is served, and the meta tag verification is a second safety net either way.
+      Delete `service/_redirects` (a Netlify convention Render ignored and Vercel also ignores).
+- [ ] **2A.3** — Extract `BaseLayout.astro` — `<head>`, meta, nav, footer. Kills the duplicated
+      nav/footer markup and the hand-maintained `.active` link state (derive it from the URL).
+- [ ] **2A.4** — Merge the three stylesheets into one shared `global.css`. **Byte-for-byte the same
+      rules**, deduplicated only where genuinely identical. No restyling at this stage.
+- [ ] **2A.5** — Port pages, **preserving URLs exactly**: `src/pages/index.astro`,
+      `src/pages/service/index.astro`, `src/pages/aboutus/index.astro`. Directory-style paths mean
+      `/service/` and `/aboutus/` keep working with **no redirects needed at all**.
+- [ ] **2A.6** — Port the JS. Contact form and reviews marquee stay vanilla; the duplicated
+      `openLinkedIn` / scroll code in `service/script.js` and `aboutus/script.js` collapses into one
+      module. Fix the stale placeholder LinkedIn URLs in `service/script.js` while doing it.
+- [ ] **2A.7** — Verify: diff rendered output against the current live site page by page, confirm
+      the contact form still sends both emails, confirm all internal links resolve.
+
+### 2A file structure
 
 Target structure:
 
@@ -128,19 +177,22 @@ Target structure:
     │   ├── about.astro
     │   ├── work.astro                  ← NEW portfolio index
     │   ├── work/[slug].astro           ← NEW per-project case study
-    │   └── api/contact.ts              ← serverless send
     └── styles/tokens.css, global.css
 ```
 
 Migration guarantees:
 - **URLs preserved.** `/service/` and `/aboutus/` must keep working (they are in the sitemap and
-  indexed by Google). Handled via `vercel.json` redirects or by keeping the directory names.
+  indexed by Google). Handled via Render's Redirects/Rewrites settings or by keeping the directory names.
+  Note: the existing `service/_redirects` file is a **Netlify** convention and is silently ignored by
+  Render — that 301 has never fired.
 - Google Search Console verification file preserved at root; the three broken duplicates deleted.
 - `sitemap.xml` generated by `@astrojs/sitemap` and extended with the new `/work/` routes.
 - Astro ships **zero JS by default** — the site stays as fast as the current static one. Interactive
   bits (form, marquee, counters) are small islands or plain vanilla scripts.
 
-### 2.2 Design system
+---
+
+### 2B — Design system
 
 - **Tokens**: CSS custom properties for colour, type scale, spacing, radii, shadows, easing, durations. Single source of truth.
 - **Palette**: keep `#E43636` as the accent, but replace flat `#000` with layered near-blacks
@@ -151,7 +203,7 @@ Migration guarantees:
   Geist for body. Self-hosted woff2, subset, `font-display: swap`. Fluid `clamp()` type scale.
 - **Layout**: consistent max-width and vertical rhythm, proper section spacing, a real grid system.
 
-### 2.3 Motion
+### 2B — Motion
 
 All CSS-driven or IntersectionObserver — no animation library, nothing that hurts Lighthouse.
 
@@ -165,7 +217,7 @@ All CSS-driven or IntersectionObserver — no animation library, nothing that hu
 - Page transitions via Astro's View Transitions API
 - **`prefers-reduced-motion: reduce` fully honoured throughout** — non-negotiable
 
-### 2.4 Portfolio section ← the explicitly requested addition
+### 2B — Portfolio section ← the explicitly requested addition
 
 - `/work` index: filterable card grid (AI Automation / n8n / Web Dev)
 - `/work/[slug]`: per-project case study — problem → approach → build → result → stack
@@ -174,7 +226,7 @@ All CSS-driven or IntersectionObserver — no animation library, nothing that hu
 - **Blocked on content from you** — see [Blocked On](#blocked-on). I will scaffold the section with
   clearly-marked placeholders so it is buildable before the real content arrives.
 
-### 2.5 Content & SEO
+### 2B — Content & SEO
 
 - Tighten copy across all pages toward "premium, techy, concise"
 - Per-page meta descriptions, Open Graph and Twitter card images
@@ -241,8 +293,9 @@ Ordered by what blocks the earliest phase.
 
 ### For Phase 2 (migration) — needed before restructuring
 
-4. **Vercel project settings** — specifically the Root Directory, since the site currently lives in
-   an `agentinflow/` subfolder rather than the repo root. Restructuring without this breaks the deploy.
+4. **Render service settings** — whether it is a Static Site or a Web Service, plus Root Directory,
+   Build Command and Publish Directory. The site lives in an `agentinflow/` subfolder rather than the
+   repo root, so restructuring without this breaks the deploy.
 5. Confirm `/service/` and `/aboutus/` URLs must be preserved (assumed yes — they are in the sitemap).
 
 ### For Phase 2 (design) — needed before the Portfolio section is real
@@ -268,10 +321,10 @@ Ordered by what blocks the earliest phase.
 
 Stated explicitly so they can be corrected rather than discovered later.
 
-- Hosting is Vercel with the repo connected for auto-deploy on push to `main`.
+- Hosting is Render (Static Site) with the repo connected for auto-deploy on push to `main`.
 - The domain is `www.agentinflow.com` and DNS stays untouched.
 - No CMS is wanted — content lives in the repo as markdown and updates via git.
-- No analytics currently installed; Vercel Analytics or Plausible can be added in Phase 2 if desired.
+- No analytics currently installed; Plausible or Umami can be added in Phase 2 if desired.
 - English only, no i18n.
 - The site remains a marketing site — no auth, dashboard, or client portal (that would have argued
   for Next.js over Astro).
@@ -287,14 +340,14 @@ Stated explicitly so they can be corrected rather than discovered later.
 | Portfolio content never arrives, blocking the redesign | Ship the section with placeholders; it goes live the day content lands |
 | Redesign drifts from "premium" into "busy" | Motion budget: no more than 2 animated elements per viewport; token-driven so restraint is enforced by the system |
 | LinkedIn app review rejected | Postiz/Buffer rail sidesteps review entirely |
-| **Variable-name drift between Phase 1 and Phase 2 reintroduces the missing-name bug** | The five EmailJS variables are a frozen contract — see below. Phase 2's `/api/contact` route must send exactly the Phase 1 names |
+| **Variable-name drift between Phase 1 and Phase 2 reintroduces the missing-name bug** | The five EmailJS variables are a frozen contract — see below. any future rewrite of the sender must use exactly the Phase 1 names |
 
 ### Frozen: EmailJS variable contract
 
 `from_name` · `from_email` · `company` · `message` · `submitted_at`
 
-Both dashboard templates and **every** sender (today's `script.js` handler, tomorrow's Vercel
-`/api/contact` route) use exactly these names. Do not rename them during the Astro migration.
+Both dashboard templates and **every** sender (today's `script.js` handler, and whatever replaces it
+after the Astro migration) use exactly these names. Do not rename them during the migration.
 
 `from_name`/`from_email` look redundant beside plain `name`/`email` and are tempting to tidy up,
 but the templates are the other half of the contract and live **outside the repo** — a rename there

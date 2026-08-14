@@ -1,0 +1,141 @@
+/* Services page.
+   Rewritten for the minimised content: three stacked service cards plus a
+   "how we work" band. The old service-detail / feature-box / pricing rules
+   were removed along with the sections they styled. */
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* ---------- Hero ---------- */
+.page-hero {
+    padding: 10rem 1.5rem 4rem;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
+    text-align: center;
+}
+
+.page-hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1.1;
+    color: var(--heading);
+    margin-bottom: 1rem;
+}
+
+.page-hero-sub {
+    font-size: 1.25rem;
+    color: var(--text);
+    max-width: 34rem;
+    margin: 0 auto;
+}
+
+.metric-value {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 2.75rem;
+    line-height: 1;
+    color: var(--accent);
+}
+
+.metric-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 0.4rem;
+    max-width: 11rem;
+}
+
+/* ---------- How we work ---------- */
+.how-we-work {
+    padding: 5rem 0;
+    background-color: var(--bg);
+}
+
+.section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    text-align: center;
+    color: var(--heading);
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--text);
+    font-size: 1.1rem;
+    max-width: 40rem;
+    margin: 0 auto 3rem;
+}
+
+.principles-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.principle-card {
+    padding: 1.75rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    border-top: 3px solid var(--accent);
+}
+
+.principle-card h3 {
+    font-size: 1.2rem;
+    color: var(--heading);
+    margin-bottom: 0.6rem;
+}
+
+.principle-card p {
+    color: var(--text);
+    font-size: 0.975rem;
+}
+
+/* ---------- CTA ---------- */
+.cta-section {
+    padding: 5rem 1.5rem;
+    background-color: var(--bg-alt);
+    text-align: center;
+    border-top: 1px solid var(--border);
+}
+
+.cta-section h2 {
+    font-size: clamp(1.85rem, 4vw, 2.75rem);
+    color: var(--heading);
+    margin-bottom: 1rem;
+}
+
+.cta-section p {
+    color: var(--text);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.cta-btn {
+    display: inline-block;
+    padding: 1rem 2.25rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(var(--accent-rgb), 0.35);
+}
+
+/* ---------- Responsive ---------- */
+@media (min-width: 768px) {
+    .principles-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cta-btn:hover {
+        transform: none;
+    }
+}

@@ -1,0 +1,377 @@
+---
+// "Our work" - the proof section, sitting after the hero.
+//
+// Copy describes only what is verifiable from the live sites. Nothing is
+// inferred about budgets, timelines or outcomes.
+//
+// The metric is delivery time, not an outcome figure. Neither client has
+// reported numbers back, so there is nothing to claim on their side - but
+// turnaround is ours to state and we can stand behind it. It also matches
+// what the Services page promises about agreed scope and visible progress,
+// so the two pages say the same thing.
+// Cards omit the block entirely when metric is null.
+const projects = [
+    {
+        num: '01',
+        client: 'Bellemeade Advisors · Healthcare',
+        title: 'Prescription price comparison platform',
+        problem: 'Patients had no straightforward way to see what the same prescription costs at different pharmacies, so most paid whatever their usual one charged.',
+        url: 'https://bellemeade-advisors.onrender.com/',
+        metric: '2 weeks',
+        metricLabel: 'brief to live, progress shared at every stage'
+    },
+    {
+        num: '02',
+        client: 'Crossing Cultural Boundaries · Non-profit',
+        title: 'Cultural exchange and scholarship programme site',
+        problem: 'CCB promotes cultural exchange and youth leadership through scholarships and community impact, and needed a public home for that work.',
+        url: 'https://www.crossingculturalboundaries.com/',
+        metric: '1 week',
+        metricLabel: 'brief to live, progress shared at every stage'
+    }
+];
+---
+
+<section class="work" id="work">
+    <div class="work-inner">
+        <header class="work-head">
+            <span class="eyebrow">Our work</span>
+            <h2>Built, shipped, and still running</h2>
+        </header>
+
+        <ol class="project-list">
+            {projects.map((pr) => (
+                <li class="project-card">
+                    <div class="card-text">
+                        <span class="project-num">{pr.num}</span>
+                        <p class="project-client">{pr.client}</p>
+                        <p class="project-problem">{pr.problem}</p>
+
+                        {pr.metric && (
+                            <div class="project-metric">
+                                <span class="metric-value">{pr.metric}</span>
+                                <span class="metric-label">{pr.metricLabel}</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Built from divs in real CSS 3D rather than drawn flat, so
+                        the hover turn is an actual rotation and the lid keeps
+                        its correct angle to the base throughout.
+                        The laptop is the link to the live site - the title
+                        no longer carries one. */}
+                    <a class="laptop-scene" href={pr.url} target="_blank" rel="noopener"
+                        aria-label={`Visit the ${pr.client.split(' · ')[0]} site`}>
+                        <div class="turntable">
+                            <div class="laptop">
+                                <div class="lid">
+                                    <div class="screen"><span>AF</span></div>
+                                </div>
+                                <div class="base">
+                                    <div class="keyboard"></div>
+                                    <div class="trackpad"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            ))}
+        </ol>
+    </div>
+</section>
+
+<style>
+    /* Same ground as the hero, with generous clearance above so the two
+       sections read as separate without needing a divider line. */
+    .work {
+        padding: clamp(6rem, 18vh, 12rem) 1.5rem clamp(4rem, 12vh, 8rem);
+        background-color: var(--bg);
+    }
+
+    .work-inner {
+        max-width: 880px;
+        margin: 0 auto;
+    }
+
+    /* --- Heading --- */
+    .work-head {
+        margin-bottom: clamp(2.5rem, 6vh, 4rem);
+    }
+
+    .eyebrow {
+        display: block;
+        margin-bottom: 0.85rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+    }
+
+    .work-head h2 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.75rem, 4vw, 3rem);
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        color: var(--heading);
+    }
+
+    /* --- Cards --- */
+    .project-list {
+        display: grid;
+        gap: 1.25rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .project-card {
+        display: grid;
+        gap: 2rem;
+        align-items: center;
+        padding: clamp(1.5rem, 3vw, 2rem);
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .project-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+    }
+
+    .project-num {
+        display: block;
+        margin-bottom: 1rem;
+        font-family: var(--font-display);
+        font-size: 0.9rem;
+        letter-spacing: 0.16em;
+        color: var(--accent);
+    }
+
+    .project-client {
+        margin: 0 0 0.5rem;
+        font-size: 0.85rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+    }
+
+    .project-problem {
+        margin: 0.75rem 0 0;
+        max-width: 52ch;
+        color: var(--text);
+        font-size: 1.05rem;
+        line-height: 1.65;
+    }
+
+    .project-metric {
+        margin-top: 1.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .metric-value {
+        display: block;
+        font-family: var(--font-display);
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        line-height: 1;
+        letter-spacing: -0.02em;
+        color: var(--accent);
+    }
+
+    .metric-label {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: var(--text-dim);
+    }
+
+    /* ================= Laptop ================= */
+    .laptop-scene {
+        justify-self: center;
+        display: block;
+        /* Held off the card's top-right corner. The lid is the tallest and
+           right-most part of the machine, so without this it sits almost on
+           the corner radius. */
+        margin: 1.25rem 0.75rem 0 0;
+        width: 230px;
+        /* Sized to what the machine actually occupies: a 112px deck laid
+           back to ~42px plus a lid standing ~118px above the hinge. Any
+           taller and the card is padded out by empty scene. */
+        height: 172px;
+        /* perspective belongs on the ancestor; on the rotating element
+           itself it flattens the result. */
+        perspective: 900px;
+        cursor: pointer;
+    }
+
+    /* Spins about the world vertical. Kept on its own element so the
+       laptop's own tilt is not fighting the hover rotation. */
+    .turntable {
+        /* Flex, so the deck can be pinned to the bottom of the scene and the
+           lid grows upward into it. Without this the deck sat at the top of
+           the scene and the lid overflowed above the card. */
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        /* --sc lets a narrow screen shrink the whole machine without the
+           scroll handler, which owns --ry, having to know about it. */
+        transform: rotateY(var(--ry, -18deg)) scale(var(--sc, 1));
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Front three-quarter view: the deck is laid back far enough to read as
+       a horizontal surface, while the lid - opening 104 degrees off it -
+       ends up only about 20 degrees off square to the viewer, so the screen
+       stays legible rather than being seen edge-on from above. */
+    .laptop {
+        position: relative;
+        width: 196px;
+        height: 112px;
+        transform-style: preserve-3d;
+        transform: rotateX(68deg);
+    }
+
+    .base,
+    .lid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 196px;
+        border-radius: 5px;
+    }
+
+    .base {
+        height: 112px;
+        background: linear-gradient(160deg, #2c2c2c 0%, #171717 100%);
+        border: 1px solid #3a3a3a;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .keyboard {
+        position: absolute;
+        inset: 12% 8% 32%;
+        border-radius: 3px;
+        background: #101010;
+        /* Key rows suggested with a repeating gradient rather than 60 divs. */
+        background-image:
+            repeating-linear-gradient(90deg, #2a2a2a 0 8%, transparent 8% 10%),
+            repeating-linear-gradient(0deg, #2a2a2a 0 16%, transparent 16% 20%);
+    }
+
+    .trackpad {
+        position: absolute;
+        left: 50%;
+        bottom: 8%;
+        width: 34%;
+        height: 18%;
+        transform: translateX(-50%);
+        border-radius: 3px;
+        background: #202020;
+        border: 1px solid #333;
+    }
+
+    /* The lid sits ABOVE the base and hinges on its own bottom edge, which
+       coincides with the base's far edge once the machine is tilted back.
+       Hinging it at the top edge instead swung it down underneath the base
+       and turned the screen away from the viewer.
+       -76deg opens it to 104 from the base: slightly past square, which is
+       how a laptop actually sits, and it leaves the screen facing forward. */
+    .lid {
+        top: -124px;
+        height: 124px;
+        transform-origin: bottom center;
+        transform: rotateX(-76deg);
+        background: linear-gradient(160deg, #303030 0%, #1a1a1a 100%);
+        border: 1px solid #3a3a3a;
+    }
+
+    .screen {
+        position: absolute;
+        inset: 7px;
+        display: grid;
+        place-items: center;
+        border-radius: 3px;
+        background: #000;
+        box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+    }
+
+    .screen span {
+        font-family: var(--font-display);
+        font-size: 2.1rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--accent);
+        text-shadow: 0 0 22px rgba(var(--accent-rgb), 0.55);
+    }
+
+    /* --- Layout --- */
+    @media (min-width: 860px) {
+        .project-card {
+            grid-template-columns: 1fr 230px;
+            gap: 3rem;
+        }
+    }
+
+    /* The deck is a fixed 196px inside a fixed 230px scene. Once the card's
+       inner width drops below that the machine pushes the page sideways, so
+       it is scaled down rather than allowed to overflow. */
+    @media (max-width: 420px) {
+        .laptop-scene {
+            width: 100%;
+            height: 142px;
+            margin-right: 0;
+            --sc: 0.78;
+        }
+    }
+
+    .laptop-scene:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 6px;
+        border-radius: 8px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .project-card,
+        .turntable {
+            transition: none;
+        }
+
+        .project-card:hover {
+            transform: none;
+        }
+    }
+</style>
+
+<script>
+    // Map the pointer's horizontal position across the card onto the
+    // turntable's rotation, so the laptop turns with the cursor rather than
+    // snapping to a fixed angle. Vertical movement is ignored on purpose.
+    const REST = -18;
+    const SWING = 26;
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.project-card').forEach((card) => {
+            const turntable = card.querySelector('.turntable');
+            if (!turntable) return;
+
+            card.addEventListener('pointermove', (e) => {
+                const { left, width } = card.getBoundingClientRect();
+                // -1 at the left edge, +1 at the right
+                const t = ((e.clientX - left) / width) * 2 - 1;
+                turntable.style.setProperty('--ry', `${REST + t * SWING}deg`);
+            });
+
+            card.addEventListener('pointerleave', () => {
+                turntable.style.removeProperty('--ry');
+            });
+        });
+    }
+</script>

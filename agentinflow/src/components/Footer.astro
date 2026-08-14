@@ -1,0 +1,208 @@
+---
+// Site footer, rebuilt for the new design.
+//
+// Class names are all `sf-` prefixed on purpose. The old footer rules still
+// live in global.css / service.css / about.css and disagree with each other
+// (a spread row on home, a centred column on the inner pages). Nothing here
+// matches those selectors, so the old CSS cannot reach this markup and can
+// be deleted later without touching this file.
+//
+// The footer no longer carries an address or phone numbers. Everything
+// points at the form on the Services page instead, which is where the
+// email address and the WhatsApp and call buttons already live - one place
+// to keep correct rather than four. That also retires the old footer's
+// 95845 98779 WhatsApp number, the one spot on the site that disagreed with
+// Contact.astro and contact.js.
+const year = new Date().getFullYear();
+
+const FORM_HREF = '/service/#contact';
+
+const pages = [
+    { label: 'Home', href: '/' },
+    { label: 'Services', href: '/service/' },
+    { label: 'About Us', href: '/aboutus/' },
+    { label: 'Our Work', href: '/#work' },
+    { label: 'GitNomad', href: '/#product' }
+];
+
+// Both handles are unverified - they were carried over from the About page
+// and have not been checked against live accounts.
+const social = [
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/company/agentinflow' },
+    { label: 'Twitter / X', href: 'https://x.com/agentinflow' }
+];
+---
+
+<footer class="sf">
+    <div class="sf-inner">
+        <div class="sf-brand">
+            <span class="sf-mark">AF</span>
+            <p class="sf-line">
+                AI automation and web development. We build what you ask.
+            </p>
+            <a class="sf-cta" href={FORM_HREF}>
+                Start a conversation
+                <span class="sf-arrow" aria-hidden="true">↗</span>
+            </a>
+        </div>
+
+        <nav class="sf-col" aria-label="Footer">
+            <h2 class="sf-heading">Pages</h2>
+            <ul class="sf-list">
+                {pages.map((pg) => (
+                    <li><a href={pg.href}>{pg.label}</a></li>
+                ))}
+            </ul>
+        </nav>
+
+        <div class="sf-col">
+            <h2 class="sf-heading">Contact</h2>
+            <ul class="sf-list">
+                <li><a href={FORM_HREF}>Send us a message</a></li>
+            </ul>
+        </div>
+
+        <div class="sf-col">
+            <h2 class="sf-heading">Elsewhere</h2>
+            <ul class="sf-list">
+                {social.map((so) => (
+                    <li><a href={so.href} target="_blank" rel="noopener">{so.label}</a></li>
+                ))}
+            </ul>
+        </div>
+    </div>
+
+    <div class="sf-bottom">
+        <p>&copy; {year} AgentinFlow. All rights reserved.</p>
+        <p class="sf-place">Built in India, working anywhere.</p>
+    </div>
+</footer>
+
+<style>
+    .sf {
+        padding: clamp(3.5rem, 9vh, 5.5rem) 1.5rem 1.75rem;
+        background-color: var(--footer-bg);
+        border-top: 1px solid var(--border);
+        color: var(--text);
+    }
+
+    .sf-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: grid;
+        gap: clamp(2.25rem, 6vw, 3.5rem);
+    }
+
+    /* --- Brand --- */
+    .sf-mark {
+        display: block;
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 1.65rem;
+        letter-spacing: -0.01em;
+        color: var(--accent);
+    }
+
+    .sf-line {
+        margin: 0.85rem 0 1.5rem;
+        max-width: 28ch;
+        font-size: 0.95rem;
+        line-height: 1.65;
+        color: var(--text-dim);
+    }
+
+    .sf-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--heading);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(var(--accent-rgb), 0.55);
+        padding-bottom: 0.2rem;
+        transition: color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .sf-cta:hover,
+    .sf-cta:focus-visible {
+        color: var(--accent);
+        border-color: var(--accent);
+    }
+
+    .sf-arrow {
+        font-size: 0.85em;
+        line-height: 1;
+    }
+
+    /* --- Columns --- */
+    .sf-heading {
+        margin: 0 0 1.1rem;
+        font-family: var(--font-body);
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+    }
+
+    .sf-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.7rem;
+    }
+
+    .sf-list a {
+        font-size: 0.95rem;
+        color: var(--text);
+        text-decoration: none;
+        transition: color 0.25s ease;
+    }
+
+    .sf-list a:hover,
+    .sf-list a:focus-visible {
+        color: var(--accent);
+    }
+
+    /* --- Bottom bar --- */
+    .sf-bottom {
+        max-width: 1080px;
+        margin: clamp(2.5rem, 7vh, 4rem) auto 0;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.5rem 1.5rem;
+    }
+
+    .sf-bottom p {
+        margin: 0;
+        font-size: 0.82rem;
+        color: var(--text-dim);
+    }
+
+    .sf-place {
+        letter-spacing: 0.04em;
+    }
+
+    /* --- Layout ---
+       Brand block takes the wide track; the three link columns share the
+       rest evenly. */
+    @media (min-width: 760px) {
+        .sf-inner {
+            grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+            align-items: start;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .sf-cta,
+        .sf-list a {
+            transition: none;
+        }
+    }
+</style>

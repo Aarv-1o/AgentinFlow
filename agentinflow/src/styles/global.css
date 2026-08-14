@@ -1,0 +1,25 @@
+/* Shared across every page. Rules here were byte-identical in all three
+   original stylesheets. Page stylesheets load AFTER this file and may
+   legitimately override.
+
+   The footer rules that used to live here are gone: Footer.astro carries
+   its own scoped styles under sf- prefixed classes, and nothing in the
+   markup matches .footer-info, .footer-contact or .footer-copyright any
+   more. The bare `footer` rule went with them - .sf sets its own padding,
+   background and top border, so it only ever overrode it. */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.hero-content {
+    text-align: center;
+    max-width: 56rem;
+    margin: 0 auto;
+}
+
+.hero-highlight {
+    color: var(--accent);
+}

@@ -1,0 +1,287 @@
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--heading);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* Hero Section */
+.about-hero {
+    padding: 10rem 1.5rem 5rem;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-alt) 100%);
+}
+
+.about-hero h1 {
+    font-size: 4rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: var(--text);
+}
+
+/* Introduction Section */
+.introduction {
+    padding: 5rem 1.5rem;
+    background-color: var(--bg-alt);
+}
+
+.introduction .container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.intro-content {
+    max-width: 56rem;
+    margin: 0 auto;
+}
+
+.intro-content h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--heading);
+}
+
+.intro-text {
+    font-size: 1.125rem;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+}
+
+/* Team Section */
+.team-section {
+    padding: 5rem 1.5rem;
+    background-color: var(--bg);
+}
+
+.connect-section {
+    padding: 0 1.5rem 5rem;
+    background-color: var(--bg);
+}
+
+.team-section .container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* ---------- Row-link list (team + connect) ---------- */
+.link-list {
+    list-style: none;
+    max-width: 60rem;
+    margin: 0 auto;
+    border-top: 1px solid var(--border);
+}
+
+.link-row {
+    border-bottom: 1px solid var(--border);
+}
+
+.link-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 2rem 0.5rem;
+    text-decoration: none;
+    transition: padding-left 0.35s ease, background-color 0.35s ease;
+}
+
+.link-item:hover,
+.link-item:focus-visible {
+    padding-left: 1.5rem;
+    background-color: var(--surface);
+}
+
+.link-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    line-height: 1.15;
+    color: var(--heading);
+    transition: color 0.3s;
+}
+
+.link-item:hover .link-title,
+.link-item:focus-visible .link-title {
+    color: var(--accent);
+}
+
+.link-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+/* Team rows are shorter than the Connect rows below them: three names in a
+   list do not need the same presence as the two places to reach us, and at
+   the shared size the section ran well past a screen.
+   Scoped to .team-section so Connect keeps its original scale. */
+.team-section .link-item {
+    padding: 1.15rem 0.5rem;
+}
+
+.team-section .link-title {
+    font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+}
+
+.link-arrow {
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+    transform: translate(-4px, 4px);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.link-item:hover .link-arrow,
+.link-item:focus-visible .link-arrow {
+    opacity: 1;
+    transform: translate(0, 0);
+    color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .link-item,
+    .link-arrow {
+        transition: none;
+    }
+
+    .link-item:hover,
+    .link-item:focus-visible {
+        padding-left: 0.5rem;
+    }
+
+    .link-arrow {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+
+.section-title {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-size: 1.25rem;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+/* Specific styling for Chinmay's image */
+#chinmay {
+    object-fit: contain;
+    object-position: center;
+    background-color: var(--bg-alt);
+}
+
+/* CTA Section */
+.cta-section {
+    padding: 5rem 1.5rem;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+    text-align: center;
+}
+
+.cta-section h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--heading);
+}
+
+.cta-section p {
+    font-size: 1.25rem;
+    color: var(--heading);
+    margin-bottom: 2rem;
+}
+
+.cta-btn {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background-color: var(--bg);
+    color: var(--heading);
+    text-decoration: none;
+    border-radius: 9999px;
+    font-weight: bold;
+    font-size: 1.125rem;
+    transition: all 0.3s;
+}
+
+.cta-btn:hover {
+    background-color: var(--heading);
+    color: var(--bg);
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(var(--bg-rgb), 0.3);
+}
+
+
+/* ============================================ */
+/* RESPONSIVE DESIGN */
+/* ============================================ */
+
+/* Mobile devices (up to 640px) */
+@media (max-width: 640px) {
+    .about-hero {
+        padding: 7rem 1rem 4rem;
+    }
+
+    .about-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.125rem;
+    }
+
+    .intro-content h2,
+    .section-title,
+    .cta-section h2 {
+        font-size: 2rem;
+    }
+
+    .intro-text {
+        font-size: 1rem;
+    }
+}
+
+
+/* Large tablets and small desktops (768px and up) */
+@media (min-width: 768px) {
+    .about-hero h1 {
+        font-size: 4.5rem;
+    }
+}
+
+/* Large desktops (1024px and up) */
+@media (min-width: 1024px) {
+    .about-hero h1 {
+        font-size: 5rem;
+    }
+
+    .section-title,
+    .intro-content h2,
+    .cta-section h2 {
+        font-size: 3.5rem;
+    }
+}
+
+/* Extra large screens (1280px and up) */
+@media (min-width: 1280px) {
+    .about-hero h1 {
+        font-size: 5.5rem;
+    }
+}
+

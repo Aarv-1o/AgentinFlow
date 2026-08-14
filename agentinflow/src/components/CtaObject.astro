@@ -1,0 +1,231 @@
+---
+// One decorative panel holding a slowly moving object.
+//
+// Its own component because Astro frontmatter is plain JavaScript - a
+// function returning markup only works in a .astro file.
+//
+// Purely decorative: the parent column carries pointer-events:none and
+// aria-hidden, so hover and click do nothing and screen readers skip it.
+const { shape, tone = 'cool', spin = '22s', dir = 'normal' } = Astro.props;
+
+// --- Glass cluster: eight cubes in a 2x2x2 stack ---------------------------
+// The lower four are solid and tinted, the upper four frosted, so the stack
+// reads as two materials rather than one repeated block.
+const CUBE = 30;
+const GAP = 2;
+const OFF = (CUBE + GAP) / 2;
+const HALF = CUBE / 2;
+
+const cubes = [];
+for (const x of [-1, 1]) {
+    for (const y of [-1, 1]) {
+        for (const z of [-1, 1]) {
+            cubes.push({
+                x: x * OFF,
+                y: y * OFF,
+                z: z * OFF,
+                // y is screen-down, so +1 is the lower tier
+                solid: y === 1
+            });
+        }
+    }
+}
+
+const FACES = [
+    { k: 'fz', t: `translateZ(${HALF}px)` },
+    { k: 'bz', t: `rotateY(180deg) translateZ(${HALF}px)` },
+    { k: 'rx', t: `rotateY(90deg) translateZ(${HALF}px)` },
+    { k: 'lx', t: `rotateY(-90deg) translateZ(${HALF}px)` },
+    { k: 'ty', t: `rotateX(90deg) translateZ(${HALF}px)` },
+    { k: 'by', t: `rotateX(-90deg) translateZ(${HALF}px)` }
+];
+
+// --- Tile grid -------------------------------------------------------------
+const N = 4;
+const TILE = 19;
+const TGAP = 6;
+const SPAN = N * (TILE + TGAP) - TGAP;
+
+// Which cells light up, and how far into the cycle each one starts. Chosen
+// so no two lit cells are adjacent - a scatter reads as activity, a cluster
+// reads as a mistake.
+const LIT = { '0,1': 0, '1,3': 1.6, '2,0': 3.1, '3,2': 4.4 };
+
+const tiles = [];
+for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+        const key = `${r},${c}`;
+        tiles.push({
+            left: c * (TILE + TGAP),
+            top: r * (TILE + TGAP),
+            lit: key in LIT,
+            delay: LIT[key] ?? 0
+        });
+    }
+}
+---
+
+<div class={`panel is-${tone}`}>
+    <div class="stage">
+        {shape === 'glass' && (
+            <div class="cluster" style={`--spin:${spin}; --dir:${dir}`}>
+                {cubes.map((cu) => (
+                    <div class={cu.solid ? 'cube is-solid' : 'cube'}
+                        style={`transform: translate3d(${cu.x}px, ${cu.y}px, ${cu.z}px)`}>
+                        {FACES.map((f) => <span class="face" style={`transform:${f.t}`}></span>)}
+                    </div>
+                ))}
+            </div>
+        )}
+
+        {shape === 'grid' && (
+            /* A flat plane, so it is swung through a shallow arc rather than
+               turned a full circle - at 90 degrees a plane disappears. */
+            <div class="grid-plane" style={`--span:${SPAN}px; --spin:${spin}`}>
+                {tiles.map((t) => (
+                    <span class={t.lit ? 'tile is-lit' : 'tile'}
+                        style={`left:${t.left}px; top:${t.top}px; --d:${t.delay}s`}></span>
+                ))}
+            </div>
+        )}
+    </div>
+</div>
+
+<style>
+    .panel {
+        display: grid;
+        place-items: center;
+        aspect-ratio: 1 / 1;
+        border-radius: 1rem;
+        border: 1px solid var(--border);
+        background: radial-gradient(120% 100% at 50% 0%, #1c1c1c 0%, #0d0d0d 74%);
+        overflow: hidden;
+    }
+
+    .is-warm {
+        background: radial-gradient(120% 100% at 50% 0%, rgba(var(--accent-rgb), 0.24) 0%, #101010 74%);
+    }
+
+    /* perspective on the stage, never on the moving element itself -
+       there it flattens the rotation away. */
+    .stage {
+        perspective: 560px;
+        transform-style: preserve-3d;
+    }
+
+    /* ---------- Glass cluster ---------- */
+    .cluster {
+        position: relative;
+        width: 0;
+        height: 0;
+        transform-style: preserve-3d;
+        animation: cluster-spin var(--spin, 22s) linear infinite;
+        animation-direction: var(--dir, normal);
+    }
+
+    @keyframes cluster-spin {
+        from {
+            transform: rotateX(-22deg) rotateY(0deg);
+        }
+
+        to {
+            transform: rotateX(-22deg) rotateY(360deg);
+        }
+    }
+
+    .cube {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        margin: -15px 0 0 -15px;
+        transform-style: preserve-3d;
+    }
+
+    .face {
+        position: absolute;
+        inset: 0;
+        border-radius: 3px;
+        border: 1px solid rgba(255, 255, 255, 0.34);
+        /* Frosted: bright enough to catch an edge, transparent enough that
+           the cubes behind still show through. */
+        background: linear-gradient(150deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+    }
+
+    .is-solid .face {
+        border-color: rgba(var(--accent-rgb), 0.85);
+        background: linear-gradient(150deg,
+                rgba(var(--accent-rgb), 0.95),
+                rgba(var(--accent-rgb), 0.5));
+    }
+
+    /* ---------- Tile grid ---------- */
+    .grid-plane {
+        position: relative;
+        width: var(--span);
+        height: var(--span);
+        transform-style: preserve-3d;
+        animation: plane-sway var(--spin, 22s) ease-in-out infinite;
+    }
+
+    /* Laid back and turned 45 degrees for the isometric read, then rocked
+       through a shallow arc so it never goes edge-on. */
+    @keyframes plane-sway {
+
+        0%,
+        100% {
+            transform: rotateX(58deg) rotateZ(28deg);
+        }
+
+        50% {
+            transform: rotateX(58deg) rotateZ(62deg);
+        }
+    }
+
+    .tile {
+        position: absolute;
+        width: 19px;
+        height: 19px;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .is-lit {
+        border-color: transparent;
+        background: var(--accent);
+        box-shadow: 0 0 14px 2px rgba(var(--accent-rgb), 0.75);
+        animation: tile-pulse 6s ease-in-out infinite;
+        animation-delay: var(--d, 0s);
+    }
+
+    @keyframes tile-pulse {
+
+        0%,
+        100% {
+            opacity: 0.35;
+            box-shadow: 0 0 6px 0 rgba(var(--accent-rgb), 0.3);
+        }
+
+        45% {
+            opacity: 1;
+            box-shadow: 0 0 16px 3px rgba(var(--accent-rgb), 0.8);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .cluster,
+        .grid-plane,
+        .is-lit {
+            animation: none;
+        }
+
+        .cluster {
+            transform: rotateX(-22deg) rotateY(-30deg);
+        }
+
+        .grid-plane {
+            transform: rotateX(58deg) rotateZ(45deg);
+        }
+    }
+</style>

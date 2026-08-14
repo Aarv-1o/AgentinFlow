@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/tokens.css';
+// Order matters: global first, page sheet second (matches the original
+// single-stylesheet cascade). See BaseLayout.astro for why.
+import '../../styles/global.css';
+import '../../styles/service.css';
+import Contact from '../../components/Contact.astro';
+import ServiceChart from '../../components/ServiceChart.astro';
+import FlowTree from '../../components/FlowTree.astro';
+
+const title = 'AI Automation Services in India | AI Agents & N8N Workflows – AgentinFlow';
+const description = 'AgentinFlow provides AI automation services in India, including AI agent automation, N8N workflow development, and custom business automation solutions.';
+const canonical = 'https://www.agentinflow.com/service/';
+
+const services = [
+    {
+        num: '01',
+        title: 'Web & App Development',
+        lead: 'Sites and apps that load fast, rank well, and turn visitors into enquiries.',
+        builds: [
+            'Business sites and landing pages',
+            'E-commerce with payments and inventory',
+            'Custom web apps — CRM, booking, internal tools'
+        ],
+        metric: '90+',
+        metricLabel: 'PageSpeed score, mobile first'
+    },
+    {
+        num: '02',
+        title: 'AI Agents',
+        lead: 'Agents that handle the repetitive work, around the clock, without supervision.',
+        builds: [
+            'Support across website, WhatsApp and social',
+            'Lead qualification and follow-up',
+            'Document, email and data processing'
+        ],
+        metric: '70%',
+        metricLabel: 'lower operational cost'
+    },
+    {
+        num: '03',
+        title: 'n8n Automation',
+        lead: 'Your tools connected, so data moves itself instead of moving through you.',
+        builds: [
+            'Custom workflows across 400+ apps',
+            'Lead capture straight into your CRM',
+            'Scheduled reporting and data sync'
+        ],
+        metric: '20+',
+        metricLabel: 'hours a week returned'
+    }
+];
+
+const principles = [
+    {
+        title: 'Scope agreed before we build',
+        body: 'You approve exactly what gets built and what it costs. No moving targets, no invoice you did not expect.'
+    },
+    {
+        title: 'You talk to the person building it',
+        body: 'No account manager in between. Questions get answered by whoever is writing the code.'
+    },
+    {
+        title: 'Progress you can see',
+        body: 'Regular check-ins while the work is live, so nothing arrives as a surprise at the end.'
+    }
+];
+
+const steps = [
+    { n: '1', t: 'Discovery', d: 'We learn your process and find what is worth automating.' },
+    { n: '2', t: 'Design', d: 'You see the plan before a line of code exists.' },
+    { n: '3', t: 'Build', d: 'We build and test against the agreed scope.' },
+    { n: '4', t: 'Launch', d: 'We deploy it and train your team to use it.' },
+    { n: '5', t: 'Support', d: 'We monitor and improve it based on real usage.' }
+];
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1>What we <span class="hero-highlight">build</span></h1>
+            <p class="page-hero-sub">
+                Three services that work together to take manual work off your team.
+            </p>
+        </div>
+    </section>
+
+    <!-- Services, drawn as a chart. The old .services-stack markup is gone;
+         its rules in service.css are now dead and can be removed. -->
+    <ServiceChart services={services} />
+
+    <!-- How we work -->
+    <section class="how-we-work">
+        <div class="container">
+            <h2 class="section-title">Conversation first, then a <span class="hero-highlight">finite result</span></h2>
+            <p class="section-subtitle">
+                Most automation projects fail because nobody agreed what "done" meant.
+                We settle that in conversation before anything gets built.
+            </p>
+
+            <div class="principles-grid">
+                {principles.map((p) => (
+                    <div class="principle-card">
+                        <h3>{p.title}</h3>
+                        <p>{p.body}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* The numbered strip is gone: the branch says the same thing,
+                and says it as a flow rather than as five boxes. Its rules
+                in service.css (.steps-strip, .step-number) are now dead. */}
+            <FlowTree steps={steps} services={services} />
+        </div>
+    </section>
+
+    <!-- Enquiry form. Carries id="contact", the target every CTA points at. -->
+    <Contact />
+</BaseLayout>
+
+<script>
+    import '../../scripts/site.js';
+</script>

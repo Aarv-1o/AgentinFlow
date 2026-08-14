@@ -1,0 +1,206 @@
+---
+// The bridge to the Services page, between Our work and Our product.
+//
+// It is also where the home page names what we sell: the three service
+// names live here, so neither a visitor nor a crawler has to reach
+// /service/ to find them.
+//
+// An earlier version flanked this with two drawn hands reaching in. They
+// did not work - a figurative silhouette needs a real cutout to hold up,
+// and nothing else on the site is figurative. This is built from what the
+// site already uses: a glass panel, hairline rules, one wine glow.
+const services = [
+    { name: 'Web & app development', line: 'Sites and apps that load fast and rank.' },
+    { name: 'AI agents', line: 'The repetitive work, handled around the clock.' },
+    { name: 'n8n automation', line: 'Your tools connected, so data moves itself.' }
+];
+---
+
+<section class="bridge-section" id="services">
+    <div class="bridge">
+        {/* Sits behind the panel and bleeds past its edges, so the glass has
+            something to catch rather than floating on flat ground. */}
+        <div class="glow" aria-hidden="true"></div>
+
+        <a class="pane" href="/service/">
+            <span class="eyebrow">What we do</span>
+            <h2>Three services, one team</h2>
+
+            <ul class="service-names">
+                {services.map((s) => (
+                    <li>
+                        <span class="name">{s.name}</span>
+                        <span class="line">{s.line}</span>
+                    </li>
+                ))}
+            </ul>
+
+            <span class="pane-cta">
+                See what we build
+                <span class="arrow" aria-hidden="true">→</span>
+            </span>
+        </a>
+    </div>
+</section>
+
+<style>
+    .bridge-section {
+        padding: clamp(4rem, 12vh, 8rem) 1.5rem;
+        background-color: var(--bg);
+    }
+
+    .bridge {
+        position: relative;
+        max-width: 880px;
+        margin: 0 auto;
+    }
+
+    .glow {
+        position: absolute;
+        inset: -20% -10%;
+        background: radial-gradient(50% 55% at 50% 50%, rgba(var(--accent-rgb), 0.16) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    /* --- Glass panel --- */
+    .pane {
+        position: relative;
+        display: block;
+        padding: clamp(2rem, 5vw, 3.25rem);
+        text-align: center;
+        text-decoration: none;
+        border-radius: 1.75rem;
+
+        /* The nav bar's recipe: a faint sheen over a translucent ground, a
+           hairline border, and an inset highlight along the top edge.
+           saturate() is what stops what shows through going flat. */
+        border: 1px solid var(--glass-border);
+        background-image: linear-gradient(180deg, var(--glass-sheen-top) 0%, var(--glass-sheen-bottom) 100%);
+        background-color: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow:
+            0 24px 60px rgba(0, 0, 0, 0.55),
+            inset 0 1px 0 var(--glass-highlight);
+
+        transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    /* Without backdrop-filter there is nothing to frost, and a translucent
+       ground would only look washed out - so fall back to opaque. */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        .pane {
+            background-color: var(--surface);
+        }
+    }
+
+    .pane:hover,
+    .pane:focus-visible {
+        transform: translateY(-4px);
+        border-color: rgba(var(--accent-rgb), 0.55);
+        box-shadow:
+            0 28px 70px rgba(0, 0, 0, 0.6),
+            0 0 44px rgba(var(--accent-rgb), 0.2),
+            inset 0 1px 0 var(--glass-highlight);
+    }
+
+    .eyebrow {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+    }
+
+    .pane h2 {
+        margin: 0 0 clamp(1.75rem, 4vw, 2.5rem);
+        font-family: var(--font-display);
+        font-size: clamp(1.65rem, 3.6vw, 2.4rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: var(--heading);
+    }
+
+    /* --- The three --- */
+    .service-names {
+        margin: 0 0 clamp(1.75rem, 4vw, 2.5rem);
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .service-names li {
+        display: grid;
+        gap: 0.4rem;
+    }
+
+    .name {
+        font-family: var(--font-display);
+        font-size: 1.05rem;
+        letter-spacing: -0.01em;
+        color: var(--heading);
+    }
+
+    .line {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: var(--text-dim);
+    }
+
+    .pane-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--heading);
+    }
+
+    .arrow {
+        transition: transform 0.35s ease;
+    }
+
+    .pane:hover .arrow,
+    .pane:focus-visible .arrow {
+        transform: translateX(4px);
+    }
+
+    /* --- Layout ---
+       Three across once there is room, with hairlines between them rather
+       than around them, so the row reads as one object split in three. */
+    @media (min-width: 720px) {
+        .service-names {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0;
+        }
+
+        .service-names li {
+            padding: 0 1.5rem;
+            align-content: start;
+        }
+
+        .service-names li+li {
+            border-left: 1px solid var(--border);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .pane,
+        .arrow {
+            transition: none;
+        }
+
+        .pane:hover {
+            transform: none;
+        }
+
+        .pane:hover .arrow {
+            transform: none;
+        }
+    }
+</style>

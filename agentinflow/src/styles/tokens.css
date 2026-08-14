@@ -1,0 +1,128 @@
+/* ============================================================
+   Design tokens — single source of truth for colour and type.
+   Every colour in the site resolves through here. Change a value
+   in this file and it propagates everywhere.
+
+   ============================================================ */
+
+:root {
+    /* --- Raw palette (from the supplied swatches) --- */
+    --c-ink: #121212;
+    --c-coal: #262626;
+    --c-mist: #c3cacf;
+    --c-wine: #5d1527;
+    --c-white: #ffffff;
+
+    /* --- Type --- */
+    --font-display: 'Domine', Georgia, 'Times New Roman', serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* The logotype only - hero mark and nav mark, nothing else. Domine is a
+       text serif: at 5rem its thin strokes lose their edge, and the mark has
+       to hold at both that size and the nav's 1.1rem. Space Grotesk keeps
+       an even weight across that range and its letterforms stay distinct
+       when the word folds down to two of them. */
+    --font-wordmark: 'Space Grotesk', 'Domine', Georgia, serif;
+
+    /* --- Glass ---
+       Frosted surfaces are built from a translucent ground, a hairline
+       border and a one-pixel top highlight that reads as the lit edge of
+       a pane. Tokenised so cards can reuse the same recipe as the nav. */
+    --glass-bg: rgba(11, 11, 11, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.09);
+    --glass-highlight: rgba(255, 255, 255, 0.1);
+    --glass-sheen-top: rgba(255, 255, 255, 0.045);
+    --glass-sheen-bottom: rgba(255, 255, 255, 0.015);
+    --glass-blur: blur(22px) saturate(165%);
+
+    /* --- Status colours --- */
+    --whatsapp: #25d366;
+    --danger: #ff8080;
+    --danger-soft: #ffa5a5;
+    --danger-rgb: 255, 128, 128;
+    --success: #7ee2b0;
+    --success-rgb: 52, 199, 123;
+
+    /* --- Applied palette: dark ground, wine accent ---
+       Raw wine sits at about 1.6:1 against #121212, so anything
+       interactive uses the lifted tint. True wine is kept as
+       --accent-strong for use on light surfaces. */
+    --bg: #121212;
+    --bg-rgb: 18, 18, 18;
+    --bg-alt: #1a1a1a;
+    --surface: #202020;
+    --surface-hover: #272727;
+    --footer-bg: #0d0d0d;
+    --border: #2e2e2e;
+
+    --heading: #ffffff;
+    --text: #c3cacf;
+    --text-dim: #7c858c;
+
+    --accent: #8e2039;
+    --accent-strong: #5d1527;
+    --accent-rgb: 142, 32, 57;
+
+    --cta-bg: #8e2039;
+    --cta-text: #ffffff;
+    --cta-hover: #a32642;
+}
+
+/* ============================================================
+   Type application
+   ============================================================ */
+/* The nav is fixed, so an anchor jump lands its target underneath the bar.
+   scroll-padding-top holds the target clear of it - this is what makes
+   /service/#contact usable, and every CTA on the site points there. */
+html {
+    scroll-padding-top: 7rem;
+}
+
+@media (max-width: 680px) {
+    html {
+        scroll-padding-top: 6rem;
+    }
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    /* Nothing on the page is meant to be wider than the screen. This keeps
+       a single overrunning element from putting the whole document into a
+       sideways scroll on a phone. Clip rather than hidden: hidden on body
+       creates a scroll container and would break position:sticky. */
+    overflow-x: clip;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+}
+
+/* Domine is a serif with heavier default weight than the old system
+   stack; drop bold to 700 explicitly so headings do not over-thicken. */
+h1,
+h2,
+h3 {
+    font-weight: 700;
+}
+
+/* ============================================================
+   Buttons resolve through the CTA tokens rather than --accent, so
+   button colour can be retuned without touching accent text.
+   ============================================================ */
+.submit-btn,
+.cta-btn {
+    background-color: var(--cta-bg);
+    color: var(--cta-text);
+}
+
+.submit-btn:hover:not(:disabled),
+.cta-btn:hover {
+    background-color: var(--cta-hover);
+    color: var(--cta-text);
+}

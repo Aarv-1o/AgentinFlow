@@ -1,0 +1,192 @@
+---
+// Closing call to action: centred pitch flanked by rotating objects.
+//
+// The button points at the Services page form rather than a booking tool.
+// When a scheduling system exists, this href and the label are the only
+// things that change.
+import CtaObject from './CtaObject.astro';
+
+const CTA_HREF = '/service/#contact';
+
+// A single decorative panel, on the right. Purely decorative: it moves on
+// its own, takes no pointer events and is hidden from assistive tech.
+// The copy takes everything else, which is the point of a CTA - one object
+// is punctuation, two start competing with the thing being asked for.
+const panels = [
+    { side: 'right', shape: 'grid', tone: 'warm', spin: '14s', dir: 'normal' }
+];
+
+const bySide = (side) => panels.filter((pn) => pn.side === side);
+
+---
+
+{/* id="contact" so agentinflow.com/#contact still lands somewhere. The old
+    home page had the form here; it lives on the Services page now, and
+    this section is the thing that sends you to it. Only the home page
+    renders this component, so it cannot collide with the form's own
+    id="contact" over on /service/. */}
+<section class="cta" id="contact">
+    <div class="cta-grid">
+        {bySide('left').length > 0 && (
+            <div class="panel-col" aria-hidden="true">
+                {bySide('left').map((pn) => <CtaObject shape={pn.shape} tone={pn.tone} spin={pn.spin} dir={pn.dir} />)}
+            </div>
+        )}
+
+        <div class="cta-copy">
+            <h2>Lead in your<br /><span>Industry</span></h2>
+            <p>
+                Ready to take the manual work off your team? Tell us what is slowing
+                you down and we will tell you whether it is worth automating.
+            </p>
+            <a class="cta-button" href={CTA_HREF}>
+                <span class="cta-dot" aria-hidden="true"></span>
+                Connect with us
+            </a>
+        </div>
+
+        {bySide('right').length > 0 && (
+            <div class="panel-col" aria-hidden="true">
+                {bySide('right').map((pn) => <CtaObject shape={pn.shape} tone={pn.tone} spin={pn.spin} dir={pn.dir} />)}
+            </div>
+        )}
+    </div>
+</section>
+
+<style>
+    .cta {
+        padding: clamp(3rem, 8vh, 6rem) 1.5rem clamp(4rem, 10vh, 7rem);
+        background-color: var(--bg);
+    }
+
+    .cta-grid {
+        max-width: 1180px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        align-items: center;
+        padding: clamp(2rem, 5vw, 3.5rem);
+        border: 1px solid var(--border);
+        border-radius: 1.5rem;
+        /* Centre lit slightly, so the eye lands on the copy rather than on
+           the objects either side. */
+        background:
+            radial-gradient(70% 90% at 50% 50%, rgba(255, 255, 255, 0.035) 0%, transparent 70%),
+            var(--bg-alt);
+    }
+
+    /* --- Copy --- */
+    .cta-copy {
+        grid-row: 1;
+        text-align: center;
+        padding: clamp(1rem, 4vh, 3rem) 0;
+    }
+
+    .cta-copy h2 {
+        margin: 0 0 1rem;
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        color: var(--heading);
+    }
+
+    .cta-copy h2 span {
+        color: var(--accent);
+    }
+
+    .cta-copy p {
+        max-width: 40rem;
+        margin: 0 auto 2rem;
+        color: var(--text);
+        font-size: 1.05rem;
+        line-height: 1.65;
+    }
+
+    .cta-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 0.5rem 1.75rem 0.5rem 0.5rem;
+        border-radius: 9999px;
+        background-color: var(--heading);
+        color: var(--bg);
+        font-size: 1.05rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cta-button:hover,
+    .cta-button:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.5);
+    }
+
+    .cta-dot {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background-color: var(--accent);
+        animation: cta-pulse 2.8s ease-in-out infinite;
+    }
+
+    @keyframes cta-pulse {
+
+        0%,
+        100% {
+            box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.55);
+        }
+
+        70% {
+            box-shadow: 0 0 0 12px rgba(var(--accent-rgb), 0);
+        }
+    }
+
+    /* --- Panels ---
+       Decoration only: no pointer events, so hover and click do nothing and
+       the objects cannot swallow a click meant for the page. */
+    .panel-col {
+        display: grid;
+        align-content: center;
+        gap: 1.25rem;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    /* --- Layout ---
+       Objects only appear once there is room; below this the section is the
+       copy alone rather than a cramped three-column squeeze. */
+    @media (max-width: 900px) {
+        .panel-col {
+            display: none;
+        }
+    }
+
+    @media (min-width: 901px) {
+        /* Copy takes the free track, the panel a small fixed one. Fractional
+           widths let the panel stretch and swallow the copy - the object is
+           punctuation, so it gets a width and never a share. */
+        .cta-grid {
+            grid-template-columns: minmax(0, 1fr) 158px;
+            gap: clamp(2.5rem, 6vw, 5rem);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .cta-button {
+            transition: none;
+        }
+
+        .cta-button:hover {
+            transform: none;
+        }
+
+
+        .cta-dot {
+            animation: none;
+        }
+    }
+</style>

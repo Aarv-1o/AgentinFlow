@@ -1,0 +1,23 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "redirects": [
+        {
+            "source": "/sitemap.xml",
+            "destination": "/sitemap-index.xml",
+            "permanent": true
+        },
+        { "source": "/index.html", "destination": "/", "permanent": true },
+        { "source": "/service/index.html", "destination": "/service/", "permanent": true },
+        { "source": "/aboutus/index.html", "destination": "/aboutus/", "permanent": true }
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                { "key": "X-Content-Type-Options", "value": "nosniff" },
+                { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+                { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+            ]
+        }
+    ]
+}
