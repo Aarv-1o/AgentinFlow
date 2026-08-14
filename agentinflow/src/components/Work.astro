@@ -1,23 +1,20 @@
 ---
-// "Our work" - the proof section, sitting directly after the hero.
+// "Our work" - the proof section, sitting after the hero.
 //
-// Copy below describes only what is verifiable from the live sites and their
-// shipped bundles: features visible on the page, and stacks read from the
-// build output. Nothing is inferred about budgets, timelines or outcomes.
+// Copy describes only what is verifiable from the live sites: features
+// visible on the page, and stacks read from the shipped build output.
+// Nothing is inferred about budgets, timelines or outcomes.
 //
 // `metric` is deliberately absent on both entries. A result figure is the
 // most persuasive thing here and the one thing that cannot be derived from
-// the outside - it has to come from the client. The layout collapses to a
-// single column when metric is missing, so no empty slot is shown and no
-// invented number ships in the meantime.
+// outside - it has to come from the client. Cards omit the block entirely
+// when metric is null, so no empty slot shows and no invented number ships.
 const projects = [
     {
         num: '01',
         client: 'Bellemeade Advisors · Healthcare',
         title: 'Prescription price comparison platform',
         problem: 'Patients had no straightforward way to see what the same prescription costs at different pharmacies, so most paid whatever their usual one charged.',
-        built: 'A search platform comparing prices across pharmacies in one place, with an AI assistant for plain-language questions, a nearby-pharmacy finder, saved medicines and user accounts.',
-        stack: ['Next.js', 'React', 'AI assistant', 'Render'],
         url: 'https://bellemeade-advisors.onrender.com/',
         metric: null,
         metricLabel: null
@@ -27,8 +24,6 @@ const projects = [
         client: 'Crossing Cultural Boundaries · Non-profit',
         title: 'Cultural exchange and scholarship programme site',
         problem: 'CCB promotes cultural exchange and youth leadership through scholarships and community impact, and needed a public home for that work.',
-        built: 'A single-page application with client-side routing and a Firebase backend handling accounts and data.',
-        stack: ['React', 'Vite', 'Firebase', 'React Router'],
         url: 'https://www.crossingculturalboundaries.com/',
         metric: null,
         metricLabel: null
@@ -45,32 +40,25 @@ const projects = [
 
         <ol class="project-list">
             {projects.map((pr) => (
-                <li class={pr.metric ? 'project has-metric' : 'project'}>
-                    <div class="project-main">
-                        <span class="project-num">{pr.num}</span>
-                        <p class="project-client">{pr.client}</p>
+                <li class="project-card">
+                    <span class="project-num">{pr.num}</span>
+                    <p class="project-client">{pr.client}</p>
 
-                        <h3 class="project-title">
-                            {pr.url
-                                ? <a href={pr.url} target="_blank" rel="noopener">
-                                    {pr.title}
-                                    <svg class="visit-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                        aria-hidden="true">
-                                        <line x1="7" y1="17" x2="17" y2="7" />
-                                        <polyline points="7 7 17 7 17 17" />
-                                    </svg>
-                                </a>
-                                : pr.title}
-                        </h3>
+                    <h3 class="project-title">
+                        {pr.url
+                            ? <a href={pr.url} target="_blank" rel="noopener">
+                                {pr.title}
+                                <svg class="visit-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    aria-hidden="true">
+                                    <line x1="7" y1="17" x2="17" y2="7" />
+                                    <polyline points="7 7 17 7 17 17" />
+                                </svg>
+                            </a>
+                            : pr.title}
+                    </h3>
 
-                        <p class="project-problem">{pr.problem}</p>
-                        <p class="project-built">{pr.built}</p>
-
-                        <ul class="stack">
-                            {pr.stack.map((s) => <li>{s}</li>)}
-                        </ul>
-                    </div>
+                    <p class="project-problem">{pr.problem}</p>
 
                     {pr.metric && (
                         <div class="project-metric">
@@ -85,10 +73,11 @@ const projects = [
 </section>
 
 <style>
+    /* Same ground as the hero, with generous clearance above so the two
+       sections read as separate without needing a divider line. */
     .work {
-        padding: clamp(4rem, 12vh, 8rem) 1.5rem;
-        background-color: var(--bg-alt);
-        border-top: 1px solid var(--border);
+        padding: clamp(6rem, 18vh, 12rem) 1.5rem clamp(4rem, 12vh, 8rem);
+        background-color: var(--bg);
     }
 
     .work-inner {
@@ -119,19 +108,26 @@ const projects = [
         color: var(--heading);
     }
 
-    /* --- Projects --- */
+    /* --- Cards, stacked --- */
     .project-list {
-        list-style: none;
+        display: grid;
+        gap: 1.25rem;
         margin: 0;
         padding: 0;
-        border-top: 1px solid var(--border);
+        list-style: none;
     }
 
-    .project {
-        display: grid;
-        gap: 2rem;
-        padding: clamp(2rem, 5vh, 3rem) 0;
-        border-bottom: 1px solid var(--border);
+    .project-card {
+        padding: clamp(1.75rem, 4vw, 2.75rem);
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .project-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
     }
 
     .project-num {
@@ -149,6 +145,15 @@ const projects = [
         letter-spacing: 0.1em;
         text-transform: uppercase;
         color: var(--text-dim);
+    }
+
+    .project-title {
+        margin: 0 0 1rem;
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 2.6vw, 2rem);
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+        color: var(--heading);
     }
 
     .project-title a {
@@ -179,56 +184,23 @@ const projects = [
         transform: translate(2px, -2px);
     }
 
-    .project-title {
-        margin: 0 0 1rem;
-        font-family: var(--font-display);
-        font-size: clamp(1.35rem, 2.6vw, 2rem);
-        line-height: 1.2;
-        letter-spacing: -0.01em;
-        color: var(--heading);
-    }
-
-    .project-problem,
-    .project-built {
-        margin: 0 0 0.75rem;
-        max-width: 46ch;
+    .project-problem {
+        margin: 0;
+        max-width: 56ch;
         color: var(--text);
         font-size: 1rem;
         line-height: 1.65;
     }
 
-    .project-built {
-        color: var(--text-dim);
-    }
-
-    /* --- Stack --- */
-    .stack {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin: 1.5rem 0 0;
-        padding: 0;
-        list-style: none;
-    }
-
-    .stack li {
-        padding: 0.35rem 0.75rem;
-        border: 1px solid var(--border);
-        border-radius: 9999px;
-        font-size: 0.8rem;
-        letter-spacing: 0.04em;
-        color: var(--text-dim);
-    }
-
-    /* --- Metric --- */
+    /* --- Metric (rendered only when one exists) --- */
     .project-metric {
-        align-self: start;
+        margin-top: 1.75rem;
     }
 
     .metric-value {
         display: block;
         font-family: var(--font-display);
-        font-size: clamp(2.5rem, 6vw, 4rem);
+        font-size: clamp(2rem, 5vw, 3rem);
         line-height: 1;
         letter-spacing: -0.02em;
         color: var(--accent);
@@ -236,35 +208,22 @@ const projects = [
 
     .metric-label {
         display: block;
-        margin-top: 0.6rem;
-        max-width: 12rem;
+        margin-top: 0.5rem;
         font-size: 0.85rem;
         line-height: 1.5;
         color: var(--text-dim);
     }
 
-    @media (min-width: 820px) {
-        /* Only rows that actually carry a figure get the second column, so a
-           project without one runs full width instead of leaving a gap. */
-        .project.has-metric {
-            grid-template-columns: 1fr 15rem;
-            gap: 4rem;
-        }
-
-        .project-metric {
-            text-align: right;
-        }
-
-        .metric-label {
-            margin-left: auto;
-        }
-    }
-
     @media (prefers-reduced-motion: reduce) {
 
+        .project-card,
         .project-title a,
         .visit-arrow {
             transition: none;
+        }
+
+        .project-card:hover {
+            transform: none;
         }
 
         .project-title a:hover .visit-arrow {
