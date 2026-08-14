@@ -5,6 +5,7 @@ import '../../styles/tokens.css';
 // single-stylesheet cascade). See BaseLayout.astro for why.
 import '../../styles/global.css';
 import '../../styles/service.css';
+import Contact from '../../components/Contact.astro';
 
 const title = 'AI Automation Services in India | AI Agents & N8N Workflows – AgentinFlow';
 const description = 'AgentinFlow provides AI automation services in India, including AI agent automation, N8N workflow development, and custom business automation solutions.';
@@ -150,14 +151,8 @@ const steps = [
         </div>
     </section>
 
-    <!-- CTA -->
-    <section class="cta-section">
-        <div class="container">
-            <h2>Tell us what is slowing you down</h2>
-            <p>We will tell you whether it is worth automating — on a call, in plain terms.</p>
-            <a href="/#contact" class="cta-btn">Start a conversation</a>
-        </div>
-    </section>
+    <!-- Enquiry form. Carries id="contact", the target every CTA points at. -->
+    <Contact />
 </BaseLayout>
 
 <script>

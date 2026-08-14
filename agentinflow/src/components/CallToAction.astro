@@ -1,0 +1,233 @@
+---
+// Closing call to action: centred pitch flanked by project panels.
+//
+// The button points at the Services page form rather than a booking tool.
+// When a scheduling system exists, this href and the label are the only
+// things that change.
+const CTA_HREF = '/service/#contact';
+
+// Flanking panels. Purely decorative - each is a laptop lit in a different
+// tone so the two columns do not read as the same image twice.
+const panels = [
+    { side: 'left', tone: 'cool', label: 'AF' },
+    { side: 'left', tone: 'warm', label: 'AF' },
+    { side: 'right', tone: 'warm', label: 'AF' },
+    { side: 'right', tone: 'cool', label: 'AF' }
+];
+---
+
+<section class="cta">
+    <div class="cta-grid">
+        <div class="panel-col">
+            {panels.filter((pn) => pn.side === 'left').map((pn) => (
+                <div class={`panel is-${pn.tone}`} aria-hidden="true">
+                    <div class="mini-laptop">
+                        <div class="mini-lid"><span>{pn.label}</span></div>
+                        <div class="mini-base"></div>
+                    </div>
+                </div>
+            ))}
+        </div>
+
+        <div class="cta-copy">
+            <h2>Lead in your<br /><span>Industry</span></h2>
+            <p>
+                Ready to take the manual work off your team? Tell us what is slowing
+                you down and we will tell you whether it is worth automating.
+            </p>
+            <a class="cta-button" href={CTA_HREF}>
+                <span class="cta-dot" aria-hidden="true"></span>
+                Book a call
+            </a>
+        </div>
+
+        <div class="panel-col">
+            {panels.filter((pn) => pn.side === 'right').map((pn) => (
+                <div class={`panel is-${pn.tone}`} aria-hidden="true">
+                    <div class="mini-laptop">
+                        <div class="mini-lid"><span>{pn.label}</span></div>
+                        <div class="mini-base"></div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+</section>
+
+<style>
+    .cta {
+        padding: clamp(3rem, 8vh, 6rem) 1.5rem clamp(4rem, 10vh, 7rem);
+        background-color: var(--bg);
+    }
+
+    .cta-grid {
+        position: relative;
+        max-width: 1180px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        align-items: center;
+        padding: clamp(2rem, 5vw, 3.5rem);
+        border: 1px solid var(--border);
+        border-radius: 1.5rem;
+        /* Centre lit slightly, so the eye lands on the copy rather than on
+           the panels either side. */
+        background:
+            radial-gradient(70% 90% at 50% 50%, rgba(255, 255, 255, 0.035) 0%, transparent 70%),
+            var(--bg-alt);
+        overflow: hidden;
+    }
+
+    /* --- Copy --- */
+    .cta-copy {
+        text-align: center;
+        padding: clamp(1rem, 4vh, 3rem) 0;
+    }
+
+    .cta-copy h2 {
+        margin: 0 0 1rem;
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        color: var(--heading);
+    }
+
+    .cta-copy h2 span {
+        color: var(--accent);
+    }
+
+    .cta-copy p {
+        max-width: 34rem;
+        margin: 0 auto 2rem;
+        color: var(--text);
+        font-size: 1.05rem;
+        line-height: 1.65;
+    }
+
+    .cta-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 0.5rem 1.75rem 0.5rem 0.5rem;
+        border-radius: 9999px;
+        background-color: var(--heading);
+        color: var(--bg);
+        font-size: 1.05rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cta-button:hover,
+    .cta-button:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.5);
+    }
+
+    .cta-dot {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background-color: var(--accent);
+        /* Slow pulse, so the button has a pulse of life without animating
+           the whole control. */
+        animation: cta-pulse 2.8s ease-in-out infinite;
+    }
+
+    @keyframes cta-pulse {
+
+        0%,
+        100% {
+            box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.55);
+        }
+
+        70% {
+            box-shadow: 0 0 0 12px rgba(var(--accent-rgb), 0);
+        }
+    }
+
+    /* --- Flanking panels --- */
+    .panel-col {
+        display: grid;
+        gap: 1.25rem;
+    }
+
+    .panel {
+        display: grid;
+        place-items: center;
+        aspect-ratio: 4 / 3;
+        border-radius: 1rem;
+        background: radial-gradient(120% 100% at 50% 0%, #232323 0%, #131313 70%);
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .is-warm {
+        background: radial-gradient(120% 100% at 50% 0%, rgba(var(--accent-rgb), 0.28) 0%, #131313 70%);
+    }
+
+    /* --- Miniature laptop ---
+       A simplified two-part version rather than the full 3D build used in the
+       work cards: at this size the extra geometry would not be legible and
+       these are decoration, not the subject. */
+    .mini-laptop {
+        width: 62%;
+        transform: perspective(600px) rotateX(12deg);
+    }
+
+    .mini-lid {
+        display: grid;
+        place-items: center;
+        aspect-ratio: 16 / 10;
+        border-radius: 6px 6px 2px 2px;
+        border: 1px solid #3a3a3a;
+        background: #000;
+    }
+
+    .mini-lid span {
+        font-family: var(--font-display);
+        font-size: clamp(0.9rem, 2vw, 1.5rem);
+        font-weight: 700;
+        color: var(--accent);
+        text-shadow: 0 0 16px rgba(var(--accent-rgb), 0.6);
+    }
+
+    .mini-base {
+        height: 7px;
+        margin: 2px -9% 0;
+        border-radius: 0 0 5px 5px;
+        background: linear-gradient(180deg, #333 0%, #1b1b1b 100%);
+    }
+
+    /* --- Layout ---
+       Panels only appear once there is room for them; below this the section
+       is the copy alone rather than a cramped three-column squeeze. */
+    @media (max-width: 900px) {
+        .panel-col {
+            display: none;
+        }
+    }
+
+    @media (min-width: 901px) {
+        .cta-grid {
+            grid-template-columns: minmax(180px, 1fr) minmax(0, 1.6fr) minmax(180px, 1fr);
+            gap: clamp(1.5rem, 4vw, 3.5rem);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .cta-button {
+            transition: none;
+        }
+
+        .cta-button:hover {
+            transform: none;
+        }
+
+        .cta-dot {
+            animation: none;
+        }
+    }
+</style>
