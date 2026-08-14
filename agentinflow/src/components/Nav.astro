@@ -301,6 +301,19 @@ const letters = [...WORD].map((ch, i) => ({ ch, keep: KEEP.has(i) }));
             font-size: 1.25rem;
         }
 
+        /* The mark stays folded on a phone. Open, AGENTINFLOW is about
+           165px; with three links and the CTA that overruns a 360px bar and
+           pushes the whole page into a horizontal scroll. !important is
+           needed because the scroll handler writes --p as an inline style,
+           and a stylesheet only outranks that when marked. */
+        .wordmark {
+            --p: 0 !important;
+        }
+
+        .is-fold {
+            display: none;
+        }
+
         .nav-links a {
             padding: 0.45rem 0.5rem;
             font-size: 0.82rem;

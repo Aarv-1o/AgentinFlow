@@ -177,7 +177,11 @@ const LABEL_TF = `${COS30} 0.5 ${-COS30} 0.5`;
 
 <style>
     .hero {
+        /* svh is the viewport with the mobile browser's chrome showing. On
+           100vh the hero is sized to the chrome-hidden height, so the line
+           at the bottom sits under the address bar until you scroll. */
         min-height: 100vh;
+        min-height: 100svh;
         display: grid;
         grid-template-rows: auto auto auto;
         align-content: center;

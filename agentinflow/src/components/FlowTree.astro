@@ -259,9 +259,10 @@ const limbs = services.map((s, i) => {
     }
 
     /* --- Narrow screens --- */
+    /* No horizontal padding: the section's .container already supplies it,
+       and a second helping indents the list past everything around it. */
     .flow-list {
         display: none;
-        padding: 0 1.5rem;
     }
 
     .flow-ends {

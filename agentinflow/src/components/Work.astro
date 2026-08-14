@@ -220,7 +220,9 @@ const projects = [
         width: 100%;
         height: 100%;
         transform-style: preserve-3d;
-        transform: rotateY(var(--ry, -18deg));
+        /* --sc lets a narrow screen shrink the whole machine without the
+           scroll handler, which owns --ry, having to know about it. */
+        transform: rotateY(var(--ry, -18deg)) scale(var(--sc, 1));
         transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
@@ -314,6 +316,18 @@ const projects = [
         .project-card {
             grid-template-columns: 1fr 230px;
             gap: 3rem;
+        }
+    }
+
+    /* The deck is a fixed 196px inside a fixed 230px scene. Once the card's
+       inner width drops below that the machine pushes the page sideways, so
+       it is scaled down rather than allowed to overflow. */
+    @media (max-width: 420px) {
+        .laptop-scene {
+            width: 100%;
+            height: 142px;
+            margin-right: 0;
+            --sc: 0.78;
         }
     }
 

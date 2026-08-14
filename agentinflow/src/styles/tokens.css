@@ -70,11 +70,29 @@
 /* ============================================================
    Type application
    ============================================================ */
+/* The nav is fixed, so an anchor jump lands its target underneath the bar.
+   scroll-padding-top holds the target clear of it - this is what makes
+   /service/#contact usable, and every CTA on the site points there. */
+html {
+    scroll-padding-top: 7rem;
+}
+
+@media (max-width: 680px) {
+    html {
+        scroll-padding-top: 6rem;
+    }
+}
+
 body {
     font-family: var(--font-body);
     background-color: var(--bg);
     color: var(--text);
     min-height: 100vh;
+    /* Nothing on the page is meant to be wider than the screen. This keeps
+       a single overrunning element from putting the whole document into a
+       sideways scroll on a phone. Clip rather than hidden: hidden on body
+       creates a scroll container and would break position:sticky. */
+    overflow-x: clip;
 }
 
 h1,
