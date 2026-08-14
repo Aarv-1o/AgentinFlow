@@ -1,0 +1,211 @@
+---
+// "Our work" - the proof section, sitting directly after the hero.
+//
+// PLACEHOLDER CONTENT. Every field below is invented and must be replaced
+// with the two real client projects before this goes anywhere near
+// production. Values are deliberately obvious rather than plausible so that
+// nobody mistakes them for real figures.
+const projects = [
+    {
+        num: '01',
+        client: 'PLACEHOLDER — client or sector',
+        title: 'Placeholder project title',
+        problem: 'One or two lines on what was broken before you: the manual process, the bottleneck, the thing that did not scale.',
+        built: 'One line on what you built and how.',
+        metric: '00%',
+        metricLabel: 'placeholder result',
+        stack: ['n8n', 'OpenAI', 'Google Sheets']
+    },
+    {
+        num: '02',
+        client: 'PLACEHOLDER — client or sector',
+        title: 'Placeholder project title',
+        problem: 'One or two lines on what was broken before you: the manual process, the bottleneck, the thing that did not scale.',
+        built: 'One line on what you built and how.',
+        metric: '00h',
+        metricLabel: 'placeholder result',
+        stack: ['Astro', 'Postgres', 'WhatsApp API']
+    }
+];
+---
+
+<section class="work" id="work">
+    <div class="work-inner">
+        <header class="work-head">
+            <span class="eyebrow">Our work</span>
+            <h2>Built, shipped, and still running</h2>
+        </header>
+
+        <ol class="project-list">
+            {projects.map((pr) => (
+                <li class="project">
+                    <div class="project-main">
+                        <span class="project-num">{pr.num}</span>
+                        <p class="project-client">{pr.client}</p>
+                        <h3 class="project-title">{pr.title}</h3>
+                        <p class="project-problem">{pr.problem}</p>
+                        <p class="project-built">{pr.built}</p>
+
+                        <ul class="stack">
+                            {pr.stack.map((s) => <li>{s}</li>)}
+                        </ul>
+                    </div>
+
+                    <div class="project-metric">
+                        <span class="metric-value">{pr.metric}</span>
+                        <span class="metric-label">{pr.metricLabel}</span>
+                    </div>
+                </li>
+            ))}
+        </ol>
+    </div>
+</section>
+
+<style>
+    .work {
+        padding: clamp(4rem, 12vh, 8rem) 1.5rem;
+        background-color: var(--bg-alt);
+        border-top: 1px solid var(--border);
+    }
+
+    .work-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+    }
+
+    /* --- Heading --- */
+    .work-head {
+        margin-bottom: clamp(2.5rem, 6vh, 4rem);
+    }
+
+    .eyebrow {
+        display: block;
+        margin-bottom: 0.85rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+    }
+
+    .work-head h2 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.75rem, 4vw, 3rem);
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        color: var(--heading);
+    }
+
+    /* --- Projects --- */
+    .project-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-top: 1px solid var(--border);
+    }
+
+    .project {
+        display: grid;
+        gap: 2rem;
+        padding: clamp(2rem, 5vh, 3rem) 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .project-num {
+        display: block;
+        margin-bottom: 1rem;
+        font-family: var(--font-display);
+        font-size: 0.9rem;
+        letter-spacing: 0.16em;
+        color: var(--accent);
+    }
+
+    .project-client {
+        margin: 0 0 0.5rem;
+        font-size: 0.85rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+    }
+
+    .project-title {
+        margin: 0 0 1rem;
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 2.6vw, 2rem);
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+        color: var(--heading);
+    }
+
+    .project-problem,
+    .project-built {
+        margin: 0 0 0.75rem;
+        max-width: 46ch;
+        color: var(--text);
+        font-size: 1rem;
+        line-height: 1.65;
+    }
+
+    .project-built {
+        color: var(--text-dim);
+    }
+
+    /* --- Stack --- */
+    .stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1.5rem 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .stack li {
+        padding: 0.35rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        letter-spacing: 0.04em;
+        color: var(--text-dim);
+    }
+
+    /* --- Metric --- */
+    .project-metric {
+        align-self: start;
+    }
+
+    .metric-value {
+        display: block;
+        font-family: var(--font-display);
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        line-height: 1;
+        letter-spacing: -0.02em;
+        color: var(--accent);
+    }
+
+    .metric-label {
+        display: block;
+        margin-top: 0.6rem;
+        max-width: 12rem;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: var(--text-dim);
+    }
+
+    @media (min-width: 820px) {
+        .project {
+            /* Metric column is fixed so the figures line up down the page
+               rather than shifting with each project's text length. */
+            grid-template-columns: 1fr 15rem;
+            gap: 4rem;
+        }
+
+        .project-metric {
+            text-align: right;
+        }
+
+        .metric-label {
+            margin-left: auto;
+        }
+    }
+</style>
