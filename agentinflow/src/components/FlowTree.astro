@@ -99,7 +99,6 @@ const limbs = services.map((s, i) => {
                         stroke widens it without widening the drawing. */}
                     <path class="hit" d={lb.d} />
                     <path class="twig" d={lb.d} />
-                    <circle class="knot" cx={lb.tipX} cy={lb.tipY} r="5" />
                     <text class="limb-label" x={lb.tipX} y={lb.tipY - 18}>{lb.title}</text>
                 </g>
             ))}
@@ -109,7 +108,6 @@ const limbs = services.map((s, i) => {
                 <g class="stage">
                     <rect class="hit-box" x={st.x - 66} y={st.y} width="132" height={STUB + 56} />
                     <path class="stub" d={`M${f(st.x)},${f(st.y)} L${f(st.x)},${f(st.tipY)}`} />
-                    <circle class="knot" cx={st.x} cy={st.tipY} r="4" />
                     <text class="stage-title" x={st.x} y={st.tipY + 26}>{st.t}</text>
                 </g>
             ))}
@@ -193,11 +191,6 @@ const limbs = services.map((s, i) => {
         stroke-width: 1.5;
     }
 
-    .knot {
-        fill: #4a4a4a;
-        transition: fill 0.3s ease, filter 0.3s ease;
-    }
-
     .hit,
     .hit-box {
         fill: none;
@@ -253,12 +246,6 @@ const limbs = services.map((s, i) => {
     .stage:hover .stub {
         stroke: var(--accent);
         filter: drop-shadow(0 0 6px rgba(var(--accent-rgb), 0.8));
-    }
-
-    .limb:hover .knot,
-    .stage:hover .knot {
-        fill: var(--accent);
-        filter: drop-shadow(0 0 6px rgba(var(--accent-rgb), 0.7));
     }
 
     .limb:hover .limb-label {
@@ -317,7 +304,6 @@ const limbs = services.map((s, i) => {
 
         .twig,
         .stub,
-        .knot,
         .limb-label,
         .stage-title {
             transition: none;
