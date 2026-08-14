@@ -7,15 +7,15 @@
 // matches those selectors, so the old CSS cannot reach this markup and can
 // be deleted later without touching this file.
 //
-// Numbers: WhatsApp is +91 93433 93388, matching Contact.astro and
-// contact.js. The old footer listed 95845 98779 for WhatsApp only - a
-// leftover, and the one place on the site that disagreed.
+// The footer no longer carries an address or phone numbers. Everything
+// points at the form on the Services page instead, which is where the
+// email address and the WhatsApp and call buttons already live - one place
+// to keep correct rather than four. That also retires the old footer's
+// 95845 98779 WhatsApp number, the one spot on the site that disagreed with
+// Contact.astro and contact.js.
 const year = new Date().getFullYear();
 
-const EMAIL = 'aarvsinghchauhan@gmail.com';
-const WHATSAPP = '919343393388';
-const PHONE = '+919343393388';
-const PHONE_DISPLAY = '+91 93433 93388';
+const FORM_HREF = '/service/#contact';
 
 const pages = [
     { label: 'Home', href: '/' },
@@ -40,7 +40,7 @@ const social = [
             <p class="sf-line">
                 AI automation and web development. We build what you ask.
             </p>
-            <a class="sf-cta" href="/service/#contact">
+            <a class="sf-cta" href={FORM_HREF}>
                 Start a conversation
                 <span class="sf-arrow" aria-hidden="true">↗</span>
             </a>
@@ -58,13 +58,7 @@ const social = [
         <div class="sf-col">
             <h2 class="sf-heading">Contact</h2>
             <ul class="sf-list">
-                <li><a href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
-                <li>
-                    <a href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noopener">
-                        WhatsApp {PHONE_DISPLAY}
-                    </a>
-                </li>
-                <li><a href={`tel:${PHONE}`}>Call {PHONE_DISPLAY}</a></li>
+                <li><a href={FORM_HREF}>Send us a message</a></li>
             </ul>
         </div>
 

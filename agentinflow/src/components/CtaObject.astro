@@ -42,8 +42,8 @@ const FACES = [
 
 // --- Tile grid -------------------------------------------------------------
 const N = 4;
-const TILE = 16;
-const TGAP = 5;
+const TILE = 19;
+const TGAP = 6;
 const SPAN = N * (TILE + TGAP) - TGAP;
 
 // Which cells light up, and how far into the cycle each one starts. Chosen
@@ -183,9 +183,9 @@ for (let r = 0; r < N; r++) {
 
     .tile {
         position: absolute;
-        width: 16px;
-        height: 16px;
-        border-radius: 4px;
+        width: 19px;
+        height: 19px;
+        border-radius: 5px;
         border: 1px solid rgba(255, 255, 255, 0.2);
         background: rgba(255, 255, 255, 0.03);
     }
