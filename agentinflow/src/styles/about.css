@@ -133,22 +133,6 @@ body {
     font-size: clamp(1.35rem, 2.6vw, 1.9rem);
 }
 
-/* A row with no destination. The hover rules above are written against
-   .link-item, so they have to be undone here rather than simply not
-   applied. */
-.link-item.is-static {
-    cursor: default;
-}
-
-.link-item.is-static:hover {
-    padding-left: 0.5rem;
-    background-color: transparent;
-}
-
-.link-item.is-static:hover .link-title {
-    color: var(--heading);
-}
-
 .link-arrow {
     width: 16px;
     height: 16px;

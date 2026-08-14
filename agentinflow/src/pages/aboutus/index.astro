@@ -87,16 +87,21 @@ const canonical = 'https://www.agentinflow.com/aboutus/';
                     </a>
                 </li>
 
-                {/* No LinkedIn URL supplied for Ayush, so this row is a
-                    plain div rather than an <a>. is-static suppresses the
-                    hover shift and the arrow - a row that lights up and
-                    moves but goes nowhere reads as a broken link. Swap it
-                    for an <a class="link-item"> once the URL exists. */}
                 <li class="link-row">
-                    <div class="link-item is-static">
+                    <a class="link-item"
+                        href="https://www.linkedin.com/in/ayush-bhatt-60310422a/"
+                        target="_blank" rel="noopener"
+                        aria-label="Ayush Bhatt on LinkedIn">
                         <span class="link-title">Ayush Bhatt</span>
-                        <span class="link-meta">Co-Founder</span>
-                    </div>
+                        <span class="link-meta">
+                            Co-Founder
+                            <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="7" y1="17" x2="17" y2="7" />
+                                <polyline points="7 7 17 7 17 17" />
+                            </svg>
+                        </span>
+                    </a>
                 </li>
             </ul>
         </div>
