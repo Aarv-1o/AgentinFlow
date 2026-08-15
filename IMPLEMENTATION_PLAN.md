@@ -273,42 +273,104 @@ All CSS-driven or IntersectionObserver — no animation library, nothing that hu
 
 ## Phase 3 — Social posting automation (3×/week, LinkedIn + X)
 
-**Publishing rail deliberately undecided.** Captured here so the discussion has a written baseline.
+**Status:** planned, not started. Decisions taken 2026-08-15.
 
-### The actual constraint
+### Correction to the earlier baseline
 
-The hard part is not the automation — it is API access.
+The options table above claimed self-hosted Postiz means "no LinkedIn app review." **That is wrong.**
+Postiz's own self-hosting docs require `LINKEDIN_CLIENT_ID` / `LINKEDIN_CLIENT_SECRET` and
+`X_API_KEY` / `X_API_SECRET` — you create both developer apps yourself, add the LinkedIn products,
+and configure the OAuth redirect. Posting to a company page needs the separate `linkedin-page`
+provider.
 
-- **LinkedIn Company Page** posting requires a LinkedIn Developer app with the Community Management
-  API and `w_organization_social`. Review typically takes **2–6 weeks** and is regularly rejected
-  for vaguely-worded use cases.
-- **X** free tier permits 500 writes/month (12/mo is well within it), but app setup is fiddly.
-- n8n's LinkedIn node does **not** avoid this — it still consumes those same OAuth credentials.
+Their docs also warn: without the Advertising API permissions approved, **you get no refresh
+tokens**, so LinkedIn access expires every 60 days and must be reconnected by hand.
 
-### Options on the table
+So the LinkedIn review is unavoidable for company-page posting, by any route. It is the long pole
+and it starts on day one regardless of everything else.
 
-| Option | Setup time | Cost | Notes |
-|---|---|---|---|
-| n8n + **Postiz** (self-hosted) | Hours | Free | Open-source, sits beside your n8n, has an API, no LinkedIn app review |
-| n8n + **Buffer** | Minutes | Free tier covers 3/wk | Fastest to live; external dependency |
-| **Pure n8n**, direct APIs | 2–6 weeks | Free | Full dogfooding, doubles as a sales asset — "here's the workflow running our own socials" |
-| Pure n8n, Buffer as interim | Minutes, then migrate | Free | Posting starts this week; direct API becomes the end state |
+### What Postiz actually buys
 
-### Pipeline (rail-independent — this part is the same either way)
+Not review avoidance. It buys OAuth token storage and refresh, one API covering both platforms, a
+queue you can eyeball, and easy addition of further platforms later. It costs a hosted service —
+the app plus Postgres plus Redis.
+
+**Open question, worth answering before M3:** with a plain script already making HTTP calls, Postiz
+saves perhaps 80 lines of token handling in exchange for a service to run and patch. Direct API
+calls may be the smaller system. Deferred deliberately — M1 and M2 are identical either way, and by
+M3 the LinkedIn review outcome will be known.
+
+### Decisions taken
+
+| Question | Decision |
+|---|---|
+| Orchestration | Plain scheduled script, no n8n |
+| Publishing rail | Postiz, self-hosted — **pending the reassessment above** |
+| Approval | Human approves every post before it publishes |
+| LinkedIn target | AgentinFlow company page |
+
+### Architecture
 
 ```
-Cron (Mon/Wed/Fri) → fetch RSS + Hacker News + dev.to
-  → filter by relevance/recency → dedupe against already-posted store
-  → LLM drafts LinkedIn variant + X variant in AgentinFlow's voice
-  → approval step → publish → log to store
+GitHub Actions cron (Mon/Wed/Fri)
+  → fetch: RSS + Hacker News + dev.to
+  → filter on recency and relevance
+  → dedupe against the posted store
+  → Claude drafts a LinkedIn variant AND a separate X variant
+  → write draft to store, notify Telegram with Approve / Reject buttons
+                            ↓
+Telegram button → Vercel function (the site is already on Vercel)
+  → publish via the chosen rail → mark posted in the store
 ```
 
-Notes:
-- The two platforms need genuinely different drafts, not one text cross-posted — LinkedIn rewards
-  longer narrative, X rewards compression.
-- Dedupe store prevents reposting the same story; Google Sheets or Postgres.
-- Approval via Telegram/Slack with Approve/Reject buttons was the recommendation.
-- Whichever rail is chosen, the workflow JSON is importable and version-controlled in this repo.
+Split on purpose: GitHub Actions gives a generous free cron but its runners are ephemeral, so they
+cannot hold a webhook open for the approval callback. Vercel functions are already available and
+are always on. Vercel Hobby cron is capped at one run per day per job, which is why the schedule
+lives in Actions rather than there.
+
+**Store:** Upstash Redis free tier — holds pending drafts and the posted-URL set for dedupe.
+Alternative considered: committing drafts to the repo. Version-controlled and free, but every
+approval becomes a git round-trip from a serverless function, which is more moving parts, not fewer.
+
+### Content pipeline
+
+- Sources: Hacker News front page, dev.to, and a curated RSS list. **Needs a decision on topics** —
+  general tech news, or narrowed to AI/automation where the agency has standing to comment.
+- Two genuinely different drafts per story, never one text cross-posted. LinkedIn rewards narrative
+  and a point of view; X rewards compression.
+- Voice must match the site: plain, concrete, no hype. The same rule that governed the copy.
+- Dedupe on canonical URL, kept for 90 days.
+
+### Milestones
+
+| # | Deliverable | Blocked by |
+|---|---|---|
+| **M0** | LinkedIn Developer app created, Community Management + Advertising products requested. X developer app created. | Nothing — **do this first**, review is 2–6 weeks |
+| **M1** | Fetch → filter → dedupe → draft, writing to a local file. Fully testable with zero API access. | Anthropic API key, topic decision |
+| **M2** | Telegram approval loop end to end, publishing to a dry-run target | Telegram bot token, Upstash |
+| **M3** | Real publishing; Postiz-vs-direct decided | M0 approval |
+| **M4** | Live, monitored, with a failure alert | M3 |
+
+M1 is the bulk of the work and is buildable today. Nothing about it waits on LinkedIn.
+
+### Inputs needed
+
+1. **Topic scope** — general tech news, or AI/automation specifically
+2. **Anthropic API key** for drafting (~$1–2/month at this volume)
+3. **Telegram bot token + chat ID** (via @BotFather, five minutes)
+4. **X API tier** — confirm the free tier's current write allowance covers ~12 posts/month
+5. Where Postiz would be hosted, if it survives the M3 reassessment
+6. **A voice sample** — 2–3 posts you would be happy to have published, or existing posts you like
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| LinkedIn rejects the app | Personal profile as fallback; X ships regardless. Company page may simply not be automatable |
+| No refresh token → 60-day expiry | Request Advertising API at M0. Otherwise a calendar reminder and manual reconnect |
+| LLM posts something wrong or tone-deaf under the agency name | Approval gate is load-bearing, not optional. Never remove it |
+| Automated posting reads as spam | Three a week with a human approving each is well within normal. Do not scale up |
+| Vercel Hobby non-commercial ToS | Already a known accepted risk; business automation on it widens the exposure |
 
 ---
 
