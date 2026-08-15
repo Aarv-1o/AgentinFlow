@@ -289,23 +289,33 @@ tokens**, so LinkedIn access expires every 60 days and must be reconnected by ha
 So the LinkedIn review is unavoidable for company-page posting, by any route. It is the long pole
 and it starts on day one regardless of everything else.
 
-### What Postiz actually buys
+### Postiz: rejected for this, worth keeping for something else
 
-Not review avoidance. It buys OAuth token storage and refresh, one API covering both platforms, a
-queue you can eyeball, and easy addition of further platforms later. It costs a hosted service —
-the app plus Postgres plus Redis.
+Self-hosting it means an Ubuntu VM at 2GB/2vCPU running Docker Compose with the app, Postgres, a
+cache and **Temporal** — a full workflow engine — to send 12 posts a month to 2 channels. Roughly
+$6–12/month plus patching, backups and monitoring.
 
-**Open question, worth answering before M3:** with a plain script already making HTTP calls, Postiz
-saves perhaps 80 lines of token handling in exchange for a service to run and patch. Direct API
-calls may be the smaller system. Deferred deliberately — M1 and M2 are identical either way, and by
-M3 the LinkedIn review outcome will be known.
+Against that:
+
+- It does not avoid the LinkedIn app review, which is why it was chosen.
+- Its main benefit is token refresh — but if the Advertising API product is not approved, LinkedIn
+  issues no refresh token at all, and Postiz cannot refresh what was never issued. The 60-day manual
+  reconnect happens either way.
+- It contradicts the "plain scheduled script, no n8n" decision by being heavier than n8n.
+- It is a failure surface we own: a wedged VM on Monday morning fails silently.
+
+Direct API calls cost roughly 40 lines of token handling per platform. That is the whole trade.
+
+**Kept on the table as a separate idea:** self-hosted Postiz is a service an automation agency could
+sell — managed scheduling for clients, on our infrastructure, no per-seat fees. That deserves its
+own evaluation driven by real client requirements, not by our own three posts a week.
 
 ### Decisions taken
 
 | Question | Decision |
 |---|---|
 | Orchestration | Plain scheduled script, no n8n |
-| Publishing rail | Postiz, self-hosted — **pending the reassessment above** |
+| Publishing rail | **Direct LinkedIn + X APIs** (decided 2026-08-15, reversing the earlier Postiz choice) |
 | Approval | Human approves every post before it publishes |
 | LinkedIn target | AgentinFlow company page |
 
