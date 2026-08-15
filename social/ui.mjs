@@ -62,13 +62,46 @@ export function showStory(story, ago) {
     console.log('');
 }
 
-export async function askView() {
+// Returns { action, text }.
+//   view  - they typed an opinion, text holds it
+//   next  - not interested, show the following story
+//   list  - show the shortlist and choose
+//   quit  - done for now
+//
+// Slash prefixes rather than bare letters, so a one-word opinion is never
+// mistaken for a command.
+export async function askView({ remaining = 0 } = {}) {
     console.log(c.bold('  What do you think about this?'));
-    console.log(c.dim('  A sentence is enough. Blank line to skip this story.\n'));
+    console.log(c.dim(
+        '  A sentence is enough.' +
+        (remaining ? `   ${c.bold('/n')} next story (${remaining} left)` : '') +
+        `   ${c.bold('/l')} pick from list   ${c.bold('/q')} quit\n`
+    ));
     const io = rl();
-    const answer = await io.question('  > ');
+    const answer = (await io.question('  > ')).trim();
     io.close();
-    return answer.trim();
+
+    if (!answer || /^\/q(uit)?$/i.test(answer)) return { action: 'quit' };
+    if (/^\/n(ext)?$/i.test(answer)) return { action: 'next' };
+    if (/^\/l(ist)?$/i.test(answer)) return { action: 'list' };
+    return { action: 'view', text: answer };
+}
+
+// Numbered shortlist. Returns an index into the array, or null to go back.
+export async function chooseFrom(stories, ago) {
+    console.log('');
+    rule('shortlist');
+    stories.slice(0, 10).forEach((s, i) => {
+        console.log(`  ${String(i + 1).padStart(2)}. ${c.bold(s.title.slice(0, 62))}`);
+        console.log(c.dim(`      ${s.source} · ${s.points}pts · ${ago(s.publishedAt)} · score ${s.score.total}`));
+    });
+    console.log('');
+    const io = rl();
+    const answer = (await io.question('  number, or blank to go back  > ')).trim();
+    io.close();
+    const n = Number(answer);
+    if (!Number.isInteger(n) || n < 1 || n > Math.min(10, stories.length)) return null;
+    return n - 1;
 }
 
 export function showDrafts(drafts) {

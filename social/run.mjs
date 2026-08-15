@@ -77,21 +77,14 @@ async function gather() {
     return ranked;
 }
 
-async function choose(ranked) {
-    if (!PICK) return ranked[0];
-
-    console.log('');
-    ui.rule('shortlist');
-    ranked.slice(0, 5).forEach((s, i) => {
-        console.log(`  ${i + 1}. ${String(s.score.total).padStart(5)}  ${s.title.slice(0, 62)}`);
-    });
-    console.log('');
-    const io = (await import('node:readline/promises')).createInterface({
-        input: process.stdin, output: process.stdout
-    });
-    const n = Number(await io.question('  which? [1] ')) || 1;
-    io.close();
-    return ranked[Math.min(Math.max(n, 1), 5) - 1];
+// --pick opens on the shortlist instead of the top story.
+async function pickIndex(ranked) {
+    const chosen = await ui.chooseFrom(ranked, ago);
+    if (chosen === null) {
+        console.log(ui.colour.dim('\n  Nothing chosen.\n'));
+        return null;
+    }
+    return chosen;
 }
 
 async function run() {
@@ -116,14 +109,43 @@ async function run() {
     // Only now is a key required - --list stays usable without one.
     requireOpenAI();
 
-    const story = await choose(ranked);
-    ui.notify('AgentinFlow: story ready', story.title);
-    ui.showStory(story, ago(story.publishedAt));
+    // Walk the ranked list until one is worth writing about. Rejecting a
+    // story is not the same as posting it: nothing is recorded, so it comes
+    // back next run rather than being burned.
+    let index = PICK ? await pickIndex(ranked) : 0;
+    if (index === null) return;
 
-    let view = await ui.askView();
-    if (!view) {
-        console.log(ui.colour.dim('\n  Skipped. Nothing posted, nothing recorded.\n'));
-        return;
+    let story;
+    let view;
+
+    for (;;) {
+        if (index >= ranked.length) {
+            console.log(ui.colour.dim('\n  That is every eligible story. Nothing posted.\n'));
+            return;
+        }
+
+        story = ranked[index];
+        if (index === 0) ui.notify('AgentinFlow: story ready', story.title);
+        ui.showStory(story, ago(story.publishedAt));
+
+        const answer = await ui.askView({ remaining: ranked.length - index - 1 });
+
+        if (answer.action === 'quit') {
+            console.log(ui.colour.dim('\n  Nothing posted, nothing recorded.\n'));
+            return;
+        }
+        if (answer.action === 'next') {
+            index += 1;
+            continue;
+        }
+        if (answer.action === 'list') {
+            const chosen = await ui.chooseFrom(ranked, ago);
+            if (chosen !== null) index = chosen;
+            continue;
+        }
+
+        view = answer.text;
+        break;
     }
 
     // Loop until the drafts are approved, the view is rewritten, or it is
