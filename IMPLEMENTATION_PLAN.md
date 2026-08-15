@@ -334,20 +334,59 @@ approval becomes a git round-trip from a serverless function, which is more movi
 
 ### Content pipeline
 
-- Sources: Hacker News front page, dev.to, and a curated RSS list. **Needs a decision on topics** —
-  general tech news, or narrowed to AI/automation where the agency has standing to comment.
-- Two genuinely different drafts per story, never one text cross-posted. LinkedIn rewards narrative
-  and a point of view; X rewards compression.
-- Voice must match the site: plain, concrete, no hype. The same rule that governed the copy.
-- Dedupe on canonical URL, kept for 90 days.
+**Topic scope: general tech news.**
+
+The interaction is two-stage. The system does not draft first and ask for approval — it asks what
+you think *before* anything is written, then writes the post around your take.
+
+```
+1. fetch + filter + dedupe            → pick one story
+2. Telegram: "Story: <headline>       → you reply in free text
+   <2-line summary> <link>
+   What is your view on this?"
+3. Claude drafts LinkedIn + X posts   → news framing carries your view as the point
+4. Telegram: draft + Approve/Edit/Reject
+5. publish on approve
+```
+
+Two human touches per post, not one. That is the cost of posts that carry an actual opinion rather
+than a summary anyone could have generated. If it proves too heavy, step 2 can accept a one-word
+steer and let the model expand it — but it must never be skippable, or the posts revert to filler.
+
+State has to survive between the two touches, which is what the store is for: the run that asks the
+question ends before you answer it.
+
+### Voice profile
+
+Derived from three real AgentinFlow LinkedIn posts supplied 2026-08-15. Encode as the drafting
+system prompt, not as loose guidance.
+
+| Trait | Observed |
+|---|---|
+| Structure | One sentence per line. No paragraph blocks. |
+| Person | "We" — the agency, never an individual |
+| Opening | Straight into substance. No "In today's fast-paced world" |
+| Length | 60–120 words |
+| Emoji | Zero or one, at the end of a line. 🚀 👇 |
+| Close | Soft CTA or a question — "Would love your feedback", "Let's build something impactful" |
+| Hashtags | 4–6, PascalCase, brand + topic + geography: #AgentInflow #WebDevelopment #StartupIndia |
+| Register | Plain and direct. Some marketing warmth, no jargon stacking |
+| Honesty | "Still early, but we're excited" — comfortable admitting stage. Keep this |
+
+**No X sample exists.** The X variant will be derived — same view, compressed, no hashtag stack,
+one link — and needs review on the first few posts before it can be trusted.
+
+**Account reality:** the company page had 17 followers at the time of sampling. Automation fixes
+cadence, not reach. Three consistent posts a week with a real opinion is the right lever; expecting
+distribution from it is not.
 
 ### Milestones
 
 | # | Deliverable | Blocked by |
 |---|---|---|
 | **M0** | LinkedIn Developer app created, Community Management + Advertising products requested. X developer app created. | Nothing — **do this first**, review is 2–6 weeks |
-| **M1** | Fetch → filter → dedupe → draft, writing to a local file. Fully testable with zero API access. | Anthropic API key, topic decision |
-| **M2** | Telegram approval loop end to end, publishing to a dry-run target | Telegram bot token, Upstash |
+| **M1** | Fetch → filter → dedupe → story selection, writing to a local file. Testable with zero API access. | ~~topic decision~~ ✅ general tech |
+| **M2** | Two-stage Telegram loop: ask for view → draft → approve. Dry-run publish. | Anthropic key, Telegram bot token, Upstash |
 | **M3** | Real publishing; Postiz-vs-direct decided | M0 approval |
 | **M4** | Live, monitored, with a failure alert | M3 |
 
@@ -355,12 +394,12 @@ M1 is the bulk of the work and is buildable today. Nothing about it waits on Lin
 
 ### Inputs needed
 
-1. **Topic scope** — general tech news, or AI/automation specifically
-2. **Anthropic API key** for drafting (~$1–2/month at this volume)
-3. **Telegram bot token + chat ID** (via @BotFather, five minutes)
-4. **X API tier** — confirm the free tier's current write allowance covers ~12 posts/month
-5. Where Postiz would be hosted, if it survives the M3 reassessment
-6. **A voice sample** — 2–3 posts you would be happy to have published, or existing posts you like
+1. ~~Topic scope~~ ✅ **general tech news**
+2. ~~Voice sample~~ ✅ **three LinkedIn posts supplied, profiled above**
+3. **Anthropic API key** for drafting (~$1–2/month at this volume) — still needed
+4. **Telegram bot token + chat ID** (via @BotFather, five minutes) — still needed
+5. **X API tier** — confirm the free tier's current write allowance covers ~12 posts/month
+6. Where Postiz would be hosted, if it survives the M3 reassessment
 
 ### Risks
 
