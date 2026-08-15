@@ -14,25 +14,46 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 // take effect without restarting anything.
 const voice = () => readFileSync(join(HERE, 'voice.md'), 'utf8');
 
-async function callModel(messages) {
-    const res = await fetch(`${config.openai.baseUrl}/chat/completions`, {
+// Enough spread to sound human, not enough to wander off the view. Some
+// models reject any value but the default and 400 the whole request, so this
+// is dropped and retried rather than allowed to fail the run.
+const TEMPERATURE = 0.75;
+let sendTemperature = true;
+
+async function post(body) {
+    return fetch(`${config.openai.baseUrl}/chat/completions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${config.openai.key}`
         },
-        body: JSON.stringify({
-            model: config.openai.model,
-            messages,
-            // Enough spread to sound human, not enough to wander off the view.
-            temperature: 0.75,
-            response_format: { type: 'json_object' }
-        })
+        body: JSON.stringify(body)
     });
+}
+
+async function callModel(messages) {
+    const base = {
+        model: config.openai.model,
+        messages,
+        response_format: { type: 'json_object' }
+    };
+
+    let res = await post(sendTemperature ? { ...base, temperature: TEMPERATURE } : base);
+
+    if (!res.ok && sendTemperature) {
+        const body = await res.text();
+        if (/temperature/i.test(body)) {
+            // Latch it off for the rest of the process - the model will not
+            // start supporting it midway through a run.
+            sendTemperature = false;
+            res = await post(base);
+        } else {
+            throw new Error(`OpenAI ${res.status}: ${body.slice(0, 300)}`);
+        }
+    }
 
     if (!res.ok) {
-        const body = await res.text();
-        throw new Error(`OpenAI ${res.status}: ${body.slice(0, 300)}`);
+        throw new Error(`OpenAI ${res.status}: ${(await res.text()).slice(0, 300)}`);
     }
 
     const data = await res.json();

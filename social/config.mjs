@@ -25,8 +25,10 @@ if (existsSync(ENV_FILE)) {
 export const config = {
     openai: {
         key: process.env.OPENAI_API_KEY || '',
-        // Overridable because model names move faster than this script will.
-        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+        // Small, current, and fast enough that the wait between typing a view
+        // and seeing drafts is a couple of seconds. Overridable because model
+        // names move faster than this script will.
+        model: process.env.OPENAI_MODEL || 'gpt-5.4-mini',
         baseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1'
     },
     limits: {
