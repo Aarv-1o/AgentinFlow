@@ -390,15 +390,85 @@ one link — and needs review on the first few posts before it can be trusted.
 cadence, not reach. Three consistent posts a week with a real opinion is the right lever; expecting
 distribution from it is not.
 
+### Revised architecture — local, interactive (decided 2026-08-15)
+
+Telegram, Upstash and the Vercel webhook are all removed. They existed only because the person and
+the process were in different places: a bot that asks a question and waits for an answer needs
+somewhere to keep the half-finished post while the run that asked it has already exited.
+
+Running on the operator's own machine collapses that. The process stays alive while you type, so
+there is no cross-process state at all — no queue, no KV, no callback endpoint.
+
+**Drafting model: OpenAI.** One function behind an interface; the provider is an env var.
+
+```
+Windows Task Scheduler  (Mon/Wed/Fri 09:00, "run ASAP after missed start")
+   │
+   └─> node social/run.mjs
+         1  fetchAll()              sources.mjs      HN + dev.to          ✅ built
+         2  selectStory(seen)       select.mjs       score, dedupe        ✅ built
+         3  notify + present        ui.mjs           toast, then console
+         4  readline                ui.mjs           your view, free text
+         5  draft()                 draft.mjs        OpenAI -> {linkedin, x}
+         6  review loop             ui.mjs           Approve / Edit / Regenerate / Skip
+         7  publish()               publish/*.mjs    direct API calls
+         8  markPosted() + log      store.mjs        local JSON
+```
+
+Every step is in one process. If it dies at step 6, nothing was posted and nothing is half-written.
+
+### File layout
+
+```
+social/
+  run.mjs              orchestrator + CLI            ✅
+  sources.mjs          HN + dev.to                   ✅
+  select.mjs           scoring, canonicalise, dedupe ✅
+  store.mjs            posted set + run log          ✅
+  draft.mjs            OpenAI call, JSON out
+  voice.md             voice profile as system prompt
+  ui.mjs               toast, readline, review loop
+  auth/oauth.mjs       localhost callback, token store, refresh
+  publish/x.mjs        POST /2/tweets
+  publish/linkedin.mjs POST /rest/posts
+  setup.mjs            one-time per-platform OAuth
+  install-task.ps1     registers the scheduled task
+  .env                 secrets                       (gitignored)
+  state/               posted.json, tokens.json, log.ndjson (gitignored)
+```
+
+### Auth, concretely
+
+| | X | LinkedIn |
+|---|---|---|
+| Flow | OAuth 2.0 PKCE, user context | OAuth 2.0 3-legged |
+| Scopes | `tweet.write`, `users.read`, `offline.access` | `w_organization_social` |
+| Endpoint | `POST /2/tweets` | `POST /rest/posts`, `LinkedIn-Version` header, author `urn:li:organization:{id}` |
+| Refresh | `offline.access` yields a refresh token | Only if the Advertising API product is approved |
+| Gate | Developer account, free tier | **App review, 2–6 weeks** |
+
+Both flows run once via `setup.mjs`, which starts a throwaway HTTP server on localhost to catch the
+redirect and writes tokens to `state/tokens.json`. **To verify:** whether LinkedIn still accepts an
+`http://localhost` redirect URI, and X's current free-tier write allowance. Neither blocks M2.
+
+### Failure handling
+
+- A publish failure writes the draft to `state/failed/` and does **not** mark the story posted, so
+  it can be retried rather than lost.
+- Every run appends to `state/log.ndjson`, which is the only way to notice the task silently
+  stopped firing.
+- `--dry-run` prints what would be posted and touches no API.
+
 ### Milestones
 
 | # | Deliverable | Blocked by |
 |---|---|---|
 | **M0** | LinkedIn Developer app created, Community Management + Advertising products requested. X developer app created. | Nothing — **do this first**, review is 2–6 weeks |
-| **M1** | Fetch → filter → dedupe → story selection, writing to a local file. Testable with zero API access. | ~~topic decision~~ ✅ general tech |
-| **M2** | Two-stage Telegram loop: ask for view → draft → approve. Dry-run publish. | Anthropic key, Telegram bot token, Upstash |
-| **M3** | Real publishing; Postiz-vs-direct decided | M0 approval |
-| **M4** | Live, monitored, with a failure alert | M3 |
+| **M1** ✅ | Fetch → score → dedupe → select. Runs with no keys. | done 2026-08-15 |
+| **M2** | `draft.mjs` + interactive review loop + `--dry-run`. End to end except posting. | **OpenAI key only** |
+| **M3** | X auth + publishing. Ships first — no review gate. | X developer account |
+| **M4** | LinkedIn auth + publishing | **M0 app review** |
+| **M5** | Scheduled task, logging, failure surfacing | M3 |
 
 M1 is the bulk of the work and is buildable today. Nothing about it waits on LinkedIn.
 
