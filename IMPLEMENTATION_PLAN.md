@@ -1,7 +1,9 @@
 # AgentinFlow — Implementation Plan
 
 **Created:** 2026-08-12
-**Status:** Phase 1 complete and verified live (2026-08-12). Phase 2 awaiting inputs — see [Blocked On](#blocked-on).
+**Status:** Phase 1 complete and verified live (2026-08-12).
+**Phase 2 complete and live in production (2026-08-15).**
+Phase 3 awaiting decisions — see [Blocked On](#blocked-on) items 9–13.
 
 ---
 
@@ -117,7 +119,39 @@ Static pages are unaffected (global edge CDN), but a form submit from India roun
 
 ---
 
-## Phase 2 — Astro migration + design overhaul
+## Phase 2 — Astro migration + design overhaul ✅ COMPLETE (2026-08-15)
+
+Merged to `main` and live on Vercel. Verified from outside: the new sections serve,
+`/sitemap-index.xml` is valid, and the fabricated testimonials are gone.
+
+**What shipped**
+
+| Area | Outcome |
+|---|---|
+| Framework | Astro 5, `build.format: 'directory'` — `/`, `/service/`, `/aboutus/` all preserved |
+| Hosting | Vercel, GitHub integration, previews per branch |
+| Palette | A (cool mist + wine), single `:root` in `tokens.css` |
+| Type | Domine headings, Inter body, Space Grotesk logotype |
+| Home | Hero keypad (isometric SVG) → Work → Services bridge → Product → CTA → Footer |
+| Services | Org-chart of the three services + branch diagram of how a job runs |
+| About | Three founders, row links, Connect section |
+| Portfolio | Two real projects, delivery-time metrics — no invented outcome figures |
+| Product | GitNomad, mark redrawn as inline SVG |
+| SEO | Generated sitemap, OG + Twitter, Organization JSON-LD, `scroll-padding-top`, 301s for `/index.html` and `/sitemap.xml` |
+| Cleanup | 1,236 lines of dead CSS/JS removed, verified against shipped markup |
+
+**Deliberately not done**
+- 1200×630 social card — the square logo letterboxes on LinkedIn/X
+- Small favicon sizes; the 2000px PNG mushes at 16px
+- Booking system — every CTA still routes to the Services form
+
+**Regression to watch:** the home page carries far less body copy than the old one and no longer
+has a keyword-loaded `h1`. Title, description and the services panel should hold it. If rankings
+slip, this is the first place to look.
+
+---
+
+## Phase 2 — original plan (kept for reference)
 
 Split into two independently verifiable stages. **2A must ship a visually identical site** — same
 CSS, same rendered markup, same URLs. Any visual difference after 2A is a bug, not a design choice.
@@ -282,7 +316,7 @@ Notes:
 
 Ordered by what blocks the earliest phase.
 
-### For Phase 1 (email) — needed to start
+### For Phase 1 (email) — ✅ all resolved
 
 1. **The current EmailJS template body and its variable names.**
    EmailJS dashboard → Email Templates → your template → Content. Paste the body or screenshot it.
@@ -291,14 +325,14 @@ Ordered by what blocks the earliest phase.
 3. Whether the EmailJS account is free tier (200 emails/month) — affects whether the auto-reply
    doubles your consumption and whether rate limiting is urgent.
 
-### For Phase 2 (migration) — needed before restructuring
+### For Phase 2 (migration) — ✅ all resolved
 
 4. **Render service settings** — whether it is a Static Site or a Web Service, plus Root Directory,
    Build Command and Publish Directory. The site lives in an `agentinflow/` subfolder rather than the
    repo root, so restructuring without this breaks the deploy.
 5. Confirm `/service/` and `/aboutus/` URLs must be preserved (assumed yes — they are in the sitemap).
 
-### For Phase 2 (design) — needed before the Portfolio section is real
+### For Phase 2 (design) — ✅ all resolved (testimonials confirmed placeholder and removed rather than published)
 
 6. **Portfolio content.** Per project: name, client (or "Confidential"), 1–2 line problem,
    what was built, result metric, tech stack, screenshot/thumbnail. **Three projects is enough to ship.**
@@ -307,7 +341,7 @@ Ordered by what blocks the earliest phase.
    Google penalty risk, and real names may need permission.
 8. Brand assets: logo as SVG if it exists, any brand guide, and 2–3 reference sites whose look you want.
 
-### For Phase 3 (social) — not yet needed
+### For Phase 3 (social) — ← BLOCKING NOW
 
 9. Where n8n runs (cloud vs self-hosted — the RepoCloud lead suggests self-hosted experience).
 10. LinkedIn: Company Page or personal profile.
@@ -362,5 +396,5 @@ live test submission.
 
 ## Immediate next step
 
-Provide item **#1** (the EmailJS template body) and Phase 1 starts.
-Items **#6–8** can be gathered in parallel while Phase 1 is in flight.
+Phase 3. Answer items **#9–13** — the publishing rail is the one that decides everything else,
+because it determines whether posting starts this week or after a LinkedIn app review.
