@@ -14,6 +14,9 @@ import { seenUrls, markPosted } from './store.mjs';
 import { draft } from './draft.mjs';
 import { requireOpenAI } from './config.mjs';
 import * as ui from './ui.mjs';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const args = process.argv.slice(2);
 const has = (f) => args.includes(f);
@@ -25,6 +28,41 @@ const ago = (iso) => {
     const h = (Date.now() - new Date(iso).getTime()) / 36e5;
     return h < 1 ? `${Math.round(h * 60)}m ago` : `${h.toFixed(1)}h ago`;
 };
+
+// Publish to both, independently. One platform failing must not stop the
+// other - they are separate accounts with separate approvals, and LinkedIn
+// may be unavailable for weeks while X works fine.
+async function publishAll(story, drafts) {
+    const targets = [
+        { key: 'linkedin', text: drafts.linkedin, load: () => import('./publish/linkedin.mjs') },
+        { key: 'x', text: drafts.x, load: () => import('./publish/x.mjs') }
+    ];
+
+    const results = [];
+    for (const t of targets) {
+        try {
+            const { publish } = await t.load();
+            const res = await publish(t.text);
+            console.log(`  ${ui.colour.bold(res.platform)} posted  ${ui.colour.dim(res.url || res.id || '')}`);
+            results.push({ ok: true, platform: res.platform, ...res });
+        } catch (err) {
+            console.log(`  ${ui.colour.wine(t.key + ' failed')}  ${err.message}`);
+            // Keep the text that failed so it can be posted by hand rather
+            // than regenerated from scratch.
+            await saveFailed(story, t.key, t.text, err.message);
+            results.push({ ok: false, platform: t.key, error: err.message });
+        }
+    }
+    return results;
+}
+
+async function saveFailed(story, platform, text, error) {
+    const dir = join(dirname(fileURLToPath(import.meta.url)), 'state', 'failed');
+    await mkdir(dir, { recursive: true });
+    const name = `${new Date().toISOString().replace(/[:.]/g, '-')}-${platform}.json`;
+    await writeFile(join(dir, name), JSON.stringify({ story: story.title, url: story.url, platform, text, error }, null, 2));
+    console.log(ui.colour.dim(`    draft saved to state/failed/${name}`));
+}
 
 async function gather() {
     const { stories, failures } = await fetchAll();
@@ -116,12 +154,21 @@ async function run() {
             return;
         }
 
-        console.log(ui.colour.wine('\n  Publishing is not wired up yet (M3 for X, M4 for LinkedIn).'));
-        console.log(ui.colour.dim('  Copy the drafts above by hand for now, then mark it posted.\n'));
+        const results = await publishAll(story, drafts);
+        const posted = results.filter((r) => r.ok);
 
-        if (await ui.confirm('Mark this story as posted so it is not offered again?')) {
-            const n = await markPosted({ url: story.canonical, title: story.title });
-            console.log(ui.colour.dim(`  Recorded. ${n} in the dedupe store.\n`));
+        // Recorded if either platform took it. Re-offering a story already
+        // live on LinkedIn because X failed would be worse than losing the
+        // X post - the failed draft is saved for a manual retry instead.
+        if (posted.length) {
+            const n = await markPosted({
+                url: story.canonical,
+                title: story.title,
+                platforms: posted.map((r) => r.platform)
+            });
+            console.log(ui.colour.dim(`  Recorded. ${n} stories in the dedupe store.\n`));
+        } else {
+            console.log(ui.colour.wine('  Nothing published. Story stays eligible for the next run.\n'));
         }
         return;
     }

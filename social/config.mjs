@@ -31,6 +31,24 @@ export const config = {
         model: process.env.OPENAI_MODEL || 'gpt-5.4-mini',
         baseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1'
     },
+    // Both redirect URIs must be registered byte-for-byte in the respective
+    // developer app, or the authorise call is rejected before it starts.
+    x: {
+        clientId: process.env.X_CLIENT_ID || '',
+        clientSecret: process.env.X_CLIENT_SECRET || '',
+        redirectUri: process.env.X_REDIRECT_URI || 'http://localhost:8721/callback'
+    },
+    linkedin: {
+        clientId: process.env.LINKEDIN_CLIENT_ID || '',
+        clientSecret: process.env.LINKEDIN_CLIENT_SECRET || '',
+        redirectUri: process.env.LINKEDIN_REDIRECT_URI || 'http://localhost:8722/callback',
+        // The numeric id of the company page, not its vanity name.
+        orgId: process.env.LINKEDIN_ORG_ID || '',
+        // YYYYMM. LinkedIn sunsets versions on a rolling basis - 202507 is
+        // already dead - so this needs bumping periodically.
+        version: process.env.LINKEDIN_VERSION || '202607'
+    },
+
     limits: {
         // X's hard ceiling. Enforced before sending, not discovered from a 403.
         xMaxChars: Number(process.env.X_MAX_CHARS || 280),
