@@ -1,0 +1,218 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/tokens.css';
+import '../../styles/global.css';
+
+// Every claim here was checked against the code rather than written from a
+// template. If the contact form, its recipients, or the third parties in
+// BaseLayout change, this page has to change with them:
+//   src/components/Contact.astro   the fields collected
+//   src/scripts/contact.js         where they are sent
+//   src/layouts/BaseLayout.astro   Google Fonts
+const title = 'Privacy Policy – AgentinFlow';
+const description = 'What AgentinFlow collects when you contact us, who processes it, and how to have it deleted.';
+const canonical = 'https://www.agentinflow.com/privacy/';
+
+const UPDATED = '16 August 2026';
+const EMAIL = 'aarvsinghchauhan@gmail.com';
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+    <section class="legal">
+        <div class="legal-inner">
+            <header>
+                <h1>Privacy Policy</h1>
+                <p class="updated">Last updated {UPDATED}</p>
+            </header>
+
+            <p class="lead">
+                AgentinFlow is an AI automation and web development agency based in India.
+                This page explains what happens to your information when you use this website.
+                It is written to be read, not to be survived.
+            </p>
+
+            <h2>What we collect</h2>
+            <p>Only what you type into the contact form on our Services page:</p>
+            <ul>
+                <li><strong>Your name</strong> — required, so we know who we are replying to</li>
+                <li><strong>Your email address</strong> — required, so we can reply</li>
+                <li><strong>Your company</strong> — optional</li>
+                <li><strong>Your message</strong> — required</li>
+                <li><strong>The date and time</strong> you submitted it</li>
+            </ul>
+            <p>
+                There is one hidden field in the form. It is a spam trap: it is invisible to you and
+                only automated bots fill it in. If it is filled, the submission is discarded and
+                nothing is sent or stored.
+            </p>
+            <p>
+                Our hosting provider records standard server logs, which include IP addresses, as
+                part of serving and protecting the site. We do not use those logs to identify
+                individual visitors.
+            </p>
+
+            <h2>Why we collect it</h2>
+            <p>
+                To read your enquiry and reply to it. That is the only purpose. We do not add you
+                to a mailing list, and we do not send you anything you did not ask for.
+            </p>
+
+            <h2>Who else sees it</h2>
+            <p>Your submission passes through three companies before it reaches us:</p>
+            <ul>
+                <li>
+                    <strong>EmailJS</strong> — transmits the form contents as an email. Your
+                    submission passes through their systems.
+                </li>
+                <li>
+                    <strong>Google</strong> — we receive and store enquiries in Gmail, so your
+                    message sits in a Google mailbox.
+                </li>
+                <li>
+                    <strong>Vercel</strong> — hosts this website and handles the server logs
+                    described above.
+                </li>
+            </ul>
+            <p>
+                Separately, this site loads its fonts from <strong>Google Fonts</strong>. That means
+                Google receives your IP address when a page loads, whether or not you ever use the
+                contact form.
+            </p>
+            <p>
+                We do not sell your information, rent it, or share it with anyone beyond the
+                companies listed above.
+            </p>
+
+            <h2>What this site does not do</h2>
+            <ul>
+                <li>It sets <strong>no cookies</strong> of its own.</li>
+                <li>It runs <strong>no analytics</strong> — no Google Analytics, no tracking pixels, no session recording.</li>
+                <li>It does <strong>not profile you</strong> or make automated decisions about you.</li>
+                <li>It does <strong>not use AI to process</strong> anything you submit through this website.</li>
+            </ul>
+
+            <h2>How long we keep it</h2>
+            <p>
+                Enquiry emails stay in our mailbox while we are in contact with you and for our
+                business records afterwards. If you would rather we deleted your enquiry, email us
+                and we will remove it.
+            </p>
+
+            <h2>Your rights</h2>
+            <p>
+                Under India's Digital Personal Data Protection Act 2023 — and under the GDPR if you
+                are in the UK or EU — you can ask us to:
+            </p>
+            <ul>
+                <li>tell you what information about you we hold</li>
+                <li>correct anything that is wrong</li>
+                <li>delete it</li>
+                <li>stop using it, where you had given consent</li>
+            </ul>
+            <p>
+                Email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> and we will respond within 30 days.
+                There is no charge, and you do not have to give a reason.
+            </p>
+
+            <h2>Children</h2>
+            <p>
+                This site is meant for businesses. It is not directed at children, and we do not
+                knowingly collect information from anyone under 18.
+            </p>
+
+            <h2>Changes</h2>
+            <p>
+                If we change what we collect or who processes it, we will change this page and
+                update the date at the top.
+            </p>
+
+            <h2>Contact</h2>
+            <p>
+                Questions about this policy, or about information we hold:
+                <a href={`mailto:${EMAIL}`}>{EMAIL}</a>, or
+                <a href="tel:+919343393388">+91 93433 93388</a>.
+            </p>
+        </div>
+    </section>
+</BaseLayout>
+
+<style>
+    .legal {
+        padding: clamp(8rem, 18vh, 11rem) 1.5rem clamp(4rem, 12vh, 7rem);
+        background-color: var(--bg);
+    }
+
+    /* Narrower than the rest of the site. This is the one place people
+       genuinely read line after line, and long measures are where they give
+       up. */
+    .legal-inner {
+        max-width: 44rem;
+        margin: 0 auto;
+    }
+
+    .legal h1 {
+        margin: 0 0 0.75rem;
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 5vw, 3rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: var(--heading);
+    }
+
+    .updated {
+        margin: 0 0 2.5rem;
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+    }
+
+    .lead {
+        margin: 0 0 2.5rem;
+        font-size: 1.15rem;
+        line-height: 1.7;
+        color: var(--text);
+    }
+
+    .legal h2 {
+        margin: 2.75rem 0 1rem;
+        font-family: var(--font-display);
+        font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+        letter-spacing: -0.01em;
+        color: var(--heading);
+    }
+
+    .legal p {
+        margin: 0 0 1.1rem;
+        line-height: 1.75;
+        color: var(--text);
+    }
+
+    .legal ul {
+        margin: 0 0 1.1rem;
+        padding-left: 1.25rem;
+        display: grid;
+        gap: 0.6rem;
+        line-height: 1.7;
+        color: var(--text);
+    }
+
+    .legal li::marker {
+        color: var(--accent);
+    }
+
+    .legal strong {
+        color: var(--heading);
+        font-weight: 600;
+    }
+
+    .legal a {
+        color: var(--accent);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    .legal a:hover {
+        color: var(--cta-hover);
+    }
+</style>

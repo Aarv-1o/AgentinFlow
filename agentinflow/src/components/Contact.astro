@@ -98,6 +98,14 @@ const PHONE_DISPLAY = '+91 93433 93388';
                     <polyline points="12 5 19 12 12 19" />
                 </svg>
             </button>
+
+            {/* Said at the point of collection, which is where it counts -
+                a policy nobody is pointed to is not a disclosure. */}
+            <p class="form-notice">
+                We use your name, email and message only to reply to you.
+                Your enquiry passes through EmailJS and Gmail on the way to us.
+                <a href="/privacy/">How we handle your information</a>.
+            </p>
         </form>
     </div>
 </section>
@@ -340,6 +348,23 @@ const PHONE_DISPLAY = '+91 93433 93388';
     }
 
     /* --- Submit --- */
+    .form-notice {
+        margin: 1.25rem 0 0;
+        font-size: 0.82rem;
+        line-height: 1.6;
+        color: var(--text-dim);
+    }
+
+    .form-notice a {
+        color: var(--text);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    .form-notice a:hover {
+        color: var(--accent);
+    }
+
     .submit-btn {
         display: flex;
         align-items: center;
