@@ -1,7 +1,9 @@
 # AgentinFlow — Implementation Plan
 
 **Created:** 2026-08-12
-**Status:** Phase 1 complete and verified live (2026-08-12). Phase 2 awaiting inputs — see [Blocked On](#blocked-on).
+**Status:** Phase 1 complete and verified live (2026-08-12).
+**Phase 2 complete and live in production (2026-08-15).**
+Phase 3 awaiting decisions — see [Blocked On](#blocked-on) items 9–13.
 
 ---
 
@@ -117,7 +119,39 @@ Static pages are unaffected (global edge CDN), but a form submit from India roun
 
 ---
 
-## Phase 2 — Astro migration + design overhaul
+## Phase 2 — Astro migration + design overhaul ✅ COMPLETE (2026-08-15)
+
+Merged to `main` and live on Vercel. Verified from outside: the new sections serve,
+`/sitemap-index.xml` is valid, and the fabricated testimonials are gone.
+
+**What shipped**
+
+| Area | Outcome |
+|---|---|
+| Framework | Astro 5, `build.format: 'directory'` — `/`, `/service/`, `/aboutus/` all preserved |
+| Hosting | Vercel, GitHub integration, previews per branch |
+| Palette | A (cool mist + wine), single `:root` in `tokens.css` |
+| Type | Domine headings, Inter body, Space Grotesk logotype |
+| Home | Hero keypad (isometric SVG) → Work → Services bridge → Product → CTA → Footer |
+| Services | Org-chart of the three services + branch diagram of how a job runs |
+| About | Three founders, row links, Connect section |
+| Portfolio | Two real projects, delivery-time metrics — no invented outcome figures |
+| Product | GitNomad, mark redrawn as inline SVG |
+| SEO | Generated sitemap, OG + Twitter, Organization JSON-LD, `scroll-padding-top`, 301s for `/index.html` and `/sitemap.xml` |
+| Cleanup | 1,236 lines of dead CSS/JS removed, verified against shipped markup |
+
+**Deliberately not done**
+- 1200×630 social card — the square logo letterboxes on LinkedIn/X
+- Small favicon sizes; the 2000px PNG mushes at 16px
+- Booking system — every CTA still routes to the Services form
+
+**Regression to watch:** the home page carries far less body copy than the old one and no longer
+has a keyword-loaded `h1`. Title, description and the services panel should hold it. If rankings
+slip, this is the first place to look.
+
+---
+
+## Phase 2 — original plan (kept for reference)
 
 Split into two independently verifiable stages. **2A must ship a visually identical site** — same
 CSS, same rendered markup, same URLs. Any visual difference after 2A is a bug, not a design choice.
@@ -239,42 +273,223 @@ All CSS-driven or IntersectionObserver — no animation library, nothing that hu
 
 ## Phase 3 — Social posting automation (3×/week, LinkedIn + X)
 
-**Publishing rail deliberately undecided.** Captured here so the discussion has a written baseline.
+**Status:** planned, not started. Decisions taken 2026-08-15.
 
-### The actual constraint
+### Correction to the earlier baseline
 
-The hard part is not the automation — it is API access.
+The options table above claimed self-hosted Postiz means "no LinkedIn app review." **That is wrong.**
+Postiz's own self-hosting docs require `LINKEDIN_CLIENT_ID` / `LINKEDIN_CLIENT_SECRET` and
+`X_API_KEY` / `X_API_SECRET` — you create both developer apps yourself, add the LinkedIn products,
+and configure the OAuth redirect. Posting to a company page needs the separate `linkedin-page`
+provider.
 
-- **LinkedIn Company Page** posting requires a LinkedIn Developer app with the Community Management
-  API and `w_organization_social`. Review typically takes **2–6 weeks** and is regularly rejected
-  for vaguely-worded use cases.
-- **X** free tier permits 500 writes/month (12/mo is well within it), but app setup is fiddly.
-- n8n's LinkedIn node does **not** avoid this — it still consumes those same OAuth credentials.
+Their docs also warn: without the Advertising API permissions approved, **you get no refresh
+tokens**, so LinkedIn access expires every 60 days and must be reconnected by hand.
 
-### Options on the table
+So the LinkedIn review is unavoidable for company-page posting, by any route. It is the long pole
+and it starts on day one regardless of everything else.
 
-| Option | Setup time | Cost | Notes |
-|---|---|---|---|
-| n8n + **Postiz** (self-hosted) | Hours | Free | Open-source, sits beside your n8n, has an API, no LinkedIn app review |
-| n8n + **Buffer** | Minutes | Free tier covers 3/wk | Fastest to live; external dependency |
-| **Pure n8n**, direct APIs | 2–6 weeks | Free | Full dogfooding, doubles as a sales asset — "here's the workflow running our own socials" |
-| Pure n8n, Buffer as interim | Minutes, then migrate | Free | Posting starts this week; direct API becomes the end state |
+### Postiz: rejected for this, worth keeping for something else
 
-### Pipeline (rail-independent — this part is the same either way)
+Self-hosting it means an Ubuntu VM at 2GB/2vCPU running Docker Compose with the app, Postgres, a
+cache and **Temporal** — a full workflow engine — to send 12 posts a month to 2 channels. Roughly
+$6–12/month plus patching, backups and monitoring.
+
+Against that:
+
+- It does not avoid the LinkedIn app review, which is why it was chosen.
+- Its main benefit is token refresh — but if the Advertising API product is not approved, LinkedIn
+  issues no refresh token at all, and Postiz cannot refresh what was never issued. The 60-day manual
+  reconnect happens either way.
+- It contradicts the "plain scheduled script, no n8n" decision by being heavier than n8n.
+- It is a failure surface we own: a wedged VM on Monday morning fails silently.
+
+Direct API calls cost roughly 40 lines of token handling per platform. That is the whole trade.
+
+**Kept on the table as a separate idea:** self-hosted Postiz is a service an automation agency could
+sell — managed scheduling for clients, on our infrastructure, no per-seat fees. That deserves its
+own evaluation driven by real client requirements, not by our own three posts a week.
+
+### Decisions taken
+
+| Question | Decision |
+|---|---|
+| Orchestration | Plain scheduled script, no n8n |
+| Publishing rail | **Direct LinkedIn + X APIs** (decided 2026-08-15, reversing the earlier Postiz choice) |
+| Approval | Human approves every post before it publishes |
+| LinkedIn target | AgentinFlow company page |
+
+### Architecture
 
 ```
-Cron (Mon/Wed/Fri) → fetch RSS + Hacker News + dev.to
-  → filter by relevance/recency → dedupe against already-posted store
-  → LLM drafts LinkedIn variant + X variant in AgentinFlow's voice
-  → approval step → publish → log to store
+GitHub Actions cron (Mon/Wed/Fri)
+  → fetch: RSS + Hacker News + dev.to
+  → filter on recency and relevance
+  → dedupe against the posted store
+  → Claude drafts a LinkedIn variant AND a separate X variant
+  → write draft to store, notify Telegram with Approve / Reject buttons
+                            ↓
+Telegram button → Vercel function (the site is already on Vercel)
+  → publish via the chosen rail → mark posted in the store
 ```
 
-Notes:
-- The two platforms need genuinely different drafts, not one text cross-posted — LinkedIn rewards
-  longer narrative, X rewards compression.
-- Dedupe store prevents reposting the same story; Google Sheets or Postgres.
-- Approval via Telegram/Slack with Approve/Reject buttons was the recommendation.
-- Whichever rail is chosen, the workflow JSON is importable and version-controlled in this repo.
+Split on purpose: GitHub Actions gives a generous free cron but its runners are ephemeral, so they
+cannot hold a webhook open for the approval callback. Vercel functions are already available and
+are always on. Vercel Hobby cron is capped at one run per day per job, which is why the schedule
+lives in Actions rather than there.
+
+**Store:** Upstash Redis free tier — holds pending drafts and the posted-URL set for dedupe.
+Alternative considered: committing drafts to the repo. Version-controlled and free, but every
+approval becomes a git round-trip from a serverless function, which is more moving parts, not fewer.
+
+### Content pipeline
+
+**Topic scope: general tech news.**
+
+The interaction is two-stage. The system does not draft first and ask for approval — it asks what
+you think *before* anything is written, then writes the post around your take.
+
+```
+1. fetch + filter + dedupe            → pick one story
+2. Telegram: "Story: <headline>       → you reply in free text
+   <2-line summary> <link>
+   What is your view on this?"
+3. Claude drafts LinkedIn + X posts   → news framing carries your view as the point
+4. Telegram: draft + Approve/Edit/Reject
+5. publish on approve
+```
+
+Two human touches per post, not one. That is the cost of posts that carry an actual opinion rather
+than a summary anyone could have generated. If it proves too heavy, step 2 can accept a one-word
+steer and let the model expand it — but it must never be skippable, or the posts revert to filler.
+
+State has to survive between the two touches, which is what the store is for: the run that asks the
+question ends before you answer it.
+
+### Voice profile
+
+Derived from three real AgentinFlow LinkedIn posts supplied 2026-08-15. Encode as the drafting
+system prompt, not as loose guidance.
+
+| Trait | Observed |
+|---|---|
+| Structure | One sentence per line. No paragraph blocks. |
+| Person | "We" — the agency, never an individual |
+| Opening | Straight into substance. No "In today's fast-paced world" |
+| Length | 60–120 words |
+| Emoji | Zero or one, at the end of a line. 🚀 👇 |
+| Close | Soft CTA or a question — "Would love your feedback", "Let's build something impactful" |
+| Hashtags | 4–6, PascalCase, brand + topic + geography: #AgentInflow #WebDevelopment #StartupIndia |
+| Register | Plain and direct. Some marketing warmth, no jargon stacking |
+| Honesty | "Still early, but we're excited" — comfortable admitting stage. Keep this |
+
+**No X sample exists.** The X variant will be derived — same view, compressed, no hashtag stack,
+one link — and needs review on the first few posts before it can be trusted.
+
+**Account reality:** the company page had 17 followers at the time of sampling. Automation fixes
+cadence, not reach. Three consistent posts a week with a real opinion is the right lever; expecting
+distribution from it is not.
+
+### Revised architecture — local, interactive (decided 2026-08-15)
+
+Telegram, Upstash and the Vercel webhook are all removed. They existed only because the person and
+the process were in different places: a bot that asks a question and waits for an answer needs
+somewhere to keep the half-finished post while the run that asked it has already exited.
+
+Running on the operator's own machine collapses that. The process stays alive while you type, so
+there is no cross-process state at all — no queue, no KV, no callback endpoint.
+
+**Drafting model: OpenAI.** One function behind an interface; the provider is an env var.
+
+```
+Windows Task Scheduler  (Mon/Wed/Fri 09:00, "run ASAP after missed start")
+   │
+   └─> node social/run.mjs
+         1  fetchAll()              sources.mjs      HN + dev.to          ✅ built
+         2  selectStory(seen)       select.mjs       score, dedupe        ✅ built
+         3  notify + present        ui.mjs           toast, then console
+         4  readline                ui.mjs           your view, free text
+         5  draft()                 draft.mjs        OpenAI -> {linkedin, x}
+         6  review loop             ui.mjs           Approve / Edit / Regenerate / Skip
+         7  publish()               publish/*.mjs    direct API calls
+         8  markPosted() + log      store.mjs        local JSON
+```
+
+Every step is in one process. If it dies at step 6, nothing was posted and nothing is half-written.
+
+### File layout
+
+```
+social/
+  run.mjs              orchestrator + CLI            ✅
+  sources.mjs          HN + dev.to                   ✅
+  select.mjs           scoring, canonicalise, dedupe ✅
+  store.mjs            posted set + run log          ✅
+  draft.mjs            OpenAI call, JSON out
+  voice.md             voice profile as system prompt
+  ui.mjs               toast, readline, review loop
+  auth/oauth.mjs       localhost callback, token store, refresh
+  publish/x.mjs        POST /2/tweets
+  publish/linkedin.mjs POST /rest/posts
+  setup.mjs            one-time per-platform OAuth
+  install-task.ps1     registers the scheduled task
+  .env                 secrets                       (gitignored)
+  state/               posted.json, tokens.json, log.ndjson (gitignored)
+```
+
+### Auth, concretely
+
+| | X | LinkedIn |
+|---|---|---|
+| Flow | OAuth 2.0 PKCE, user context | OAuth 2.0 3-legged |
+| Scopes | `tweet.write`, `users.read`, `offline.access` | `w_organization_social` |
+| Endpoint | `POST /2/tweets` | `POST /rest/posts`, `LinkedIn-Version` header, author `urn:li:organization:{id}` |
+| Refresh | `offline.access` yields a refresh token | Only if the Advertising API product is approved |
+| Gate | Developer account, free tier | **App review, 2–6 weeks** |
+
+Both flows run once via `setup.mjs`, which starts a throwaway HTTP server on localhost to catch the
+redirect and writes tokens to `state/tokens.json`. **To verify:** whether LinkedIn still accepts an
+`http://localhost` redirect URI, and X's current free-tier write allowance. Neither blocks M2.
+
+### Failure handling
+
+- A publish failure writes the draft to `state/failed/` and does **not** mark the story posted, so
+  it can be retried rather than lost.
+- Every run appends to `state/log.ndjson`, which is the only way to notice the task silently
+  stopped firing.
+- `--dry-run` prints what would be posted and touches no API.
+
+### Milestones
+
+| # | Deliverable | Blocked by |
+|---|---|---|
+| **M0** | LinkedIn Developer app created, Community Management + Advertising products requested. X developer app created. | Nothing — **do this first**, review is 2–6 weeks |
+| **M1** ✅ | Fetch → score → dedupe → select. Runs with no keys. | done 2026-08-15 |
+| **M2** | `draft.mjs` + interactive review loop + `--dry-run`. End to end except posting. | **OpenAI key only** |
+| **M3** | X auth + publishing. Ships first — no review gate. | X developer account |
+| **M4** | LinkedIn auth + publishing | **M0 app review** |
+| **M5** | Scheduled task, logging, failure surfacing | M3 |
+
+M1 is the bulk of the work and is buildable today. Nothing about it waits on LinkedIn.
+
+### Inputs needed
+
+1. ~~Topic scope~~ ✅ **general tech news**
+2. ~~Voice sample~~ ✅ **three LinkedIn posts supplied, profiled above**
+3. **Anthropic API key** for drafting (~$1–2/month at this volume) — still needed
+4. **Telegram bot token + chat ID** (via @BotFather, five minutes) — still needed
+5. **X API tier** — confirm the free tier's current write allowance covers ~12 posts/month
+6. Where Postiz would be hosted, if it survives the M3 reassessment
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| LinkedIn rejects the app | Personal profile as fallback; X ships regardless. Company page may simply not be automatable |
+| No refresh token → 60-day expiry | Request Advertising API at M0. Otherwise a calendar reminder and manual reconnect |
+| LLM posts something wrong or tone-deaf under the agency name | Approval gate is load-bearing, not optional. Never remove it |
+| Automated posting reads as spam | Three a week with a human approving each is well within normal. Do not scale up |
+| Vercel Hobby non-commercial ToS | Already a known accepted risk; business automation on it widens the exposure |
 
 ---
 
@@ -282,7 +497,7 @@ Notes:
 
 Ordered by what blocks the earliest phase.
 
-### For Phase 1 (email) — needed to start
+### For Phase 1 (email) — ✅ all resolved
 
 1. **The current EmailJS template body and its variable names.**
    EmailJS dashboard → Email Templates → your template → Content. Paste the body or screenshot it.
@@ -291,14 +506,14 @@ Ordered by what blocks the earliest phase.
 3. Whether the EmailJS account is free tier (200 emails/month) — affects whether the auto-reply
    doubles your consumption and whether rate limiting is urgent.
 
-### For Phase 2 (migration) — needed before restructuring
+### For Phase 2 (migration) — ✅ all resolved
 
 4. **Render service settings** — whether it is a Static Site or a Web Service, plus Root Directory,
    Build Command and Publish Directory. The site lives in an `agentinflow/` subfolder rather than the
    repo root, so restructuring without this breaks the deploy.
 5. Confirm `/service/` and `/aboutus/` URLs must be preserved (assumed yes — they are in the sitemap).
 
-### For Phase 2 (design) — needed before the Portfolio section is real
+### For Phase 2 (design) — ✅ all resolved (testimonials confirmed placeholder and removed rather than published)
 
 6. **Portfolio content.** Per project: name, client (or "Confidential"), 1–2 line problem,
    what was built, result metric, tech stack, screenshot/thumbnail. **Three projects is enough to ship.**
@@ -307,7 +522,7 @@ Ordered by what blocks the earliest phase.
    Google penalty risk, and real names may need permission.
 8. Brand assets: logo as SVG if it exists, any brand guide, and 2–3 reference sites whose look you want.
 
-### For Phase 3 (social) — not yet needed
+### For Phase 3 (social) — ← BLOCKING NOW
 
 9. Where n8n runs (cloud vs self-hosted — the RepoCloud lead suggests self-hosted experience).
 10. LinkedIn: Company Page or personal profile.
@@ -362,5 +577,5 @@ live test submission.
 
 ## Immediate next step
 
-Provide item **#1** (the EmailJS template body) and Phase 1 starts.
-Items **#6–8** can be gathered in parallel while Phase 1 is in flight.
+Phase 3. Answer items **#9–13** — the publishing rail is the one that decides everything else,
+because it determines whether posting starts this week or after a LinkedIn app review.
