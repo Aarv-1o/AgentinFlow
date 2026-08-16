@@ -1,11 +1,10 @@
 // OAuth for both platforms, and the token store.
 //
-// Both flows are "open a browser, catch the redirect on localhost, swap the
-// code for a token". The differences are small enough to live in a config
-// object rather than two near-identical files:
+// X only. OAuth 2.0 with PKCE, confidential client, client credentials as
+// basic auth on the token call.
 //
-//   X         OAuth 2.0 + PKCE, confidential client (basic auth on token)
-//   LinkedIn  OAuth 2.0, client_secret in the body, no PKCE
+// Kept as a keyed table rather than flattened to one provider: LinkedIn lived
+// here until it was dropped, and the next platform will slot in the same way.
 //
 // Tokens are written to social/state/tokens.json, which is gitignored. That
 // file is a credential - anyone holding it can post as you.
@@ -37,44 +36,8 @@ export const PROVIDERS = {
         // X wants the client credentials as HTTP basic auth on the token call.
         tokenAuth: 'basic'
     },
-    linkedin: {
-        label: 'LinkedIn',
-        authUrl: 'https://www.linkedin.com/oauth/v2/authorization',
-        tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
-        // r_organization_admin is only here so the org id can be looked up
-        // rather than hunted for in the page's HTML. Drop it from the app if
-        // the reviewer objects; LINKEDIN_ORG_ID can be set by hand.
-        scope: 'w_organization_social r_organization_admin',
-        pkce: false,
-        tokenAuth: 'body',
-        // LinkedIn will not register an http:// callback, so the browser flow
-        // needs an HTTPS URL. See saveManualToken for the way around it.
-        requiresHttps: true
-    }
 };
 
-// LinkedIn only registers HTTPS redirect URLs, which a localhost listener
-// cannot offer without a tunnel. Their developer portal has a token
-// generator that hands you an access token directly, so for a single-operator
-// tool that is the shorter path: paste the token in and skip the round trip.
-//
-//   https://www.linkedin.com/developers/tools/oauth/token-generator
-//
-// Tokens from it last 60 days and carry no refresh token, so this is also how
-// the connection gets renewed when it lapses.
-export async function saveManualToken(provider, token, expiresInDays = 60) {
-    const store = await readStore();
-    store[provider] = {
-        accessToken: token.trim(),
-        refreshToken: null,
-        expiresAt: Date.now() + expiresInDays * 864e5,
-        scope: 'set manually',
-        obtainedAt: new Date().toISOString(),
-        manual: true
-    };
-    await writeStore(store);
-    return store[provider];
-}
 
 // --- token store -----------------------------------------------------------
 

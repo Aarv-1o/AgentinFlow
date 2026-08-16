@@ -6,8 +6,9 @@
 //   node social/run.mjs --list       what is available, then exit (no keys needed)
 //   node social/run.mjs --help       flags and in-run commands
 //
-// A platform that is not connected is skipped rather than failed, so this is
-// usable with X alone while LinkedIn's app review is outstanding.
+// X only. LinkedIn was dropped: company-page posting needs a business email
+// on a custom domain, a 2-6 week review, and a manual reconnect every 60 days
+// because refresh tokens go to approved partners only.
 
 import { fetchAll } from './sources.mjs';
 import { selectStory, MAX_AGE_HOURS } from './select.mjs';
@@ -32,26 +33,21 @@ const ago = (iso) => {
     return h < 1 ? `${Math.round(h * 60)}m ago` : `${h.toFixed(1)}h ago`;
 };
 
-// Publish to both, independently. One platform failing must not stop the
-// other - they are separate accounts with separate approvals, and LinkedIn
-// may be unavailable for weeks while X works fine.
+// Publish. Kept as a loop over a list rather than a single call, so adding a
+// platform later is a list entry rather than a rewrite of the caller.
 async function publishAll(story, drafts) {
     const connected = new Set(
         (await status()).filter((s) => s.connected).map((s) => s.provider)
     );
 
     const targets = [
-        { key: 'linkedin', text: drafts.linkedin, load: () => import('./publish/linkedin.mjs') },
         { key: 'x', text: drafts.x, load: () => import('./publish/x.mjs') }
     ];
 
     const results = [];
     for (const t of targets) {
-        // Not connected is not a failure. Until LinkedIn's app review clears,
-        // treating it as one would write a junk file to state/failed/ on
-        // every single run.
         if (!connected.has(t.key)) {
-            console.log(`  ${ui.colour.dim(t.key + ' skipped — not connected')}`);
+            console.log(`  ${ui.colour.wine(t.key + ' is not connected')} — node social/setup.mjs ${t.key}`);
             continue;
         }
         try {
@@ -219,9 +215,6 @@ async function run() {
         const results = await publishAll(story, drafts);
         const posted = results.filter((r) => r.ok);
 
-        // Recorded if either platform took it. Re-offering a story already
-        // live on LinkedIn because X failed would be worse than losing the
-        // X post - the failed draft is saved for a manual retry instead.
         if (posted.length) {
             const n = await markPosted({
                 url: story.canonical,

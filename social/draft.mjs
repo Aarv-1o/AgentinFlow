@@ -1,4 +1,4 @@
-// Turn (story + your view) into two posts.
+// Turn (story + your view) into a post.
 //
 // The provider lives behind one function. Swapping OpenAI for anything else
 // with a chat-completions shape means editing `callModel` and nothing else.
@@ -73,27 +73,20 @@ function userPrompt(story, view) {
         'OUR VIEW (the operator wrote this — it is the point of the post)',
         view,
         '',
-        'Return JSON exactly: { "linkedin": "...", "x": "..." }',
-        'Use real newlines inside the strings, one sentence per line for LinkedIn.'
+        'Return JSON exactly: { "x": "..." }',
+        'Use real newlines inside the string, one sentence per line.'
     ].filter(Boolean).join('\n');
 }
 
 // The model is told the limits, but told is not the same as did.
 function validate(drafts) {
     const problems = [];
-    if (!drafts.linkedin?.trim()) problems.push('linkedin is empty');
-    if (!drafts.x?.trim()) problems.push('x is empty');
+    if (!drafts.x?.trim()) problems.push('the post is empty');
 
+    // Caught here so a retry can fix it, rather than discovered as a 403 at
+    // publish time.
     if (drafts.x && drafts.x.length > config.limits.xMaxChars) {
-        problems.push(`x is ${drafts.x.length} chars, limit is ${config.limits.xMaxChars}`);
-    }
-    if (drafts.linkedin && drafts.linkedin.length > config.limits.linkedinMaxChars) {
-        problems.push(`linkedin is ${drafts.linkedin.length} chars, limit is ${config.limits.linkedinMaxChars}`);
-    }
-    // The one-sentence-per-line rule is the house style; a single wall of text
-    // means it was ignored.
-    if (drafts.linkedin && drafts.linkedin.split('\n').filter((l) => l.trim()).length < 4) {
-        problems.push('linkedin is not broken one sentence per line');
+        problems.push(`post is ${drafts.x.length} chars, limit is ${config.limits.xMaxChars}`);
     }
     return problems;
 }
@@ -121,16 +114,12 @@ export async function draft(story, view, { onRetry } = {}) {
         }
 
         const problems = validate(parsed);
-        if (!problems.length) return { linkedin: parsed.linkedin.trim(), x: parsed.x.trim() };
+        if (!problems.length) return { x: parsed.x.trim() };
 
         if (attempt === 2) {
             // Hand back the flawed draft rather than failing the run - the
             // review loop can still show it and let a human fix it.
-            return {
-                linkedin: (parsed.linkedin || '').trim(),
-                x: (parsed.x || '').trim(),
-                problems
-            };
+            return { x: (parsed.x || '').trim(), problems };
         }
 
         onRetry?.(problems.join('; '));

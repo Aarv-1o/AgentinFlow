@@ -165,10 +165,7 @@ export async function chooseFrom(stories, ago) {
 
 export function showDrafts(drafts) {
     console.log('');
-    rule('linkedin');
-    console.log(drafts.linkedin.split('\n').map((l) => '  ' + l).join('\n'));
-    console.log('');
-    rule(`x  (${drafts.x.length}/280)`);
+    rule(`post  (${drafts.x.length}/280)`);
     console.log('  ' + drafts.x.replace(/\n/g, '\n  '));
     console.log('');
     if (drafts.problems?.length) {

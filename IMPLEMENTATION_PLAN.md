@@ -275,6 +275,26 @@ All CSS-driven or IntersectionObserver — no animation library, nothing that hu
 
 **Status:** planned, not started. Decisions taken 2026-08-15.
 
+### LinkedIn: dropped (2026-08-16)
+
+Company-page posting turned out to cost more than the channel was worth:
+
+- The Community Management API access request rejects free-mail addresses.
+  It needs a mailbox on a domain we control, and agentinflow.com has no MX
+  records at all today.
+- 2-6 week review after that, with rejection a real possibility.
+- LinkedIn registers HTTPS callbacks only, so the localhost OAuth listener
+  that works for X needs a tunnel or a hand-pasted token.
+- Refresh tokens go to approved partners only. Everyone else reconnects by
+  hand every 60 days - forever.
+
+The tool is X-only. Drafting produces one post rather than two, which also
+removed the guesswork in the X variant, since there was never a sample of it
+to work from.
+
+The publish step is still a loop over a list of targets, so adding a platform
+later is a list entry rather than a rewrite.
+
 ### Correction to the earlier baseline
 
 The options table above claimed self-hosted Postiz means "no LinkedIn app review." **That is wrong.**
@@ -317,7 +337,7 @@ own evaluation driven by real client requirements, not by our own three posts a 
 | Orchestration | Plain scheduled script, no n8n |
 | Publishing rail | **Direct LinkedIn + X APIs** (decided 2026-08-15, reversing the earlier Postiz choice) |
 | Approval | Human approves every post before it publishes |
-| LinkedIn target | AgentinFlow company page |
+| LinkedIn | **Dropped 2026-08-16** — see below |
 
 ### Architecture
 
@@ -466,9 +486,9 @@ redirect and writes tokens to `state/tokens.json`. **To verify:** whether Linked
 | **M0** | LinkedIn Developer app created, Community Management + Advertising products requested. X developer app created. | Nothing — **do this first**, review is 2–6 weeks |
 | **M1** ✅ | Fetch → score → dedupe → select. Runs with no keys. | done 2026-08-15 |
 | **M2** | `draft.mjs` + interactive review loop + `--dry-run`. End to end except posting. | **OpenAI key only** |
-| **M3** | X auth + publishing. Ships first — no review gate. | X developer account |
-| **M4** | LinkedIn auth + publishing | **M0 app review** |
-| **M5** | Scheduled task, logging, failure surfacing | M3 |
+| **M3** ✅ | X auth + publishing | done 2026-08-15 |
+| ~~M4~~ | ~~LinkedIn~~ | **dropped** |
+| **M5** ✅ | Scheduled task | done 2026-08-16 |
 
 M1 is the bulk of the work and is buildable today. Nothing about it waits on LinkedIn.
 
